@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Urban Court</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@200;300;400;500&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0906;--card:#121110;
+  --orange:#ed8530;--rose-gold:#c4886a;--chrome:#9fa8aa;
+  --cream:#f0e4d0;--cream-dim:rgba(240,228,208,0.38);
+  --gold:#c9a84c;--muted:#7a6550;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ─── HERO ─────────────────────────────────────────────── */
+.hero{position:relative;height:100vh;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px);animation:drift 12s ease-in-out infinite alternate}
+.orb1{width:420px;height:420px;background:radial-gradient(circle,rgba(237,133,48,0.09),transparent 70%);top:-80px;left:-100px;animation-duration:14s}
+.orb2{width:300px;height:300px;background:radial-gradient(circle,rgba(196,136,106,0.06),transparent 70%);bottom:60px;right:-60px;animation-duration:10s;animation-direction:alternate-reverse}
+.orb3{width:200px;height:200px;background:radial-gradient(circle,rgba(201,168,76,0.08),transparent 70%);top:40%;left:60%;animation-duration:18s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(30px,20px) scale(1.08)}}
+
+.hero-inner{position:relative;z-index:2;text-align:center;padding:0 28px}
+.hero-venue{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:500;letter-spacing:.5em;text-transform:uppercase;color:var(--orange);margin-bottom:24px;animation:fadeUp .8s ease both}
+.hero-orn{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:28px;animation:fadeUp .8s .1s ease both}
+.ol{height:1px;width:80px;background:linear-gradient(to right,transparent,var(--orange))}
+.or{background:linear-gradient(to left,transparent,var(--orange))}
+.od{width:5px;height:5px;background:var(--orange);transform:rotate(45deg)}
+.hero-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(52px,12vw,88px);line-height:.9;letter-spacing:.06em;text-transform:uppercase;color:var(--cream);animation:fadeUp .9s .15s ease both}
+.hero-title em{font-style:italic;color:var(--rose-gold)}
+.hero-sub{font-family:'Caveat',cursive;font-size:18px;font-weight:500;letter-spacing:.04em;color:var(--muted);margin-top:20px;animation:fadeUp .8s .25s ease both}
+.hero-enter{margin-top:48px;animation:fadeUp .8s .4s ease both}
+.hero-enter button{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--orange);background:transparent;border:1px solid rgba(237,133,48,0.3);padding:14px 36px;cursor:pointer;transition:all .3s;border-radius:4px}
+.hero-enter button:hover{border-color:rgba(237,133,48,.6);background:rgba(237,133,48,.06)}
+.hero-scroll{position:absolute;bottom:90px;left:0;right:0;width:100%;margin:0 auto;display:block;text-align:center;animation:fadeUp .8s .6s ease both;cursor:pointer;opacity:.5}
+.hero-scroll span{font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.scroll-line{width:1px;height:50px;margin:10px auto 0;position:relative;background:rgba(237,133,48,0.12)}
+.scroll-fill{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom,#ed8530,rgba(237,133,48,0.2));transform-origin:top;transform:scaleY(0);animation:scrollFill 1.4s ease-in infinite}
+@keyframes scrollFill{0%{transform:scaleY(0)}70%{transform:scaleY(1)}100%{transform:scaleY(1)}}
+
+/* ─── NAV ────────────────────────────────────────────────── */
+.nav-wrap{position:sticky;top:0;z-index:100;background:rgba(12,9,6,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(237,133,48,0.12)}
+.nav-top{display:flex;justify-content:flex-end;align-items:center;padding:0 20px;height:44px;position:relative}
+.nav-logo{position:absolute;left:50%;transform:translateX(-50%);text-align:center;line-height:1.15;pointer-events:none}
+.nav-logo-top{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#f0e4d0}
+.nav-logo-bot{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;font-style:italic;letter-spacing:.18em;text-transform:uppercase;color:#c4886a}
+.nav-cats-row{display:flex;justify-content:center;border-top:1px solid rgba(237,133,48,0.08)}
+.nav-cats{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;justify-content:center;padding:0 12px;width:100%}
+.nav-cats::-webkit-scrollbar{display:none}
+.cat-btn{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:8px 14px;transition:all .2s;white-space:nowrap;position:relative}
+.cat-btn::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;background:var(--orange);transition:all .3s}
+.cat-btn.active{color:var(--orange)}
+.cat-btn.active::after{left:14px;right:14px}
+.sub-nav-row{display:none;justify-content:center;border-top:1px solid rgba(237,133,48,0.08);background:rgba(237,133,48,0.02)}
+.sub-nav-row.visible{display:flex}
+.sub-nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;justify-content:center;padding:0 12px;width:100%}
+.sub-nav::-webkit-scrollbar{display:none}
+.sub-btn{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:7px 12px;transition:all .2s;white-space:nowrap;position:relative}
+.sub-btn::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;background:var(--orange);transition:all .3s}
+.sub-btn.active{color:var(--orange)}
+.sub-btn.active::after{left:12px;right:12px}
+.lang-tog{display:flex;border:1px solid rgba(237,133,48,0.2);border-radius:4px;overflow:hidden}
+.lang-btn{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:.15em;padding:5px 10px;border:none;cursor:pointer;transition:all .2s;background:transparent;color:var(--muted)}
+.lang-btn.active{background:var(--orange);color:#0c0906;font-weight:700}
+
+/* ─── SECTIONS ────────────────────────────────────────────── */
+.section{display:none;position:relative;overflow:hidden;padding-bottom:60px;background:linear-gradient(180deg,rgba(237,133,48,0.07) 0%,transparent 180px);border:1px solid rgba(237,133,48,0.1);border-radius:20px;margin:8px}
+.section.visible{display:block;animation:fadeSection .45s ease both}
+@keyframes fadeSection{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* Atmospheric bg orbs per section */
+.sec-atm{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.atm-orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.8}
+
+/* DRINKS / SMOOTHIE — berry purples */
+.atm-berry1{width:380px;height:380px;background:radial-gradient(circle,rgba(130,30,80,0.22),transparent 70%);top:-40px;right:-80px}
+.atm-berry2{width:280px;height:280px;background:radial-gradient(circle,rgba(50,20,120,0.18),transparent 70%);bottom:100px;left:-60px}
+.atm-berry3{width:200px;height:200px;background:radial-gradient(circle,rgba(180,40,40,0.14),transparent 70%);top:50%;left:40%}
+
+/* COFFEE — warm espresso */
+.atm-coffee1{width:400px;height:400px;background:radial-gradient(circle,rgba(110,55,15,0.25),transparent 70%);top:-60px;left:-80px}
+.atm-coffee2{width:260px;height:260px;background:radial-gradient(circle,rgba(80,35,10,0.18),transparent 70%);bottom:80px;right:-40px}
+.atm-coffee3{width:180px;height:180px;background:radial-gradient(circle,rgba(160,90,20,0.12),transparent 70%);top:40%;right:30%}
+
+/* TEA — jade & chamomile */
+.atm-tea1{width:360px;height:360px;background:radial-gradient(circle,rgba(30,80,45,0.22),transparent 70%);top:-40px;right:-60px}
+.atm-tea2{width:240px;height:240px;background:radial-gradient(circle,rgba(90,110,30,0.16),transparent 70%);bottom:120px;left:-40px}
+
+/* BEER — golden lager */
+.atm-beer1{width:380px;height:380px;background:radial-gradient(circle,rgba(180,120,15,0.2),transparent 70%);top:-60px;right:-80px}
+.atm-beer2{width:220px;height:220px;background:radial-gradient(circle,rgba(140,80,10,0.14),transparent 70%);bottom:80px;left:-30px}
+
+/* SNACKS — warm amber */
+.atm-snack1{width:320px;height:320px;background:radial-gradient(circle,rgba(160,80,20,0.18),transparent 70%);top:-40px;left:-60px}
+
+/* ─── SECTION HEADER ─────────────────────────────────────── */
+.sec-header{position:relative;z-index:2;padding:40px 28px 32px;text-align:center}
+.sec-num{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:var(--orange);margin-bottom:12px}
+.sec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(44px,8vw,48px);line-height:1;letter-spacing:.06em;text-transform:uppercase;color:var(--cream);margin-bottom:8px}
+.sec-title em{font-style:italic;color:var(--rose-gold)}
+.sec-desc{font-family:'Caveat',cursive;font-size:16px;font-weight:500;letter-spacing:.04em;color:var(--muted);margin-top:8px}
+.sec-rule{height:1px;background:linear-gradient(90deg,rgba(237,133,48,0.35),transparent);margin:20px 0 0;display:block}
+.sr-line{display:none}
+.sr-dot{display:none}
+
+/* ─── SUBSECTION ─────────────────────────────────────────── */
+.sub-head{position:relative;z-index:2;display:flex;align-items:center;gap:14px;padding:28px 20px 14px}
+.sub-dot{width:4px;height:4px;background:var(--orange);transform:rotate(45deg);flex-shrink:0}
+.sub-title{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:var(--orange);white-space:nowrap}
+.sub-rule{flex:1;height:1px;background:rgba(237,133,48,0.15)}
+
+/* ─── CARDS ──────────────────────────────────────────────── */
+.cards{position:relative;z-index:2;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid rgba(237,133,48,0.08);border-left:3px solid var(--orange);border-radius:10px;overflow:hidden;position:relative;transition:all .3s ease;-webkit-tap-highlight-color:transparent}
+.card::before{display:none}
+.card:hover,.card-glow{transform:translateY(-5px);border-color:rgba(237,133,48,.3);box-shadow:0 24px 48px rgba(0,0,0,.6),-6px 0 24px rgba(237,133,48,.15)}
+.card-glow .card-name{animation:namePulse .7s ease-in-out infinite alternate}
+@keyframes namePulsePC{from{text-shadow:0 0 12px rgba(237,133,48,0.45),0 0 28px rgba(237,133,48,0.2)}to{text-shadow:0 0 20px rgba(237,133,48,0.9),0 0 45px rgba(237,133,48,0.55)}}
+@media(hover:hover)and(pointer:fine){.card:hover .card-name{animation:namePulsePC .7s ease-in-out infinite alternate}}
+
+.card-inner{display:flex;align-items:stretch;min-height:80px}
+.card-accent{width:0;flex-shrink:0}
+.card-body{padding:20px 22px 22px;flex:1}
+.card-origin{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);opacity:.75;margin-bottom:8px}
+.card-name{font-family:'Caveat',cursive;font-size:27px;font-weight:600;line-height:1.1;color:var(--cream);margin-bottom:4px;text-shadow:0 0 12px rgba(237,133,48,0.45),0 0 28px rgba(237,133,48,0.2)}
+.card-sub{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:300;font-style:italic;letter-spacing:.04em;color:var(--muted);margin-bottom:10px;text-transform:none}
+.card-desc{font-family:'Montserrat',sans-serif;font-size:10px;line-height:1.9;color:rgba(240,228,208,0.28);font-weight:300;letter-spacing:.06em}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.tag{font-family:'Montserrat',sans-serif;font-size:8px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);background:rgba(237,133,48,.12);border:1px solid rgba(237,133,48,.25);border-radius:20px;padding:3px 10px;opacity:.55}
+
+/* ─── SMOOTHIE BASE SELECTOR ────────────────────────────── */
+.base-selector{margin-top:16px;border-top:1px solid rgba(237,133,48,.08);padding-top:14px}
+.base-label{font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:300;letter-spacing:.35em;text-transform:uppercase;font-style:italic;color:#7a6550;margin-bottom:10px}
+.base-group{margin-bottom:8px}
+.base-group-label{font-family:'Montserrat',sans-serif;font-size:8px;font-weight:300;font-style:italic;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
+.base-pills{display:flex;flex-wrap:wrap;gap:2px 8px}
+.base-pill{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:300;font-style:italic;letter-spacing:.04em;color:rgba(240,228,208,0.28);border:1px solid rgba(237,133,48,0.2);padding:2px 8px;border-radius:10px;background:rgba(237,133,48,0.05)}
+
+/* ─── GRID 2 (for larger items) ─────────────────────────── */
+.grid2{position:relative;z-index:2;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+
+/* ─── HERO PHOTO HINT (placeholder) ─────────────────────── */
+.photo-hint{width:100%;height:3px;background:linear-gradient(to right,transparent,var(--orange),transparent);opacity:.3;margin:4px 0}
+
+/* ─── FOOTER ─────────────────────────────────────────────── */
+.footer{position:relative;z-index:2;text-align:center;margin-top:60px;padding:36px 28px;border-top:1px solid rgba(237,133,48,0.1)}
+.f-dots{display:flex;justify-content:center;gap:8px;margin-bottom:14px}
+.f-dot{width:3px;height:3px;border-radius:50%;background:var(--orange)}
+.f-logo{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:.3em;color:var(--orange);margin-bottom:8px}
+.f-txt{font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:500;letter-spacing:.4em;text-transform:uppercase;color:var(--muted)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes namePulse{from{text-shadow:0 0 12px rgba(237,133,48,0.45),0 0 28px rgba(237,133,48,0.2)}to{text-shadow:0 0 18px rgba(237,133,48,0.85),0 0 40px rgba(237,133,48,0.5)}}
+
+/* ─── WIFI subtle ────────────────────────────────────────── */
+.wifi-strip{background:rgba(237,133,48,.04);border-bottom:1px solid rgba(237,133,48,0.12);padding:8px 20px;text-align:center}
+.wifi-txt{font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.wifi-txt strong{color:var(--cream);font-weight:600}
+.wifi-pw{color:var(--orange);font-weight:600}
+@media(max-width:768px){.nav-cats{padding:0 4px}.cat-btn{padding:8px 8px;letter-spacing:.15em}}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══════════════════════════════════════════════ -->
+<div class="hero" onclick="document.querySelector('.nav-wrap').scrollIntoView({behavior:'smooth'})">
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="hero-orb orb3"></div>
+  <div class="hero-inner">
+    <div class="hero-venue" data-en="Limassol · Cyprus" data-ru="Лимасол · Кипр">Limassol · Cyprus</div>
+    <div class="hero-orn"><div class="ol"></div><div class="od"></div><div class="ol or"></div></div>
+    <div class="hero-title">Urban<br><em>Court</em></div>
+    <div class="hero-sub" data-en="A curated selection for our distinguished guests" data-ru="Специальная подборка для наших гостей">A curated selection for our distinguished guests</div>
+    <div class="hero-enter">
+      <button data-en="Explore the Menu" data-ru="Открыть меню">Explore the Menu</button>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span data-en="Scroll" data-ru="Листать">Scroll</span>
+    <div class="scroll-line"><div class="scroll-fill"></div></div>
+  </div>
+</div>
+
+<!-- ═══ NAV ════════════════════════════════════════════════ -->
+<div class="nav-wrap">
+  <div class="nav-top">
+    <div class="nav-logo"><div class="nav-logo-top">Urban</div><div class="nav-logo-bot">Court</div></div>
+    <div class="lang-tog">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    </div>
+  </div>
+  <div class="nav-cats-row">
+    <div class="nav-cats">
+      <button class="cat-btn active" onclick="show('drinks',this)" data-en="Drinks" data-ru="Напитки">Drinks</button>
+      <button class="cat-btn" onclick="show('coffee',this)" data-en="Coffee" data-ru="Кофе">Coffee</button>
+      <button class="cat-btn" onclick="show('tea',this)" data-en="Tea" data-ru="Чай">Tea</button>
+      <button class="cat-btn" onclick="show('beer',this)" data-en="Beer" data-ru="Пиво">Beer</button>
+      <button class="cat-btn" onclick="show('snacks',this)" data-en="Snacks" data-ru="Снеки">Snacks</button>
+    </div>
+  </div>
+  <div class="sub-nav-row visible" id="drinks-subnav">
+    <div class="sub-nav">
+      <button class="sub-btn active" onclick="scrollToSection('section-soda',this)" data-en="Soda &amp; Softs" data-ru="Газировка и вода">Soda &amp; Softs</button>
+      <button class="sub-btn" onclick="scrollToSection('section-fresh',this)" data-en="Fresh &amp; Blended" data-ru="Фреши и смузи">Fresh &amp; Blended</button>
+      <button class="sub-btn" onclick="scrollToSection('section-hydration',this)" data-en="Hydration" data-ru="Заряд бодрости">Hydration</button>
+    </div>
+  </div>
+</div>
+
+<div class="wifi-strip">
+  <span class="wifi-txt" data-en="Wi-Fi · <strong>Urban Court</strong> · <span class='wifi-pw'>Tennis-2026</span>" data-ru="Wi-Fi · <strong>Urban Court</strong> · <span class='wifi-pw'>Tennis-2026</span>">Wi-Fi · <strong>Urban Court</strong> · <span class="wifi-pw">Tennis-2026</span></span>
+</div>
+
+<!-- ═══ DRINKS ══════════════════════════════════════════════ -->
+<div id="sec-drinks" class="section visible">
+  <div class="sec-atm">
+    <div class="atm-orb atm-berry1"></div>
+    <div class="atm-orb atm-berry2"></div>
+    <div class="atm-orb atm-berry3"></div>
+  </div>
+
+  <div class="sec-header">
+    <div class="sec-title" data-en="Non-Alcoholic<br><em>Drinks</em>" data-ru="Безалкогольные<br><em>Напитки</em>">Non-Alcoholic<br><em>Drinks</em></div>
+    <div class="sec-desc" data-en="Water · Juices · Smoothies · Hydration" data-ru="Вода · Соки · Смузи · Заряд бодрости">Water · Juices · Smoothies · Hydration</div>
+    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
+  </div>
+
+  <!-- Water -->
+  <div id="section-soda" class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Water" data-ru="Вода">Water</span><div class="sub-rule"></div></div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Évian · France" data-ru="Évian · Франция">Évian · France</div>
+          <div class="card-name" data-en="Still" data-ru="Без газа">Still</div>
+          <div class="card-desc" data-en="Sourced from the glacial waters of the French Alps. Pure, clean, and perfectly balanced." data-ru="Из ледниковых вод французских Альп. Чистая и сбалансированная.">Sourced from the glacial waters of the French Alps. Pure, clean, and perfectly balanced.</div>
+          <div class="card-tags"><span class="tag" data-en="Still" data-ru="Негазированная">Still</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Évian · France" data-ru="Évian · Франция">Évian · France</div>
+          <div class="card-name" data-en="Sparkling" data-ru="С газом">Sparkling</div>
+          <div class="card-desc" data-en="The same Alpine purity with fine, persistent effervescence. Crisp and refreshing." data-ru="Та же альпийская чистота с тонкой газацией.">The same Alpine purity with fine, persistent effervescence. Crisp and refreshing.</div>
+          <div class="card-tags"><span class="tag" data-en="Sparkling" data-ru="Газированная">Sparkling</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Soft Drinks -->
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Soft Drinks" data-ru="Газировка">Soft Drinks</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Classic · 330ml" data-ru="Классическая · 330мл">Classic · 330ml</div>
+          <div class="card-name">Coca-Cola</div>
+          <div class="card-tags"><span class="tag">Classic</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Zero Sugar · 330ml" data-ru="Без сахара · 330мл">Zero Sugar · 330ml</div>
+          <div class="card-name">Coca-Cola Zero</div>
+          <div class="card-tags"><span class="tag" data-en="Zero Sugar" data-ru="Без сахара">Zero Sugar</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Energy · 250ml" data-ru="Энергетик · 250мл">Energy · 250ml</div>
+          <div class="card-name">Red Bull</div>
+          <div class="card-tags"><span class="tag" data-en="Energy" data-ru="Энергетик">Energy</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Sugar-free Energy · 250ml" data-ru="Без сахара · 250мл">Sugar-free Energy · 250ml</div>
+          <div class="card-name">Red Bull Zero</div>
+          <div class="card-tags"><span class="tag" data-en="Energy" data-ru="Энергетик">Energy</span><span class="tag" data-en="Zero Sugar" data-ru="Без сахара">Zero Sugar</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fresh Juices -->
+  <div id="section-fresh" class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Fresh Juices" data-ru="Свежевыжатые соки">Fresh Juices</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Freshly pressed · Served cold" data-ru="Свежевыжатый · Холодный">Freshly pressed · Served cold</div>
+          <div class="card-name" data-en="Orange Fresh" data-ru="Апельсиновый фреш">Orange Fresh</div>
+          <div class="card-desc" data-en="Sun-ripened oranges, pressed to order. Bright, vibrant, and naturally sweet with a clean citrus finish." data-ru="Спелые апельсины, отжатые по заказу. Яркий вкус и натуральная сладость.">Sun-ripened oranges, pressed to order. Bright, vibrant, and naturally sweet with a clean citrus finish.</div>
+          <div class="card-tags"><span class="tag" data-en="Fresh" data-ru="Свежий">Fresh</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Freshly pressed · Served cold" data-ru="Свежевыжатый · Холодный">Freshly pressed · Served cold</div>
+          <div class="card-name" data-en="Grapefruit Fresh" data-ru="Грейпфрутовый фреш">Grapefruit Fresh</div>
+          <div class="card-desc" data-en="Deeply refreshing with a pleasant bittersweet edge. A classic post-court citrus ritual." data-ru="Освежающий, с приятной горчинкой. Классический цитрусовый ритуал после игры.">Deeply refreshing with a pleasant bittersweet edge. A classic post-court citrus ritual.</div>
+          <div class="card-tags"><span class="tag" data-en="Fresh" data-ru="Свежий">Fresh</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Freshly pressed blend · Served cold" data-ru="Свежевыжатый микс · Холодный">Freshly pressed blend · Served cold</div>
+          <div class="card-name" data-en="Orange & Grapefruit" data-ru="Апельсин + Грейпфрут">Orange & Grapefruit</div>
+          <div class="card-desc" data-en="The sweetness of orange meets the invigorating bite of grapefruit. Our signature citrus blend." data-ru="Сладость апельсина и бодрящая горчинка грейпфрута. Наш фирменный цитрусовый микс.">The sweetness of orange meets the invigorating bite of grapefruit. Our signature citrus blend.</div>
+          <div class="card-tags"><span class="tag" data-en="Signature Blend" data-ru="Фирменный микс">Signature Blend</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Smoothies -->
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Smoothies" data-ru="Смузи">Smoothies</span><div class="sub-rule"></div></div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div>
+          <div class="card-name" data-en="Energy Mix" data-ru="Energy Mix">Energy Mix</div>
+          <div class="card-sub" data-en="Banana · Strawberry · Blueberry" data-ru="Банан · Клубника · Голубика">Banana · Strawberry · Blueberry</div>
+          <div class="card-desc" data-en="Our most powerful recovery blend. Ripe banana for natural sweetness, strawberry for antioxidants, and blueberry for a deep berry richness. Energising and smooth." data-ru="Наш мощнейший восстановительный купаж. Банан для сладости, клубника для антиоксидантов и голубика для насыщенного ягодного вкуса.">Our most powerful recovery blend. Ripe banana for natural sweetness, strawberry for antioxidants, and blueberry for a deep berry richness. Energising and smooth.</div>
+          <div class="card-tags"><span class="tag" data-en="Post-Workout" data-ru="После игры">Post-Workout</span><span class="tag" data-en="Antioxidant" data-ru="Антиоксидант">Antioxidant</span></div>
+          <div class="base-selector">
+            <div class="base-label" data-en="Choose your base" data-ru="Выберите основу">Choose your base</div>
+            <div class="base-group">
+              <div class="base-group-label" data-en="Milk" data-ru="Молоко">Milk</div>
+              <div class="base-pills">
+                <span class="base-pill" data-en="Regular" data-ru="Обычное">Regular</span>
+                <span class="base-pill" data-en="Lactose-free" data-ru="Безлактозное">Lactose-free</span>
+                <span class="base-pill" data-en="Oat" data-ru="Овсяное">Oat</span>
+                <span class="base-pill" data-en="Almond" data-ru="Миндальное">Almond</span>
+                <span class="base-pill" data-en="Coconut" data-ru="Кокосовое">Coconut</span>
+                <span class="base-pill" data-en="Soy" data-ru="Соевое">Soy</span>
+              </div>
+            </div>
+            <div class="base-group">
+              <div class="base-group-label" data-en="Alternative base" data-ru="Альтернативная основа">Alternative base</div>
+              <div class="base-pills">
+                <span class="base-pill" data-en="Coconut Water" data-ru="Кокосовая вода">Coconut Water</span>
+                <span class="base-pill" data-en="Still Water" data-ru="Обычная вода">Still Water</span>
+                <span class="base-pill" data-en="Sparkling" data-ru="Газированная">Sparkling</span>
+                <span class="base-pill" data-en="Ice" data-ru="Лёд">Ice</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div>
+          <div class="card-name" data-en="Blue Banana" data-ru="Blue Banana">Blue Banana</div>
+          <div class="card-sub" data-en="Banana · Blueberry" data-ru="Банан · Голубика">Banana · Blueberry</div>
+          <div class="card-desc" data-en="A beautifully simple two-ingredient blend. Creamy banana balanced with the tartness of wild blueberry. Clean, pure, and deeply satisfying." data-ru="Простой купаж из двух ингредиентов. Кремовый банан и терпкость дикой голубики.">A beautifully simple two-ingredient blend. Creamy banana balanced with the tartness of wild blueberry. Clean, pure, and deeply satisfying.</div>
+          <div class="card-tags"><span class="tag" data-en="Antioxidant" data-ru="Антиоксидант">Antioxidant</span></div>
+          <div class="base-selector">
+            <div class="base-label" data-en="Choose your base" data-ru="Выберите основу">Choose your base</div>
+            <div class="base-group">
+              <div class="base-group-label" data-en="Milk" data-ru="Молоко">Milk</div>
+              <div class="base-pills">
+                <span class="base-pill" data-en="Regular" data-ru="Обычное">Regular</span>
+                <span class="base-pill" data-en="Lactose-free" data-ru="Безлактозное">Lactose-free</span>
+                <span class="base-pill" data-en="Oat" data-ru="Овсяное">Oat</span>
+                <span class="base-pill" data-en="Almond" data-ru="Миндальное">Almond</span>
+                <span class="base-pill" data-en="Coconut" data-ru="Кокосовое">Coconut</span>
+                <span class="base-pill" data-en="Soy" data-ru="Соевое">Soy</span>
+              </div>
+            </div>
+            <div class="base-group">
+              <div class="base-group-label" data-en="Alternative base" data-ru="Альтернативная основа">Alternative base</div>
+              <div class="base-pills">
+                <span class="base-pill" data-en="Coconut Water" data-ru="Кокосовая вода">Coconut Water</span>
+                <span class="base-pill" data-en="Still Water" data-ru="Обычная вода">Still Water</span>
+                <span class="base-pill" data-en="Sparkling" data-ru="Газированная">Sparkling</span>
+                <span class="base-pill" data-en="Ice" data-ru="Лёд">Ice</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div>
+          <div class="card-name" data-en="Strawberry Banana" data-ru="Strawberry Banana">Strawberry Banana</div>
+          <div class="card-sub" data-en="Banana · Strawberry" data-ru="Банан · Клубника">Banana · Strawberry</div>
+          <div class="card-desc" data-en="A timeless pairing. Lusciously ripe strawberry with the velvet smoothness of banana. Naturally sweet, no added sugar." data-ru="Вечная классика. Сочная спелая клубника и бархатный банан. Натуральная сладость без добавленного сахара.">A timeless pairing. Lusciously ripe strawberry with the velvet smoothness of banana. Naturally sweet, no added sugar.</div>
+          <div class="card-tags"><span class="tag" data-en="No Added Sugar" data-ru="Без добавленного сахара">No Added Sugar</span></div>
+          <div class="base-selector">
+            <div class="base-label" data-en="Choose your base" data-ru="Выберите основу">Choose your base</div>
+            <div class="base-group">
+              <div class="base-group-label" data-en="Milk" data-ru="Молоко">Milk</div>
+              <div class="base-pills">
+                <span class="base-pill" data-en="Regular" data-ru="Обычное">Regular</span>
+                <span class="base-pill" data-en="Lactose-free" data-ru="Безлактозное">Lactose-free</span>
+                <span class="base-pill" data-en="Oat" data-ru="Овсяное">Oat</span>
+                <span class="base-pill" data-en="Almond" data-ru="Миндальное">Almond</span>
+                <span class="base-pill" data-en="Coconut" data-ru="Кокосовое">Coconut</span>
+                <span class="base-pill" data-en="Soy" data-ru="Соевое">Soy</span>
+              </div>
+            </div>
+            <div class="base-group">
+              <div class="base-group-label" data-en="Alternative base" data-ru="Альтернативная основа">Alternative base</div>
+              <div class="base-pills">
+                <span class="base-pill" data-en="Coconut Water" data-ru="Кокосовая вода">Coconut Water</span>
+                <span class="base-pill" data-en="Still Water" data-ru="Обычная вода">Still Water</span>
+                <span class="base-pill" data-en="Sparkling" data-ru="Газированная">Sparkling</span>
+                <span class="base-pill" data-en="Ice" data-ru="Лёд">Ice</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div>
+          <div class="card-name" data-en="Berry Mix" data-ru="Berry Mix">Berry Mix</div>
+          <div class="card-sub" data-en="Blueberry · Strawberry" data-ru="Голубика · Клубника">Blueberry · Strawberry</div>
+          <div class="card-desc" data-en="A pure celebration of berries. Intensely flavoured, rich in antioxidants, with a vivid deep colour and clean, bright finish." data-ru="Чистый праздник ягод. Насыщенный вкус, богатый антиоксидантами.">A pure celebration of berries. Intensely flavoured, rich in antioxidants, with a vivid deep colour and clean, bright finish.</div>
+          <div class="card-tags"><span class="tag" data-en="Antioxidant Rich" data-ru="Богат антиоксидантами">Antioxidant Rich</span></div>
+          <div class="base-selector">
+            <div class="base-label" data-en="Choose your base" data-ru="Выберите основу">Choose your base</div>
+            <div class="base-group">
+              <div class="base-group-label" data-en="Milk" data-ru="Молоко">Milk</div>
+              <div class="base-pills">
+                <span class="base-pill" data-en="Regular" data-ru="Обычное">Regular</span>
+                <span class="base-pill" data-en="Lactose-free" data-ru="Безлактозное">Lactose-free</span>
+                <span class="base-pill" data-en="Oat" data-ru="Овсяное">Oat</span>
+                <span class="base-pill" data-en="Almond" data-ru="Миндальное">Almond</span>
+                <span class="base-pill" data-en="Coconut" data-ru="Кокосовое">Coconut</span>
+                <span class="base-pill" data-en="Soy" data-ru="Соевое">Soy</span>
+              </div>
+            </div>
+            <div class="base-group">
+              <div class="base-group-label" data-en="Alternative base" data-ru="Альтернативная основа">Alternative base</div>
+              <div class="base-pills">
+                <span class="base-pill" data-en="Coconut Water" data-ru="Кокосовая вода">Coconut Water</span>
+                <span class="base-pill" data-en="Still Water" data-ru="Обычная вода">Still Water</span>
+                <span class="base-pill" data-en="Sparkling" data-ru="Газированная">Sparkling</span>
+                <span class="base-pill" data-en="Ice" data-ru="Лёд">Ice</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hydration -->
+  <div id="section-hydration" class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Hydration" data-ru="Заряд бодрости">Hydration</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Natural Isotonic" data-ru="Натуральный изотоник">Natural Isotonic</div>
+      <div class="card-name" data-en="Coconut Water" data-ru="Кокосовая вода">Coconut Water</div>
+      <div class="card-desc" data-en="Nature's own electrolyte drink. Harvested from young green coconuts — hydrating, restorative, and naturally rich in potassium." data-ru="Природный электролитный напиток из молодых зелёных кокосов. Восстанавливающий, богатый калием.">Nature's own electrolyte drink. Harvested from young green coconuts — hydrating, restorative, and naturally rich in potassium.</div>
+      <div class="card-tags"><span class="tag" data-en="Electrolytes" data-ru="Электролиты">Electrolytes</span><span class="tag" data-en="Natural" data-ru="Натуральный">Natural</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin">Oshee · Zero Sugar</div>
+      <div class="card-name" data-en="Oshee Lemon" data-ru="Oshee Лимон">Oshee Lemon</div>
+      <div class="card-desc" data-en="Zero sugar electrolyte drink with lemon. Formulated for active recovery — replenishes minerals lost during play." data-ru="Электролитный напиток без сахара. Лимон. Разработан для активного восстановления.">Zero sugar electrolyte drink with lemon. Formulated for active recovery — replenishes minerals lost during play.</div>
+      <div class="card-tags"><span class="tag" data-en="Zero Sugar" data-ru="Без сахара">Zero Sugar</span><span class="tag" data-en="Electrolytes" data-ru="Электролиты">Electrolytes</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin">Oshee · Zero Sugar</div>
+      <div class="card-name" data-en="Oshee Multifruit" data-ru="Oshee Мультифрукт">Oshee Multifruit</div>
+      <div class="card-desc" data-en="Zero sugar multifruit electrolyte formula. Vibrant, refreshing, and designed to restore balance after intense activity." data-ru="Мультифрукт без сахара. Восстанавливает баланс после интенсивной игры.">Zero sugar multifruit electrolyte formula. Vibrant, refreshing, and designed to restore balance after intense activity.</div>
+      <div class="card-tags"><span class="tag" data-en="Zero Sugar" data-ru="Без сахара">Zero Sugar</span><span class="tag" data-en="Electrolytes" data-ru="Электролиты">Electrolytes</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin">Powerade · Mountain Blast</div>
+      <div class="card-name" data-en="Powerade Mountain" data-ru="Powerade Горный">Powerade Mountain</div>
+      <div class="card-desc" data-en="Professional-grade sports isotonic enriched with B vitamins. Trusted by athletes for rapid in-play hydration." data-ru="Профессиональный спортивный изотоник с витаминами группы B.">Professional-grade sports isotonic enriched with B vitamins. Trusted by athletes for rapid in-play hydration.</div>
+      <div class="card-tags"><span class="tag" data-en="Isotonic" data-ru="Изотоник">Isotonic</span><span class="tag" data-en="B Vitamins" data-ru="Витамины B">B Vitamins</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin">Powerade · Orange</div>
+      <div class="card-name" data-en="Powerade Orange" data-ru="Powerade Апельсин">Powerade Orange</div>
+      <div class="card-desc" data-en="Citrus-flavoured sports isotonic with electrolytes and B vitamins. Bright, energising, and instantly refreshing." data-ru="Цитрусовый изотоник с электролитами. Яркий, бодрящий, мгновенно освежающий.">Citrus-flavoured sports isotonic with electrolytes and B vitamins. Bright, energising, and instantly refreshing.</div>
+      <div class="card-tags"><span class="tag" data-en="Isotonic" data-ru="Изотоник">Isotonic</span><span class="tag">Orange</span></div>
+    </div></div></div>
+  </div>
+
+  <div class="footer">
+    <div class="f-dots"><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div></div>
+    <div class="f-logo">Urban Court</div>
+    <div class="f-txt" data-en="Open daily · 07:00 – 22:00" data-ru="Ежедневно · 07:00 – 22:00">Open daily · 07:00 – 22:00</div>
+  </div>
+</div>
+
+<!-- ═══ COFFEE ════════════════════════════════════════════ -->
+<div id="sec-coffee" class="section">
+  <div class="sec-atm">
+    <div class="atm-orb atm-coffee1"></div>
+    <div class="atm-orb atm-coffee2"></div>
+    <div class="atm-orb atm-coffee3"></div>
+  </div>
+  <div class="sec-header">
+    <div class="sec-title" data-en="Coffee &amp;<br><em>Espresso</em>" data-ru="Кофе &amp;<br><em>Эспрессо</em>">Coffee &amp;<br><em>Espresso</em></div>
+    <div class="sec-desc" data-en="Single origin · All milk alternatives available" data-ru="Зёрна одного происхождения · Все виды молока">Single origin · All milk alternatives available</div>
+    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Milk Options" data-ru="Выбор молока">Milk Options</span><div class="sub-rule"></div></div>
+  <div style="position:relative;z-index:2;padding:0 28px 8px">
+    <div style="font-size:8.5px;letter-spacing:.2em;color:var(--muted);line-height:2.2" data-en="Regular (3%) &nbsp;·&nbsp; Lactose-free &nbsp;·&nbsp; Oat &nbsp;·&nbsp; Almond &nbsp;·&nbsp; Coconut &nbsp;·&nbsp; Soy" data-ru="Обычное (3%) &nbsp;·&nbsp; Безлактозное &nbsp;·&nbsp; Овсяное &nbsp;·&nbsp; Миндальное &nbsp;·&nbsp; Кокосовое &nbsp;·&nbsp; Соевое">Regular (3%) &nbsp;·&nbsp; Lactose-free &nbsp;·&nbsp; Oat &nbsp;·&nbsp; Almond &nbsp;·&nbsp; Coconut &nbsp;·&nbsp; Soy</div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Espresso" data-ru="Эспрессо">Espresso</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Single shot · 30ml" data-ru="Одиночный · 30мл">Single shot · 30ml</div>
+      <div class="card-name" data-en="Espresso" data-ru="Эспрессо">Espresso</div>
+      <div class="card-desc" data-en="Pure and concentrated. The foundation of all our coffee. Rich crema, dark fruit, and a clean, lingering finish." data-ru="Чистый и концентрированный. Основа всего нашего кофе. Насыщенная крема, тёмные фрукты.">Pure and concentrated. The foundation of all our coffee. Rich crema, dark fruit, and a clean, lingering finish.</div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Double shot · 60ml" data-ru="Двойной · 60мл">Double shot · 60ml</div>
+      <div class="card-name" data-en="Double Espresso" data-ru="Двойной эспрессо">Double Espresso</div>
+      <div class="card-desc" data-en="For those who want more. Twice the intensity, same precision. Deep, complex, and powerfully satisfying." data-ru="Для тех, кому нужно больше. Вдвое интенсивнее, та же точность.">For those who want more. Twice the intensity, same precision. Deep, complex, and powerfully satisfying.</div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Espresso · Hot water · 200ml" data-ru="Эспрессо · Горячая вода · 200мл">Espresso · Hot water · 200ml</div>
+      <div class="card-name" data-en="Americano" data-ru="Американо">Americano</div>
+      <div class="card-desc" data-en="Espresso lengthened with hot water to reveal a longer, gentler extraction. Clear and flavourful." data-ru="Эспрессо с горячей водой. Открывает более длинный и мягкий вкус.">Espresso lengthened with hot water to reveal a longer, gentler extraction. Clear and flavourful.</div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Espresso · Steamed milk · 180ml" data-ru="Эспрессо · Взбитое молоко · 180мл">Espresso · Steamed milk · 180ml</div>
+      <div class="card-name" data-en="Cappuccino" data-ru="Капучино">Cappuccino</div>
+      <div class="card-desc" data-en="Equal thirds of espresso, steamed milk, and dense velvety foam. The perfect balance of strength and softness." data-ru="Равные части эспрессо, молока и густой бархатной пенки. Идеальный баланс.">Equal thirds of espresso, steamed milk, and dense velvety foam. The perfect balance of strength and softness.</div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Espresso · Steamed milk · 240ml" data-ru="Эспрессо · Горячее молоко · 240мл">Espresso · Steamed milk · 240ml</div>
+      <div class="card-name" data-en="Latte" data-ru="Латте">Latte</div>
+      <div class="card-desc" data-en="Espresso softened by a generous pour of steamed milk with a thin layer of silky microfoam. Smooth, mellow, and satisfying." data-ru="Эспрессо с обильным количеством горячего молока и тонким слоем микропены.">Espresso softened by a generous pour of steamed milk with a thin layer of silky microfoam. Smooth, mellow, and satisfying.</div>
+    </div></div></div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Iced Coffee" data-ru="Холодный кофе">Iced Coffee</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Greek cold coffee · Shaken" data-ru="Греческий холодный кофе · Взбитый">Greek cold coffee · Shaken</div>
+      <div class="card-name" data-en="Freddo Espresso" data-ru="Фреддо Эспрессо">Freddo Espresso</div>
+      <div class="card-desc" data-en="Freshly pulled espresso shaken vigorously with ice until a thick, cold foam forms on top. Intensely cold and concentrated." data-ru="Свежесваренный эспрессо, интенсивно взбитый со льдом до образования густой холодной пены.">Freshly pulled espresso shaken vigorously with ice until a thick, cold foam forms on top. Intensely cold and concentrated.</div>
+      <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Greek cold coffee · With milk foam" data-ru="Греческий холодный кофе · С молочной пенкой">Greek cold coffee · With milk foam</div>
+      <div class="card-name" data-en="Freddo Cappuccino" data-ru="Фреддо Капучино">Freddo Cappuccino</div>
+      <div class="card-desc" data-en="Cold espresso foam topped with iced, aerated milk. A Greek summer classic reimagined for the court." data-ru="Холодная пена эспрессо с ледяным взбитым молоком. Греческая летняя классика.">Cold espresso foam topped with iced, aerated milk. A Greek summer classic reimagined for the court.</div>
+      <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Espresso · Ice · Milk" data-ru="Эспрессо · Лёд · Молоко">Espresso · Ice · Milk</div>
+      <div class="card-name" data-en="Iced Latte" data-ru="Айс-латте">Iced Latte</div>
+      <div class="card-desc" data-en="Espresso poured over ice and cold milk. Effortlessly elegant. The ideal refreshment between sessions." data-ru="Эспрессо, налитый поверх льда и холодного молока. Элегантно. Идеально между играми.">Espresso poured over ice and cold milk. Effortlessly elegant. The ideal refreshment between sessions.</div>
+      <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Espresso · Ice · Strawberry · Milk" data-ru="Эспрессо · Лёд · Клубника · Молоко">Espresso · Ice · Strawberry · Milk</div>
+      <div class="card-name" data-en="Iced Strawberry Latte" data-ru="Айс-латте Клубника">Iced Strawberry Latte</div>
+      <div class="card-desc" data-en="A playful elevation of our iced latte. Real strawberry infused through cold milk with espresso on top. Visually striking and delicious." data-ru="Игривая версия нашего айс-латте. Клубника в холодном молоке с эспрессо сверху.">A playful elevation of our iced latte. Real strawberry infused through cold milk with espresso on top. Visually striking and delicious.</div>
+      <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span><span class="tag" data-en="Strawberry" data-ru="Клубника">Strawberry</span></div>
+    </div></div></div>
+  </div>
+  <div class="footer"><div class="f-dots"><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div></div><div class="f-logo">Urban Court</div><div class="f-txt" data-en="Open daily · 07:00 – 22:00" data-ru="Ежедневно · 07:00 – 22:00">Open daily · 07:00 – 22:00</div></div>
+</div>
+
+<!-- ═══ TEA ════════════════════════════════════════════════ -->
+<div id="sec-tea" class="section">
+  <div class="sec-atm"><div class="atm-orb atm-tea1"></div><div class="atm-orb atm-tea2"></div></div>
+  <div class="sec-header">
+    <div class="sec-title" data-en="Tea &amp;<br><em>Infusions</em>" data-ru="Чай &amp;<br><em>Купажи</em>">Tea &amp;<br><em>Infusions</em></div>
+    <div class="sec-desc" data-en="Premium leaf · Herbal blends · Fruit puree teas" data-ru="Листовой чай · Травяные купажи · Чаи с пюре">Premium leaf · Herbal blends · Fruit puree teas</div>
+    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Classic Leaf Teas" data-ru="Классические листовые">Classic Leaf Teas</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Black tea · Bergamot" data-ru="Чёрный чай · Бергамот">Black tea · Bergamot</div>
+      <div class="card-name">Earl Grey</div>
+      <div class="card-desc" data-en="Black tea scented with the oil of natural bergamot. Warm, floral, and pleasantly aromatic. A timeless classic, served properly." data-ru="Чёрный чай с маслом натурального бергамота. Тёплый, цветочный, ароматный. Вечная классика.">Black tea scented with the oil of natural bergamot. Warm, floral, and pleasantly aromatic. A timeless classic, served properly.</div>
+      <div class="card-tags"><span class="tag" data-en="Black Tea" data-ru="Чёрный чай">Black Tea</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Green tea · Anhui Province, China" data-ru="Зелёный чай · Провинция Аньхой, Китай">Green tea · Anhui Province, China</div>
+      <div class="card-name">Huang Shan Mao Feng</div>
+      <div class="card-desc" data-en="One of China's ten most famous teas. Grown on the fog-shrouded Yellow Mountain peaks. Extraordinarily delicate — sweet, floral, and clean with almost no astringency." data-ru="Один из десяти самых известных чаёв Китая. Выращен на вершинах Жёлтых гор. Изысканно нежный, сладкий, с цветочным ароматом.">One of China's ten most famous teas. Grown on the fog-shrouded Yellow Mountain peaks. Extraordinarily delicate — sweet, floral, and clean with almost no astringency.</div>
+      <div class="card-tags"><span class="tag" data-en="Green Tea" data-ru="Зелёный чай">Green Tea</span><span class="tag" data-en="Antioxidant" data-ru="Антиоксидант">Antioxidant</span></div>
+    </div></div></div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Herbal &amp; Botanical" data-ru="Травяные и ботанические">Herbal &amp; Botanical</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Pure chamomile · Caffeine-free" data-ru="Чистая ромашка · Без кофеина">Pure chamomile · Caffeine-free</div>
+      <div class="card-name" data-en="Chamomile" data-ru="Ромашка">Chamomile</div>
+      <div class="card-desc" data-en="Whole chamomile blossoms steeped to release their gentle, honey-like sweetness. Naturally calming and utterly soothing. Perfect to wind down after play." data-ru="Цельные цветки ромашки для нежного, медового вкуса. Успокаивающий и расслабляющий. Идеален после игры.">Whole chamomile blossoms steeped to release their gentle, honey-like sweetness. Naturally calming and utterly soothing. Perfect to wind down after play.</div>
+      <div class="card-tags"><span class="tag" data-en="Calming" data-ru="Успокаивающий">Calming</span><span class="tag" data-en="Caffeine-free" data-ru="Без кофеина">Caffeine-free</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Artisan herbal blend · Caffeine-free" data-ru="Авторский травяной купаж · Без кофеина">Artisan herbal blend · Caffeine-free</div>
+      <div class="card-name">Meditation Tea</div>
+      <div class="card-sub" data-en="Apple · Lemongrass · Rosehip · Chamomile · Lavender · Mint" data-ru="Яблоко · Лемонграсс · Шиповник · Ромашка · Лаванда · Мята">Apple · Lemongrass · Rosehip · Chamomile · Lavender · Mint</div>
+      <div class="card-desc" data-en="Six botanicals in perfect harmony. Bright and refreshing on the palate, with deep calming properties. A cup of deliberate tranquillity." data-ru="Шесть растений в идеальной гармонии. Яркий на вкус, с глубокими успокаивающими свойствами.">Six botanicals in perfect harmony. Bright and refreshing on the palate, with deep calming properties. A cup of deliberate tranquillity.</div>
+      <div class="card-tags"><span class="tag" data-en="Calming" data-ru="Успокаивающий">Calming</span><span class="tag" data-en="Caffeine-free" data-ru="Без кофеина">Caffeine-free</span></div>
+    </div></div></div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Fruit Puree Teas" data-ru="Чаи с фруктовым пюре">Fruit Puree Teas</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Tropical fruit puree infusion" data-ru="Тропическое фруктовое пюре">Tropical fruit puree infusion</div>
+      <div class="card-name" data-en="Mango Passion" data-ru="Манго-Маракуйя">Mango Passion</div>
+      <div class="card-sub" data-en="Mango · Passion fruit · Orange · Cinnamon" data-ru="Манго · Маракуйя · Апельсин · Корица">Mango · Passion fruit · Orange · Cinnamon</div>
+      <div class="card-desc" data-en="Sun-soaked tropical fruits blended into a vibrant puree, steeped with a warming whisper of cinnamon. Exotic and naturally sweet." data-ru="Тропические фрукты в виде пюре с нотой корицы. Экзотический и натурально сладкий.">Sun-soaked tropical fruits blended into a vibrant puree, steeped with a warming whisper of cinnamon. Exotic and naturally sweet.</div>
+      <div class="card-tags"><span class="tag" data-en="Fruit Puree" data-ru="С пюре">Fruit Puree</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Berry citrus puree infusion" data-ru="Ягодно-цитрусовое пюре">Berry citrus puree infusion</div>
+      <div class="card-name" data-en="Raspberry Citrus" data-ru="Малина-Цитрус">Raspberry Citrus</div>
+      <div class="card-sub" data-en="Raspberry · Orange · Cinnamon" data-ru="Малина · Апельсин · Корица">Raspberry · Orange · Cinnamon</div>
+      <div class="card-desc" data-en="Tart raspberry and bright orange together in a deeply coloured, warming puree infusion. A vivid, beautifully balanced cup." data-ru="Терпкая малина и яркий апельсин в пюре. Насыщенный, сбалансированный вкус.">Tart raspberry and bright orange together in a deeply coloured, warming puree infusion. A vivid, beautifully balanced cup.</div>
+      <div class="card-tags"><span class="tag" data-en="Fruit Puree" data-ru="С пюре">Fruit Puree</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
+    </div></div></div>
+  </div>
+  <div class="footer"><div class="f-dots"><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div></div><div class="f-logo">Urban Court</div><div class="f-txt" data-en="Open daily · 07:00 – 22:00" data-ru="Ежедневно · 07:00 – 22:00">Open daily · 07:00 – 22:00</div></div>
+</div>
+
+<!-- ═══ BEER ════════════════════════════════════════════════ -->
+<div id="sec-beer" class="section">
+  <div class="sec-atm"><div class="atm-orb atm-beer1"></div><div class="atm-orb atm-beer2"></div></div>
+  <div class="sec-header">
+    <div class="sec-title" data-en="Beer &amp;<br><em>Lager</em>" data-ru="Пиво &amp;<br><em>Лагер</em>">Beer &amp;<br><em>Lager</em></div>
+    <div class="sec-desc" data-en="Served ice cold · Bottle" data-ru="Ледяное · В бутылке">Served ice cold · Bottle</div>
+    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="With Alcohol" data-ru="С алкоголем">With Alcohol</span><div class="sub-rule"></div></div>
+  <div class="grid2">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Netherlands · Since 1873" data-ru="Нидерланды · С 1873">Netherlands · Since 1873</div>
+      <div class="card-name">Heineken</div>
+      <div class="card-desc" data-en="The world's most internationally recognised lager. Crisp, clean, and perfectly balanced with a dry, bitter finish. 5% ABV." data-ru="Самый международно известный лагер. Свежий, чистый, сухой. 5% алк.">The world's most internationally recognised lager. Crisp, clean, and perfectly balanced with a dry, bitter finish. 5% ABV.</div>
+      <div class="card-tags"><span class="tag">5% ABV</span><span class="tag">330ml</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Mexico · Since 1925" data-ru="Мексика · С 1925">Mexico · Since 1925</div>
+      <div class="card-name">Corona</div>
+      <div class="card-desc" data-en="Light, easy-drinking Mexican lager. Clean malt character with subtle citrus notes and a refreshingly light body. 4.5% ABV." data-ru="Лёгкий мексиканский лагер. Чистый солодовый характер с цитрусовыми нотами. 4.5% алк.">Light, easy-drinking Mexican lager. Clean malt character with subtle citrus notes and a refreshingly light body. 4.5% ABV.</div>
+      <div class="card-tags"><span class="tag">4.5% ABV</span><span class="tag">330ml</span></div>
+    </div></div></div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Alcohol Free" data-ru="Безалкогольное">Alcohol Free</span><div class="sub-rule"></div></div>
+  <div class="grid2">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Netherlands · 0% ABV" data-ru="Нидерланды · 0% алк.">Netherlands · 0% ABV</div>
+      <div class="card-name">Heineken 0%</div>
+      <div class="card-desc" data-en="All the character of Heineken with no alcohol. Brewed the same way, then gently de-alcoholised. A serious non-alcoholic lager." data-ru="Весь характер Heineken без алкоголя. Сварен традиционно, затем деалкоголизирован.">All the character of Heineken with no alcohol. Brewed the same way, then gently de-alcoholised. A serious non-alcoholic lager.</div>
+      <div class="card-tags"><span class="tag" data-en="0% ABV" data-ru="0% алк.">0% ABV</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin" data-en="Mexico · 0% ABV" data-ru="Мексика · 0% алк.">Mexico · 0% ABV</div>
+      <div class="card-name">Corona 0%</div>
+      <div class="card-desc" data-en="Corona's light, refreshing profile without the alcohol. The same easy-drinking quality. Perfect for an active day on the courts." data-ru="Легкий, освежающий вкус Corona без алкоголя. Идеален для активного дня.">Corona's light, refreshing profile without the alcohol. The same easy-drinking quality. Perfect for an active day on the courts.</div>
+      <div class="card-tags"><span class="tag" data-en="0% ABV" data-ru="0% алк.">0% ABV</span></div>
+    </div></div></div>
+  </div>
+  <div class="footer"><div class="f-dots"><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div></div><div class="f-logo">Urban Court</div><div class="f-txt" data-en="Open daily · 07:00 – 22:00" data-ru="Ежедневно · 07:00 – 22:00">Open daily · 07:00 – 22:00</div></div>
+</div>
+
+<!-- ═══ SNACKS ══════════════════════════════════════════════ -->
+<div id="sec-snacks" class="section">
+  <div class="sec-atm"><div class="atm-orb atm-snack1"></div></div>
+  <div class="sec-header">
+    <div class="sec-title" data-en="Functional<br><em>Snacks</em>" data-ru="Функциональные<br><em>Снеки</em>">Functional<br><em>Snacks</em></div>
+    <div class="sec-desc" data-en="High-protein · Clean ingredients · Energy" data-ru="Высокий белок · Качественные ингредиенты · Энергия">High-protein · Clean ingredients · Energy</div>
+    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
+  </div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Protein Bars" data-ru="Протеиновые батончики">Protein Bars</span><div class="sub-rule"></div></div>
+  <div class="cards">
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin">Power Pro · 20g Protein</div>
+      <div class="card-name" data-en="Classic Chocolate Fudge" data-ru="Шоколадный фадж">Classic Chocolate Fudge</div>
+      <div class="card-desc" data-en="A high-performance protein bar in rich chocolate fudge. Dense, satisfying, and designed to fuel recovery. 20g of quality protein per bar." data-ru="Высококачественный протеиновый батончик с насыщенным шоколадным вкусом. 20г белка.">A high-performance protein bar in rich chocolate fudge. Dense, satisfying, and designed to fuel recovery. 20g of quality protein per bar.</div>
+      <div class="card-tags"><span class="tag" data-en="20g Protein" data-ru="20г белка">20g Protein</span><span class="tag" data-en="Recovery" data-ru="Восстановление">Recovery</span></div>
+    </div></div></div>
+    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-origin">Kellogg's Special K · High Protein</div>
+      <div class="card-name" data-en="High Protein Cereal Bar" data-ru="Злаковый батончик High Protein">High Protein Cereal Bar</div>
+      <div class="card-desc" data-en="Kellogg's premium cereal bar with significantly elevated protein content. Light, crisp, and satisfying — the ideal between-session snack." data-ru="Премиальный злаковый батончик Kellogg's с повышенным содержанием белка. Лёгкий и хрустящий.">Kellogg's premium cereal bar with significantly elevated protein content. Light, crisp, and satisfying — the ideal between-session snack.</div>
+      <div class="card-tags"><span class="tag" data-en="High Protein" data-ru="Высокий белок">High Protein</span><span class="tag" data-en="Cereal" data-ru="Злаковый">Cereal</span></div>
+    </div></div></div>
+  </div>
+  <div class="footer">
+    <div class="f-dots"><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div></div>
+    <div class="f-logo">Urban Court</div>
+    <div class="f-txt" data-en="Open daily · 07:00 – 22:00 · Limassol, Cyprus" data-ru="Ежедневно · 07:00 – 22:00 · Лимасол, Кипр">Open daily · 07:00 – 22:00 · Limassol, Cyprus</div>
+  </div>
+</div>
+
+<script>
+let lang = 'en';
+
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  const sec = document.getElementById('sec-' + id);
+  sec.classList.add('visible');
+  btn.classList.add('active');
+  document.getElementById('drinks-subnav').classList.toggle('visible', id === 'drinks');
+  window.scrollTo({top: document.querySelector('.nav-wrap').offsetTop, behavior: 'smooth'});
+}
+
+function scrollToSection(anchorId, btn) {
+  document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const el = document.getElementById(anchorId);
+  if (el) {
+    const navH = document.querySelector('.nav-wrap').offsetHeight;
+    const top = el.getBoundingClientRect().top + window.scrollY - navH - 8;
+    window.scrollTo({top, behavior: 'smooth'});
+  }
+}
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === l.toUpperCase()));
+  document.querySelectorAll('[data-' + l + ']').forEach(el => {
+    const v = el.getAttribute('data-' + l);
+    if (v !== null) el.innerHTML = v;
+  });
+}
+
+const cards = document.querySelectorAll('.card');
+cards.forEach(card => {
+  card.addEventListener('touchstart', () => {
+    cards.forEach(c => c.classList.remove('card-glow'));
+    card.classList.add('card-glow');
+  }, {passive: true});
+});
+
+const subSectionIds = ['section-soda', 'section-fresh', 'section-hydration'];
+const subBtns = document.querySelectorAll('.sub-btn');
+const subObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = subSectionIds.indexOf(entry.target.id);
+      if (idx !== -1) {
+        subBtns.forEach(b => b.classList.remove('active'));
+        subBtns[idx].classList.add('active');
+      }
+    }
+  });
+}, {rootMargin: '-80px 0px -55% 0px', threshold: 0});
+subSectionIds.forEach(id => { const el = document.getElementById(id); if (el) subObserver.observe(el); });
+
+function selectBase(pill, group) {
+  // Deselect all pills in the same group within the same card
+  const card = pill.closest('.card');
+  const sameGroupPills = card.querySelectorAll('[onclick*="' + group + '"]');
+  sameGroupPills.forEach(p => p.classList.remove('selected'));
+  pill.classList.add('selected');
+}
+</script>
+</body>
+</html>
