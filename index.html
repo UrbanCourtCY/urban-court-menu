@@ -139,6 +139,9 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .strawberry-img-wrap{align-items:flex-end;overflow:visible}
 .strawberry-img-wrap img{width:120%;height:112%;max-width:none;object-fit:contain;object-position:bottom}
 .card:has(.strawberry-img-wrap){overflow:visible}
+.bumble-img-wrap{overflow:visible}
+.bumble-img-wrap img{transform:scale(1.07);transform-origin:bottom center}
+.card:has(.bumble-img-wrap){overflow:visible}
 .card-img-tea{flex-shrink:0;object-fit:contain;object-position:center bottom;margin-left:14px;margin-top:0;pointer-events:none;height:190px;width:auto;max-width:190px;min-width:100px;overflow:visible;filter:drop-shadow(0px 6px 18px rgba(237,133,48,0.15))}
 img[src*="kelloggs-all-bran-chocolate"]{transform:scaleX(1.22);transform-origin:center center}
 img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center center}
@@ -595,15 +598,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   <div class="cards">
     <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
       <div class="coffee-img-wrap"><img src="Images/Coffee/Espresso.png" alt="Espresso" onerror="this.style.display='none'"></div>
-      <div class="card-origin" data-en="Single shot · 30ml" data-ru="Одиночный · 30мл">Single shot · 30ml</div>
+      <div class="card-origin" data-en="Single · 30ml &nbsp;/&nbsp; Double · 60ml" data-ru="Одиночный · 30мл &nbsp;/&nbsp; Двойной · 60мл">Single · 30ml &nbsp;/&nbsp; Double · 60ml</div>
       <div class="card-name" data-en="Espresso" data-ru="Эспрессо">Espresso</div>
       <div class="card-desc" data-en="Pure and concentrated. The foundation of all our coffee. Rich crema, dark fruit, and a clean, lingering finish." data-ru="Чистый и концентрированный. Основа всего нашего кофе. Насыщенная крема, тёмные фрукты.">Pure and concentrated. The foundation of all our coffee. Rich crema, dark fruit, and a clean, lingering finish.</div>
-    </div></div></div>
-    <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
-      <div class="coffee-img-wrap"><img src="Images/Coffee/Double-Espresso.png" alt="Double Espresso" onerror="this.style.display='none'"></div>
-      <div class="card-origin" data-en="Double shot · 60ml" data-ru="Двойной · 60мл">Double shot · 60ml</div>
-      <div class="card-name" data-en="Double Espresso" data-ru="Двойной эспрессо">Double Espresso</div>
-      <div class="card-desc" data-en="For those who want more. Twice the intensity, same precision. Deep, complex, and powerfully satisfying." data-ru="Для тех, кому нужно больше. Вдвое интенсивнее, та же точность.">For those who want more. Twice the intensity, same precision. Deep, complex, and powerfully satisfying.</div>
     </div></div></div>
     <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
       <div class="coffee-img-wrap"><img src="Images/Coffee/Americano.png" alt="Americano" onerror="this.style.display='none'"></div>
@@ -655,7 +652,7 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span><span class="tag" data-en="Strawberry" data-ru="Клубника">Strawberry</span></div>
     </div></div></div>
     <div class="card"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
-      <div class="coffee-img-wrap"><img src="Images/Coffee/bumble.png" alt="Bumble" onerror="this.style.display='none'"></div>
+      <div class="coffee-img-wrap bumble-img-wrap"><img src="Images/Coffee/bumble.png" alt="Bumble" onerror="this.style.display='none'"></div>
       <div class="card-origin" data-en="Espresso · Orange Juice" data-ru="Эспрессо · Апельсиновый сок">Espresso · Orange Juice</div>
       <div class="card-name" data-en="Bumble" data-ru="Bumble">Bumble</div>
       <div class="card-desc" data-en="Freshly squeezed orange juice topped with a shot of espresso. Bright, bittersweet, and unexpectedly refreshing — citrus meets crema in one glass." data-ru="Свежевыжатый апельсиновый сок с шотом эспрессо сверху. Яркий, горько-сладкий и неожиданно освежающий — цитрус встречается с кремой в одном стакане.">Freshly squeezed orange juice topped with a shot of espresso. Bright, bittersweet, and unexpectedly refreshing — citrus meets crema in one glass.</div>
