@@ -986,7 +986,8 @@ function show(id, btn) {
   const sec = document.getElementById('sec-' + id);
   sec.classList.add('visible');
   btn.classList.add('active');
-  window.scrollTo({top: document.querySelector('.nav-wrap').offsetTop, behavior: 'smooth'});
+  const nav = document.querySelector('.nav-wrap');
+  window.scrollTo(0, nav.offsetTop);
 }
 
 function setLang(l) {
