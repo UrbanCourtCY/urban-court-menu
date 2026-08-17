@@ -55,7 +55,10 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .cat-btn::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;background:var(--orange);transition:all .3s}
 .cat-btn.active{color:var(--orange)}
 .cat-btn.active::after{left:14px;right:14px}
-.price-badge{position:absolute;top:10px;right:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em;color:#0c0906;background:var(--orange);border-radius:4px;padding:3px 8px;line-height:1.2;z-index:3;pointer-events:none}
+.price-badge{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--orange);background:rgba(237,133,48,.13);border:1px solid rgba(237,133,48,.32);border-radius:3px;padding:2px 7px;line-height:1.3;pointer-events:none;white-space:nowrap;flex-shrink:0}
+.card-eyebrow{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.card-eyebrow .card-origin{margin-bottom:0}
+.price-chips{display:flex;flex-wrap:wrap;gap:3px;flex-shrink:0}
 .deactivated{display:none!important}
 .hero-wifi{font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:14px;animation:fadeUp .8s .3s ease both}
 .hero-wifi strong{color:var(--cream);font-weight:600}
@@ -251,10 +254,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Soda &amp; Softs" data-ru="Газировка">Soda &amp; Softs</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
-      <div class="price-badge">€1.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Classic · 330ml" data-ru="Классическая · 330мл">Classic · 330ml</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Classic · 330ml" data-ru="Классическая · 330мл">Classic · 330ml</div><div class="price-badge">€1.00</div></div>
           <div class="card-name">Coca-Cola</div>
           <div class="card-tags"><span class="tag">Classic</span></div>
         </div>
@@ -262,10 +264,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€1.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Zero Sugar · 330ml" data-ru="Без сахара · 330мл">Zero Sugar · 330ml</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Zero Sugar · 330ml" data-ru="Без сахара · 330мл">Zero Sugar · 330ml</div><div class="price-badge">€1.00</div></div>
           <div class="card-name">Coca-Cola Zero</div>
           <div class="card-tags"><span class="tag" data-en="Zero Sugar" data-ru="Без сахара">Zero Sugar</span></div>
         </div>
@@ -324,10 +325,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin">Powerade · Mountain Blast</div>
+          <div class="card-eyebrow"><div class="card-origin">Powerade · Mountain Blast</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Powerade Mountain" data-ru="Powerade Горный">Powerade Mountain</div>
           <div class="card-desc" data-en="Professional-grade sports isotonic enriched with B vitamins." data-ru="Профессиональный спортивный изотоник с витаминами группы B.">Professional-grade sports isotonic enriched with B vitamins.</div>
           <div class="card-tags"><span class="tag" data-en="Isotonic" data-ru="Изотоник">Isotonic</span><span class="tag" data-en="B Vitamins" data-ru="Витамины B">B Vitamins</span></div>
@@ -336,10 +336,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin">Powerade · Orange</div>
+          <div class="card-eyebrow"><div class="card-origin">Powerade · Orange</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Powerade Orange" data-ru="Powerade Апельсин">Powerade Orange</div>
           <div class="card-desc" data-en="Citrus-flavoured sports isotonic with electrolytes and B vitamins." data-ru="Цитрусовый изотоник с электролитами и витаминами B.">Citrus-flavoured sports isotonic with electrolytes and B vitamins.</div>
           <div class="card-tags"><span class="tag" data-en="Isotonic" data-ru="Изотоник">Isotonic</span><span class="tag">Orange</span></div>
@@ -348,10 +347,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Kombucha Classic" data-ru="Комбуча Классик">Kombucha Classic</div>
           <div class="card-desc" data-en="Raw, naturally fermented kombucha. Lightly carbonated with clean, tangy notes and active live cultures." data-ru="Живая натурально сброженная комбуча. Лёгкая карбонизация, чистый терпкий вкус.">Raw, naturally fermented kombucha. Lightly carbonated with clean, tangy notes and active live cultures.</div>
           <div class="card-tags"><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span><span class="tag" data-en="Raw" data-ru="Сырая">Raw</span></div>
@@ -360,10 +358,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Kombucha Ginger" data-ru="Комбуча Имбирь">Kombucha Ginger</div>
           <div class="card-desc" data-en="Zingy raw kombucha with warming ginger. Bright, spicy, and deeply refreshing." data-ru="Комбуча с согревающим имбирём. Яркая, пряная, освежающая.">Zingy raw kombucha with warming ginger. Bright, spicy, and deeply refreshing.</div>
           <div class="card-tags"><span class="tag" data-en="Ginger" data-ru="Имбирь">Ginger</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
@@ -372,10 +369,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Kombucha Berry" data-ru="Комбуча Ягода">Kombucha Berry</div>
           <div class="card-desc" data-en="Wild berry kombucha with deep colour and antioxidant richness. Bold and vibrant." data-ru="Комбуча с дикими ягодами — насыщенный цвет и антиоксиданты.">Wild berry kombucha with deep colour and antioxidant richness. Bold and vibrant.</div>
           <div class="card-tags"><span class="tag" data-en="Antioxidant" data-ru="Антиоксидант">Antioxidant</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
@@ -384,10 +380,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Kombucha Orange" data-ru="Комбуча Апельсин">Kombucha Orange</div>
           <div class="card-desc" data-en="Citrus-forward kombucha with bright orange notes and active cultures. Light and refreshing." data-ru="Комбуча с яркими апельсиновыми нотами. Лёгкая и освежающая.">Citrus-forward kombucha with bright orange notes and active cultures. Light and refreshing.</div>
           <div class="card-tags"><span class="tag">Citrus</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
@@ -396,10 +391,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Kombucha Cucumber" data-ru="Комбуча Огурец">Kombucha Cucumber</div>
           <div class="card-desc" data-en="Light, cooling cucumber kombucha. Crisp and hydrating with a clean, garden-fresh character." data-ru="Лёгкая освежающая комбуча с огурцом. Хрустящая и увлажняющая.">Light, cooling cucumber kombucha. Crisp and hydrating with a clean, garden-fresh character.</div>
           <div class="card-tags"><span class="tag" data-en="Cooling" data-ru="Освежающая">Cooling</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
@@ -408,10 +402,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Kombucha Grapefruit" data-ru="Комбуча Грейпфрут">Kombucha Grapefruit</div>
           <div class="card-desc" data-en="Bittersweet grapefruit kombucha with a clean citrus finish and live cultures." data-ru="Горько-сладкая комбуча с грейпфрутом. Яркая и бодрящая.">Bittersweet grapefruit kombucha with a clean citrus finish and live cultures.</div>
           <div class="card-tags"><span class="tag">Citrus</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
@@ -425,10 +418,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Ice Herbal Tea" data-ru="Холодный травяной чай">Ice Herbal Tea</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="GrizoPrasino · Cold-brewed" data-ru="GrizoPrasino · Холодное заваривание">GrizoPrasino · Cold-brewed</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="GrizoPrasino · Cold-brewed" data-ru="GrizoPrasino · Холодное заваривание">GrizoPrasino · Cold-brewed</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Orangely Yours" data-ru="Orangely Yours">Orangely Yours</div>
           <div class="card-desc" data-en="Cold-brewed herbal tea with vibrant orange flavour. Light, aromatic, and naturally refreshing." data-ru="Холодный травяной чай с ярким апельсиновым вкусом. Лёгкий и ароматный.">Cold-brewed herbal tea with vibrant orange flavour. Light, aromatic, and naturally refreshing.</div>
           <div class="card-tags"><span class="tag" data-en="Cold-brewed" data-ru="Холодный">Cold-brewed</span><span class="tag">Orange</span></div>
@@ -437,10 +429,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="GrizoPrasino · Cold-brewed" data-ru="GrizoPrasino · Холодное заваривание">GrizoPrasino · Cold-brewed</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="GrizoPrasino · Cold-brewed" data-ru="GrizoPrasino · Холодное заваривание">GrizoPrasino · Cold-brewed</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Pu Pu" data-ru="Pu Pu">Pu Pu</div>
           <div class="card-desc" data-en="Light and floral cold-brewed herbal blend. Delicate, smooth, and wonderfully aromatic." data-ru="Лёгкий цветочный холодный травяной купаж. Нежный и ароматный.">Light and floral cold-brewed herbal blend. Delicate, smooth, and wonderfully aromatic.</div>
           <div class="card-tags"><span class="tag" data-en="Cold-brewed" data-ru="Холодный">Cold-brewed</span><span class="tag" data-en="Floral" data-ru="Цветочный">Floral</span></div>
@@ -449,10 +440,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="GrizoPrasino · Cold-brewed" data-ru="GrizoPrasino · Холодное заваривание">GrizoPrasino · Cold-brewed</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="GrizoPrasino · Cold-brewed" data-ru="GrizoPrasino · Холодное заваривание">GrizoPrasino · Cold-brewed</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Strawberry Tsatsatsa" data-ru="Strawberry Tsatsatsa">Strawberry Tsatsatsa</div>
           <div class="card-desc" data-en="Cold-brewed herbal tea with fresh strawberry notes. Juicy, vibrant, and naturally sweet." data-ru="Холодный травяной чай с клубничными нотами. Сочный и ароматный.">Cold-brewed herbal tea with fresh strawberry notes. Juicy, vibrant, and naturally sweet.</div>
           <div class="card-tags"><span class="tag" data-en="Cold-brewed" data-ru="Холодный">Cold-brewed</span><span class="tag" data-en="Strawberry" data-ru="Клубника">Strawberry</span></div>
@@ -466,10 +456,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Fresh &amp; Blended" data-ru="Свежие и Смузи">Fresh &amp; Blended</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Freshly pressed · Served cold" data-ru="Свежевыжатый · Холодный">Freshly pressed · Served cold</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Freshly pressed · Served cold" data-ru="Свежевыжатый · Холодный">Freshly pressed · Served cold</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Orange Fresh" data-ru="Апельсиновый фреш">Orange Fresh</div>
           <div class="card-desc" data-en="Sun-ripened oranges, pressed to order. Bright, vibrant, and naturally sweet." data-ru="Спелые апельсины, отжатые по заказу. Яркий вкус и натуральная сладость.">Sun-ripened oranges, pressed to order. Bright, vibrant, and naturally sweet.</div>
           <div class="card-tags"><span class="tag" data-en="Fresh" data-ru="Свежий">Fresh</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
@@ -478,10 +467,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Freshly pressed · Served cold" data-ru="Свежевыжатый · Холодный">Freshly pressed · Served cold</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Freshly pressed · Served cold" data-ru="Свежевыжатый · Холодный">Freshly pressed · Served cold</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Grapefruit Fresh" data-ru="Грейпфрутовый фреш">Grapefruit Fresh</div>
           <div class="card-desc" data-en="Deeply refreshing with a pleasant bittersweet edge. A classic post-court citrus ritual." data-ru="Освежающий, с приятной горчинкой. Классический цитрусовый ритуал после игры.">Deeply refreshing with a pleasant bittersweet edge. A classic post-court citrus ritual.</div>
           <div class="card-tags"><span class="tag" data-en="Fresh" data-ru="Свежий">Fresh</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
@@ -490,10 +478,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Freshly pressed blend · Served cold" data-ru="Свежевыжатый микс · Холодный">Freshly pressed blend · Served cold</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Freshly pressed blend · Served cold" data-ru="Свежевыжатый микс · Холодный">Freshly pressed blend · Served cold</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Orange &amp; Grapefruit" data-ru="Апельсин + Грейпфрут">Orange &amp; Grapefruit</div>
           <div class="card-desc" data-en="The sweetness of orange meets the invigorating bite of grapefruit. Our signature citrus blend." data-ru="Сладость апельсина и горчинка грейпфрута. Наш фирменный цитрусовый микс.">The sweetness of orange meets the invigorating bite of grapefruit. Our signature citrus blend.</div>
           <div class="card-tags"><span class="tag" data-en="Signature Blend" data-ru="Фирменный микс">Signature Blend</span></div>
@@ -502,10 +489,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€1.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Blended to order · Served cold" data-ru="Готовится по заказу · Холодный">Blended to order · Served cold</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Blended to order · Served cold" data-ru="Готовится по заказу · Холодный">Blended to order · Served cold</div><div class="price-badge">€1.50</div></div>
           <div class="card-name" data-en="Simple Protein" data-ru="Протеиновый коктейль">Simple Protein</div>
           <div class="card-desc" data-en="Protein powder blended to order with your choice of milk or water. Clean, simple, and functional." data-ru="Протеин на молоке или воде по заказу. Чисто, просто, эффективно.">Protein powder blended to order with your choice of milk or water. Clean, simple, and functional.</div>
           <div class="card-tags"><span class="tag" data-en="Protein" data-ru="Протеин">Protein</span><span class="tag" data-en="Post-Workout" data-ru="После игры">Post-Workout</span></div>
@@ -514,10 +500,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Energy Mix" data-ru="Energy Mix">Energy Mix</div>
           <div class="card-sub" data-en="Banana · Strawberry · Blueberry" data-ru="Банан · Клубника · Голубика">Banana · Strawberry · Blueberry</div>
           <div class="card-desc" data-en="Our most powerful recovery blend. Ripe banana, strawberry for antioxidants, and blueberry for rich berry depth." data-ru="Мощнейший восстановительный купаж. Банан, клубника и голубика.">Our most powerful recovery blend. Ripe banana, strawberry for antioxidants, and blueberry for rich berry depth.</div>
@@ -546,10 +531,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Blue Banana" data-ru="Blue Banana">Blue Banana</div>
           <div class="card-sub" data-en="Banana · Blueberry" data-ru="Банан · Голубика">Banana · Blueberry</div>
           <div class="card-desc" data-en="Creamy banana balanced with the tartness of wild blueberry. Clean, pure, and deeply satisfying." data-ru="Кремовый банан и терпкость дикой голубики.">Creamy banana balanced with the tartness of wild blueberry. Clean, pure, and deeply satisfying.</div>
@@ -578,10 +562,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Strawberry Banana" data-ru="Strawberry Banana">Strawberry Banana</div>
           <div class="card-sub" data-en="Banana · Strawberry" data-ru="Банан · Клубника">Banana · Strawberry</div>
           <div class="card-desc" data-en="Lusciously ripe strawberry with the velvet smoothness of banana. Naturally sweet, no added sugar." data-ru="Сочная клубника и бархатный банан. Без добавленного сахара.">Lusciously ripe strawberry with the velvet smoothness of banana. Naturally sweet, no added sugar.</div>
@@ -610,10 +593,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Signature blend · Served fresh" data-ru="Фирменный купаж · Свежий">Signature blend · Served fresh</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Berry Mix" data-ru="Berry Mix">Berry Mix</div>
           <div class="card-sub" data-en="Blueberry · Strawberry" data-ru="Голубика · Клубника">Blueberry · Strawberry</div>
           <div class="card-desc" data-en="Intensely flavoured, rich in antioxidants, with a vivid deep colour and clean, bright finish." data-ru="Насыщенный вкус, богатый антиоксидантами. Яркий цвет и чистое послевкусие.">Intensely flavoured, rich in antioxidants, with a vivid deep colour and clean, bright finish.</div>
@@ -669,46 +651,41 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Espresso" data-ru="Эспрессо">Espresso</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
-      <div class="price-badge">€0.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Coffee/Espresso.png" alt="Espresso" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Single · 30ml" data-ru="Одиночный · 30мл">Single · 30ml</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Single · 30ml" data-ru="Одиночный · 30мл">Single · 30ml</div><div class="price-badge">€0.50</div></div>
         <div class="card-name" data-en="Espresso" data-ru="Эспрессо">Espresso</div>
         <div class="card-desc" data-en="Pure and concentrated. Rich crema, dark fruit, and a clean, lingering finish." data-ru="Чистый и концентрированный. Насыщенная крема, тёмные фрукты.">Pure and concentrated. Rich crema, dark fruit, and a clean, lingering finish.</div>
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€1.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Coffee/Espresso.png" alt="Double Espresso" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Double · 60ml" data-ru="Двойной · 60мл">Double · 60ml</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Double · 60ml" data-ru="Двойной · 60мл">Double · 60ml</div><div class="price-badge">€1.00</div></div>
         <div class="card-name" data-en="Double Espresso" data-ru="Двойной эспрессо">Double Espresso</div>
         <div class="card-desc" data-en="Two concentrated shots. Maximum intensity, double the crema. For those who mean business." data-ru="Два концентрированных шота. Максимальная интенсивность, двойная крема.">Two concentrated shots. Maximum intensity, double the crema. For those who mean business.</div>
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€0.70</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Coffee/Americano.png" alt="Americano" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Espresso · Hot water · 200ml" data-ru="Эспрессо · Горячая вода · 200мл">Espresso · Hot water · 200ml</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Hot water · 200ml" data-ru="Эспрессо · Горячая вода · 200мл">Espresso · Hot water · 200ml</div><div class="price-badge">€0.70</div></div>
         <div class="card-name" data-en="Americano" data-ru="Американо">Americano</div>
         <div class="card-desc" data-en="Espresso lengthened with hot water to reveal a longer, gentler extraction. Clear and flavourful." data-ru="Эспрессо с горячей водой. Открывает более длинный и мягкий вкус.">Espresso lengthened with hot water to reveal a longer, gentler extraction. Clear and flavourful.</div>
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€1.00<br><span style="font-size:9px;opacity:.85">alt €1.50</span></div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Coffee/Cappuccino.png" alt="Cappuccino" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Espresso · Steamed milk · 180ml" data-ru="Эспрессо · Взбитое молоко · 180мл">Espresso · Steamed milk · 180ml</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Steamed milk · 180ml" data-ru="Эспрессо · Взбитое молоко · 180мл">Espresso · Steamed milk · 180ml</div><div class="price-badge">€1.00<br><span style="font-size:9px;opacity:.85">alt €1.50</span></div></div>
         <div class="card-name" data-en="Cappuccino" data-ru="Капучино">Cappuccino</div>
         <div class="card-desc" data-en="Equal thirds of espresso, steamed milk, and dense velvety foam. The perfect balance of strength and softness." data-ru="Равные части эспрессо, молока и густой бархатной пенки. Идеальный баланс.">Equal thirds of espresso, steamed milk, and dense velvety foam. The perfect balance of strength and softness.</div>
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€1.00<br><span style="font-size:9px;opacity:.85">alt €1.50</span></div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Coffee/Latte.png" alt="Latte" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Espresso · Steamed milk · 240ml" data-ru="Эспрессо · Горячее молоко · 240мл">Espresso · Steamed milk · 240ml</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Steamed milk · 240ml" data-ru="Эспрессо · Горячее молоко · 240мл">Espresso · Steamed milk · 240ml</div><div class="price-badge">€1.00<br><span style="font-size:9px;opacity:.85">alt €1.50</span></div></div>
         <div class="card-name" data-en="Latte" data-ru="Латте">Latte</div>
         <div class="card-desc" data-en="Espresso softened by a generous pour of steamed milk with a thin layer of silky microfoam. Smooth, mellow, and satisfying." data-ru="Эспрессо с обильным количеством горячего молока и тонким слоем микропены.">Espresso softened by a generous pour of steamed milk with a thin layer of silky microfoam. Smooth, mellow, and satisfying.</div>
       </div></div>
@@ -717,10 +694,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Iced Coffee" data-ru="Холодный кофе">Iced Coffee</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
-      <div class="price-badge">€1.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Coffee/Freddo-Espresso.png" alt="Freddo Espresso" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Greek cold coffee · Shaken" data-ru="Греческий холодный кофе · Взбитый">Greek cold coffee · Shaken</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Greek cold coffee · Shaken" data-ru="Греческий холодный кофе · Взбитый">Greek cold coffee · Shaken</div><div class="price-badge">€1.00</div></div>
         <div class="card-name" data-en="Freddo Espresso" data-ru="Фреддо Эспрессо">Freddo Espresso</div>
         <div class="card-desc" data-en="Freshly pulled espresso shaken vigorously with ice until a thick, cold foam forms on top. Intensely cold and concentrated." data-ru="Свежесваренный эспрессо, интенсивно взбитый со льдом до образования густой холодной пены.">Freshly pulled espresso shaken vigorously with ice until a thick, cold foam forms on top. Intensely cold and concentrated.</div>
         <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span></div>
@@ -736,20 +712,18 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       <div class="card-name" data-en="Iced Latte" data-ru="Айс-латте">Iced Latte</div>
     </div></div></div>
     <div class="card">
-      <div class="price-badge">€1.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap strawberry-img-wrap"><img src="Images/Coffee/iced-strawberry-latte.png" alt="Iced Strawberry Latte" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Espresso · Ice · Strawberry · Milk" data-ru="Эспрессо · Лёд · Клубника · Молоко">Espresso · Ice · Strawberry · Milk</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Ice · Strawberry · Milk" data-ru="Эспрессо · Лёд · Клубника · Молоко">Espresso · Ice · Strawberry · Milk</div><div class="price-badge">€1.50</div></div>
         <div class="card-name" data-en="Iced Strawberry Latte" data-ru="Айс-латте Клубника">Iced Strawberry Latte</div>
         <div class="card-desc" data-en="Real strawberry infused through cold milk with espresso on top. Visually striking and delicious." data-ru="Клубника в холодном молоке с эспрессо сверху. Красиво и вкусно.">Real strawberry infused through cold milk with espresso on top. Visually striking and delicious.</div>
         <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span><span class="tag" data-en="Strawberry" data-ru="Клубника">Strawberry</span></div>
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap bumble-img-wrap"><img src="Images/Coffee/Bumble.png" alt="Bumble" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Espresso · Orange Juice" data-ru="Эспрессо · Апельсиновый сок">Espresso · Orange Juice</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Orange Juice" data-ru="Эспрессо · Апельсиновый сок">Espresso · Orange Juice</div><div class="price-badge">€2.00</div></div>
         <div class="card-name" data-en="Bumble" data-ru="Bumble">Bumble</div>
         <div class="card-desc" data-en="Freshly squeezed orange juice topped with a shot of espresso. Bright, bittersweet, and unexpectedly refreshing." data-ru="Свежевыжатый апельсиновый сок с шотом эспрессо сверху. Яркий и бодрящий.">Freshly squeezed orange juice topped with a shot of espresso. Bright, bittersweet, and unexpectedly refreshing.</div>
         <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span><span class="tag" data-en="Citrus" data-ru="Цитрус">Citrus</span></div>
@@ -772,9 +746,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Hot Tea" data-ru="Горячий чай">Hot Tea</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
+          <div class="card-eyebrow"><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Earl Grey" data-ru="Эрл Грей">Earl Grey</div>
           <div class="card-desc" data-en="Black tea infused with natural bergamot. Aromatic, elegant, and timeless." data-ru="Чёрный чай с натуральным бергамотом. Ароматный и элегантный.">Black tea infused with natural bergamot. Aromatic, elegant, and timeless.</div>
           <div class="card-tags"><span class="tag" data-en="Black Tea" data-ru="Чёрный чай">Black Tea</span></div>
@@ -783,10 +757,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Japan · Shade-grown" data-ru="Япония · Тенистое выращивание">Japan · Shade-grown</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Japan · Shade-grown" data-ru="Япония · Тенистое выращивание">Japan · Shade-grown</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Gyokuro" data-ru="Гёкуро">Gyokuro</div>
           <div class="card-desc" data-en="Japan's finest green tea, shade-grown before harvest. Deep umami richness with a sweet, oceanic character." data-ru="Один из лучших зелёных чаёв Японии. Глубокий умами с морским и сладким послевкусием.">Japan's finest green tea, shade-grown before harvest. Deep umami richness with a sweet, oceanic character.</div>
           <div class="card-tags"><span class="tag" data-en="Green Tea" data-ru="Зелёный чай">Green Tea</span><span class="tag" data-en="Premium" data-ru="Премиум">Premium</span></div>
@@ -795,10 +768,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Japan · Roasted buckwheat" data-ru="Япония · Жареная гречка">Japan · Roasted buckwheat</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Japan · Roasted buckwheat" data-ru="Япония · Жареная гречка">Japan · Roasted buckwheat</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Sobatea" data-ru="Собатэа">Sobatea</div>
           <div class="card-desc" data-en="Light, nutty roasted buckwheat tea from Japan. Caffeine-free with a warm, comforting depth." data-ru="Лёгкий ореховый чай из жареной гречки. Без кофеина, тёплый и успокаивающий.">Light, nutty roasted buckwheat tea from Japan. Caffeine-free with a warm, comforting depth.</div>
           <div class="card-tags"><span class="tag" data-en="Caffeine-free" data-ru="Без кофеина">Caffeine-free</span><span class="tag" data-en="Roasted" data-ru="Обжаренный">Roasted</span></div>
@@ -807,9 +779,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
+          <div class="card-eyebrow"><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Chamomile" data-ru="Ромашка">Chamomile</div>
           <div class="card-desc" data-en="A mild herbal tea with a relaxing effect. Gentle, soothing, and naturally caffeine-free." data-ru="Мягкий травяной чай с расслабляющим эффектом. Нежный и успокаивающий.">A mild herbal tea with a relaxing effect. Gentle, soothing, and naturally caffeine-free.</div>
           <div class="card-tags"><span class="tag" data-en="Herbal" data-ru="Травяной">Herbal</span><span class="tag" data-en="Caffeine-free" data-ru="Без кофеина">Caffeine-free</span></div>
@@ -818,10 +790,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Japan · Roasted green tea stems" data-ru="Япония · Жареные стебли зелёного чая">Japan · Roasted green tea stems</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Japan · Roasted green tea stems" data-ru="Япония · Жареные стебли зелёного чая">Japan · Roasted green tea stems</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Kuki Hojicha" data-ru="Куки Ходзича">Kuki Hojicha</div>
           <div class="card-desc" data-en="Roasted green tea stems with a gentle smoky-caramel warmth. Lower in caffeine, deeply soothing." data-ru="Жареные стебли зелёного чая с лёгкой дымно-карамельной теплотой. Мало кофеина, очень успокаивающий.">Roasted green tea stems with a gentle smoky-caramel warmth. Lower in caffeine, deeply soothing.</div>
           <div class="card-tags"><span class="tag" data-en="Roasted" data-ru="Обжаренный">Roasted</span><span class="tag" data-en="Low Caffeine" data-ru="Мало кофеина">Low Caffeine</span></div>
@@ -835,40 +806,36 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Matcha" data-ru="Матча">Matcha</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
-      <div class="price-badge">€2.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Matcha/Matcha_milk_puree.png" alt="Matcha Latte" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Ceremonial grade · Regular milk" data-ru="Церемониальный сорт · Обычное молоко">Ceremonial grade · Regular milk</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Ceremonial grade · Regular milk" data-ru="Церемониальный сорт · Обычное молоко">Ceremonial grade · Regular milk</div><div class="price-badge">€2.50</div></div>
         <div class="card-name" data-en="Matcha Latte" data-ru="Матча Латте">Matcha Latte</div>
         <div class="card-desc" data-en="Vibrant ceremonial-grade matcha whisked with steamed milk. Earthy, creamy, and naturally energising." data-ru="Церемониальная матча, взбитая с горячим молоком. Землистая, кремовая и энергизирующая.">Vibrant ceremonial-grade matcha whisked with steamed milk. Earthy, creamy, and naturally energising.</div>
         <div class="card-tags"><span class="tag" data-en="Ceremonial" data-ru="Церемониальный">Ceremonial</span><span class="tag" data-en="Energising" data-ru="Бодрящий">Energising</span></div>
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.80</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Matcha/Matcha_milk_puree.png" alt="Matcha Latte Alt Milk" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Ceremonial grade · Alt milk" data-ru="Церемониальный сорт · Растительное молоко">Ceremonial grade · Alt milk</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Ceremonial grade · Alt milk" data-ru="Церемониальный сорт · Растительное молоко">Ceremonial grade · Alt milk</div><div class="price-badge">€2.80</div></div>
         <div class="card-name" data-en="Matcha Latte Alt" data-ru="Матча Латте Альт">Matcha Latte Alt</div>
         <div class="card-desc" data-en="The same ceremonial matcha with oat, almond, coconut, or soy milk. Creamy, vibrant, plant-based." data-ru="Та же церемониальная матча с растительным молоком на выбор. Кремовая и яркая.">The same ceremonial matcha with oat, almond, coconut, or soy milk. Creamy, vibrant, plant-based.</div>
         <div class="card-tags"><span class="tag" data-en="Plant-based" data-ru="Растительное">Plant-based</span><span class="tag" data-en="Alt Milk" data-ru="Альт молоко">Alt Milk</span></div>
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.80</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Matcha/Match_orange.png" alt="Matcha Orange" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Matcha · Orange juice" data-ru="Матча · Апельсиновый сок">Matcha · Orange juice</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Matcha · Orange juice" data-ru="Матча · Апельсиновый сок">Matcha · Orange juice</div><div class="price-badge">€2.80</div></div>
         <div class="card-name" data-en="Matcha with OJ" data-ru="Матча с апельсином">Matcha with OJ</div>
         <div class="card-desc" data-en="Ceremonial matcha blended with fresh orange juice. Bright, citrusy, and surprisingly refreshing." data-ru="Церемониальная матча со свежевыжатым апельсиновым соком. Яркая и бодрящая.">Ceremonial matcha blended with fresh orange juice. Bright, citrusy, and surprisingly refreshing.</div>
         <div class="card-tags"><span class="tag">Citrus</span><span class="tag" data-en="Refreshing" data-ru="Освежающий">Refreshing</span></div>
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€2.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="coffee-img-wrap"><img src="Images/Matcha/Matcha_tonic.png" alt="Matcha Tonic" onerror="this.style.display='none'"></div>
-        <div class="card-origin" data-en="Matcha · Tonic water" data-ru="Матча · Тоник">Matcha · Tonic water</div>
+        <div class="card-eyebrow"><div class="card-origin" data-en="Matcha · Tonic water" data-ru="Матча · Тоник">Matcha · Tonic water</div><div class="price-badge">€2.00</div></div>
         <div class="card-name" data-en="Matcha Tonic" data-ru="Матча Тоник">Matcha Tonic</div>
         <div class="card-desc" data-en="Ceremonial matcha over sparkling tonic water with ice. Clean, bitter, effervescent — a modern classic." data-ru="Церемониальная матча на игристом тонике со льдом. Чистая, горькая, шипучая.">Ceremonial matcha over sparkling tonic water with ice. Clean, bitter, effervescent — a modern classic.</div>
         <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span><span class="tag" data-en="Sparkling" data-ru="Газированный">Sparkling</span></div>
@@ -895,10 +862,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       <img class="card-img-can" src="Images/Non-Alchoholic/heineken-original-can.png" alt="">
     </div></div></div>
     <div class="card">
-      <div class="price-badge">€1.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Mexico · Since 1925" data-ru="Мексика · С 1925">Mexico · Since 1925</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Mexico · Since 1925" data-ru="Мексика · С 1925">Mexico · Since 1925</div><div class="price-badge">€1.50</div></div>
           <div class="card-name">Corona</div>
           <div class="card-desc" data-en="Light, easy-drinking Mexican lager. Clean malt character with subtle citrus notes. 4.5% ABV." data-ru="Лёгкий мексиканский лагер. Чистый солодовый характер с цитрусовыми нотами. 4.5% алк.">Light, easy-drinking Mexican lager. Clean malt character with subtle citrus notes. 4.5% ABV.</div>
           <div class="card-tags"><span class="tag">4.5% ABV</span><span class="tag">330ml</span></div>
@@ -916,10 +882,9 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       <img class="card-img-bottle" src="Images/Non-Alchoholic/heineken-00-bottle.png" alt="">
     </div></div></div>
     <div class="card">
-      <div class="price-badge">€1.50</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Mexico · 0% ABV" data-ru="Мексика · 0% алк.">Mexico · 0% ABV</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Mexico · 0% ABV" data-ru="Мексика · 0% алк.">Mexico · 0% ABV</div><div class="price-badge">€1.50</div></div>
           <div class="card-name">Corona 0%</div>
           <div class="card-desc" data-en="Corona's light, refreshing profile without the alcohol. Perfect for an active day on the courts." data-ru="Лёгкий освежающий вкус Corona без алкоголя. Идеален для активного дня.">Corona's light, refreshing profile without the alcohol. Perfect for an active day on the courts.</div>
           <div class="card-tags"><span class="tag" data-en="0% ABV" data-ru="0% алк.">0% ABV</span></div>
@@ -951,9 +916,8 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       <img class="card-img-bar" src="Images/Snacks/special-k-milk-chocolate.png" alt="">
     </div></div></div>
     <div class="card">
-      <div class="price-badge">€0.80</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
-        <div class="card-origin">KELLOGG'S · COCO POPS</div>
+        <div class="card-eyebrow"><div class="card-origin">KELLOGG'S · COCO POPS</div><div class="price-badge">€0.80</div></div>
         <div class="card-name" data-en="Coco Pops Bar" data-ru="Батончик Коко Попс">Coco Pops Bar</div>
         <div class="card-desc" data-en="Crunchy chocolatey rice cereal bar with a smooth undercoat. Source of Vitamin D. No artificial colours or flavours." data-ru="Хрустящий шоколадный рисовый батончик. Источник витамина D. Без искусственных красителей.">Crunchy chocolatey rice cereal bar with a smooth undercoat. Source of Vitamin D. No artificial colours or flavours.</div>
         <div class="card-tags"><span class="tag">82 KCAL</span><span class="tag">VITAMIN D</span></div>
@@ -961,9 +925,8 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
       </div></div>
     </div>
     <div class="card">
-      <div class="price-badge">€1.00</div>
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
-        <div class="card-origin">KELLOGG'S · ALL-BRAN</div>
+        <div class="card-eyebrow"><div class="card-origin">KELLOGG'S · ALL-BRAN</div><div class="price-badge">€1.00</div></div>
         <div class="card-name" data-en="All-Bran Chocolate Bar" data-ru="Батончик Олл-Бран Шоколад">All-Bran Chocolate Bar</div>
         <div class="card-desc" data-en="Hearty bran bar with chocolate coating and wholegrain wheat. High in fibre." data-ru="Сытный отрубной батончик с шоколадной глазурью и цельной пшеницей. Высокое содержание клетчатки.">Hearty bran bar with chocolate coating and wholegrain wheat. High in fibre.</div>
         <div class="card-tags"><span class="tag">171 KCAL</span><span class="tag">HIGH FIBRE</span></div>
