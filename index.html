@@ -193,8 +193,7 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
 /* ── DESKTOP FIXES (≥ 600px) ─────────────────────────────────────────── */
 @media(min-width:600px){
   /* Fix 1 – hard-contain every product image inside its card */
-  .card:has(.card-img-can),.card:has(.card-img-bottle),.card:has(.card-img-tea),.card:has(.coffee-img-wrap){overflow:hidden}
-  .card-img-can{width:88px;height:148px;object-fit:cover;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
+  .card:has(.card-img-bottle),.card:has(.card-img-tea),.card:has(.coffee-img-wrap){overflow:hidden}
   .card-img-bottle{width:78px;height:165px;object-fit:cover;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
   .card-img-tea{width:130px;height:165px;object-fit:cover;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
   /* Fix 2 – juice & smoothie: shift left so the glass sits centred in the slot */
