@@ -127,7 +127,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .card-inner{display:flex;align-items:stretch;min-height:80px}
 .card-accent{width:0;flex-shrink:0}
 .card-body{padding:20px 22px 22px;flex:1;overflow:visible}
-.card:has(.card-img-can),.card:has(.card-img-bottle),.card:has(.card-img-tea){overflow:visible}
+.card:has(.card-img-can){overflow:visible}
 .card-body:has(.card-img-can),.card-body:has(.card-img-bottle),.card-body:has(.card-img-tea){display:flex;align-items:center;justify-content:space-between;gap:12px;overflow:visible}
 .card-text{flex:1;min-width:0}
 .card-img-can,.card-img-bottle{flex-shrink:0;object-fit:contain;object-position:center bottom;margin-left:14px;margin-top:0;pointer-events:none;filter:drop-shadow(0px 6px 18px rgba(237,133,48,0.18));overflow:visible}
@@ -190,30 +190,24 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
 #sec-tea .cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 @media(max-width:768px){.nav-cats{padding:0 4px}.cat-btn{padding:8px 8px;letter-spacing:.15em}}
 @media(max-width:480px){.card-img-can{height:105px;max-width:65px}.card-img-bottle{height:138px;max-width:60px}.card-img-tea{height:150px;max-width:150px}img[src*="heineken-00-bottle"]{margin-top:30px;transform:scale(0.92);transform-origin:top center}img[src*="evian-sparkling"]{transform:scaleX(1.07);transform-origin:center center}}
-/* ── DESKTOP FIXES (≥ 600px) ─────────────────────────────────────────── */
-@media(min-width:600px){
-  /* Fix 1 – hard-contain every product image inside its card */
-  .card:has(.card-img-bottle),.card:has(.card-img-tea),.card:has(.coffee-img-wrap){overflow:hidden}
-  .card-img-bottle{width:78px;height:165px;object-fit:cover;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
-  .card-img-tea{width:130px;height:165px;object-fit:cover;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
-  /* Fix 2 – juice & smoothie: shift left so the glass sits centred in the slot */
-  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{object-position:20% center;transform:none;margin-right:0;width:78px;height:165px}
-  /* Fix 3 – Powerade at same prominence as herbal-tea bottles */
-  img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:165px;margin-top:0}
-  /* Fix 4 – coffee/matcha: horizontal text-left / image-right */
-  .card-body:has(.coffee-img-wrap){display:flex;flex-direction:row;align-items:center;gap:14px}
-  .coffee-img-wrap{width:110px;height:110px;flex-shrink:0}
-  .coffee-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center;max-width:none}
-  .strawberry-img-wrap{overflow:hidden;align-items:center}
-  .strawberry-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:cover;object-position:20% center;transform:none}
-  .bumble-img-wrap{overflow:hidden}
-  .bumble-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:cover;object-position:center;transform:none}
-}
-/* Fix 4 – mobile: keep image stacked above text */
-@media(max-width:599px){
-  .card-body:has(.coffee-img-wrap){display:flex;flex-direction:column}
-  .coffee-img-wrap{order:-1;width:100%;height:clamp(110px,20vw,160px)}
-}
+/* ── ALL-WIDTH FIXES ─────────────────────────────────────────────────── */
+/* 1 – lock bottle, tea, and coffee images inside their card at every width */
+.card:has(.card-img-bottle),.card:has(.card-img-tea),.card:has(.coffee-img-wrap){overflow:hidden}
+.card:has(.strawberry-img-wrap),.card:has(.bumble-img-wrap){overflow:hidden}
+.card-img-bottle{width:72px;height:165px;object-fit:cover;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
+.card-img-tea{width:120px;height:165px;object-fit:cover;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
+/* 2 – juice & smoothie: left-aligned so glass sits in frame at every width */
+img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{object-position:20% center;transform:none;margin-right:0;width:72px;height:165px}
+/* 3 – Powerade/kombucha: match herbal-tea bottle size at every width */
+img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:165px;margin-top:0}
+/* 4 – coffee & matcha: horizontal text-left/image-right at every width */
+.card-body:has(.coffee-img-wrap){display:flex;flex-direction:row;align-items:center;gap:14px}
+.coffee-img-wrap{width:110px;height:110px;flex-shrink:0}
+.coffee-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center;max-width:none}
+.strawberry-img-wrap{overflow:hidden;align-items:center}
+.strawberry-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:cover;object-position:20% center;transform:none}
+.bumble-img-wrap{overflow:hidden}
+.bumble-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:cover;object-position:center;transform:none}
 </style>
 </head>
 <body>
