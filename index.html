@@ -114,7 +114,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .sub-rule{flex:1;height:1px;background:rgba(237,133,48,0.15)}
 
 /* ─── CARDS ──────────────────────────────────────────────── */
-.cards{position:relative;z-index:2;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:16px}
+.cards{position:relative;z-index:2;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:16px}
 .card{background:var(--card);border:1px solid rgba(237,133,48,0.08);border-left:3px solid var(--orange);border-radius:10px;overflow:hidden;position:relative;transition:all .3s ease;-webkit-tap-highlight-color:transparent}
 .card::before{display:none}
 .card:hover,.card-glow{transform:translateY(-5px);border-color:rgba(237,133,48,.3);box-shadow:0 24px 48px rgba(0,0,0,.6),-6px 0 24px rgba(237,133,48,.15)}
@@ -187,19 +187,20 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
 @keyframes namePulse{from{text-shadow:0 0 15px rgba(237,133,48,0.57),0 0 35px rgba(237,133,48,0.25)}to{text-shadow:0 0 23px rgba(237,133,48,1.0),0 0 51px rgba(237,133,48,0.64)}}
 @keyframes imgPulse{from{filter:drop-shadow(0px 6px 11px rgba(237,133,48,0.38))}to{filter:drop-shadow(0px 6px 15px rgba(237,133,48,0.71))}}
 
-#sec-tea .cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+#sec-tea .cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr))}
 @media(max-width:768px){.nav-cats{padding:0 4px}.cat-btn{padding:8px 8px;letter-spacing:.15em}}
 @media(max-width:480px){.card-img-can{height:105px;max-width:65px}.card-img-bottle{height:138px;max-width:60px}.card-img-tea{height:150px;max-width:150px}img[src*="heineken-00-bottle"]{margin-top:30px;transform:scale(0.92);transform-origin:top center}img[src*="evian-sparkling"]{transform:scaleX(1.07);transform-origin:center center}}
 /* ── ALL-WIDTH FIXES ─────────────────────────────────────────────────── */
 /* 1 – lock bottle, tea, and coffee images inside their card at every width */
 .card:has(.card-img-bottle),.card:has(.card-img-tea),.card:has(.coffee-img-wrap){overflow:hidden}
 .card:has(.strawberry-img-wrap),.card:has(.bumble-img-wrap){overflow:hidden}
-.card-img-bottle{width:72px;height:165px;object-fit:contain;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
-.card-img-tea{width:120px;height:165px;object-fit:contain;object-position:center;max-width:none;min-width:auto;flex-shrink:0;margin-left:12px;margin-right:0}
-/* 2 – juice & smoothie: box matched to natural ~1:1 proportions so full glass is visible */
-img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{width:72px;height:75px;object-fit:contain;object-position:center;transform:none;margin-right:0}
-/* 3 – Powerade/kombucha: match herbal-tea bottle size at every width */
-img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:165px;margin-top:0}
+.card-img-can{width:auto;height:190px;object-fit:contain;object-position:center bottom;max-width:100px;min-width:44px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
+.card-img-bottle{width:auto;height:190px;object-fit:contain;object-position:center;max-width:100px;min-width:44px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
+.card-img-tea{width:auto;height:190px;object-fit:contain;object-position:center;max-width:240px;min-width:80px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
+/* 2 – juice & smoothie: auto width from the photo's own aspect ratio at 190px height; shrinks instead of overflowing on tight cards */
+img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{width:auto;height:190px;max-width:220px;min-width:80px;object-fit:contain;object-position:center;transform:none;margin-right:0;flex-shrink:1;flex-grow:0}
+/* 3 – Powerade/kombucha: match bottle size at every width */
+img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:190px;margin-top:0}
 /* 4 – coffee & matcha: horizontal text-left/image-right at every width */
 .card-body:has(.coffee-img-wrap){display:flex;flex-direction:row;align-items:center;gap:14px}
 .coffee-img-wrap{width:90px;height:130px;flex-shrink:0}
