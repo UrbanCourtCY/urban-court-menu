@@ -83,8 +83,19 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .lang-btn.active{background:var(--orange);color:#0c0906;font-weight:700}
 
 /* ─── SECTIONS ────────────────────────────────────────────── */
-.section{display:none;position:relative;overflow:hidden;padding-bottom:60px;background:linear-gradient(180deg,rgba(237,133,48,0.07) 0%,transparent 180px);border:1px solid rgba(237,133,48,0.1);border-radius:20px;margin:8px}
-.section.visible{display:block;animation:fadeSection .45s ease both}
+.section{display:none;position:relative;padding-bottom:60px;background:linear-gradient(180deg,rgba(237,133,48,0.07) 0%,transparent 180px);border:1px solid rgba(237,133,48,0.1);border-radius:20px;margin:8px}
+/* ═══ FIX: was ".section{overflow:hidden}" and ".section.visible{...animation:fadeSection .45s
+   ease BOTH}" — both silently break position:sticky for anything inside (an overflow other than
+   visible, OR a transform, on an ancestor traps sticky descendants against that ancestor instead
+   of the page). overflow:hidden wasn't protecting anything real (removing it changes nothing
+   visually — .sec-atm already clips its own orbs, and background/border already follow
+   border-radius on their own). The fill-mode "both" on the entrance animation was the sneakier
+   one: it holds the animation's resting transform (translateY(0), numerically identical to none)
+   applied indefinitely instead of letting the browser fall back to a true static "none" once the
+   animation ends — that's what was trapping .sec-desc.quicknav. Dropping "both" is safe since
+   there's no animation-delay here for it to bridge. (delete this comment, restore
+   "overflow:hidden" and "both" to revert — but that re-breaks .sec-desc.quicknav's stickiness) ═══ */
+.section.visible{display:block;animation:fadeSection .45s ease}
 @keyframes fadeSection{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* Atmospheric bg orbs per section */
@@ -120,12 +131,19 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .sec-desc{font-family:'Caveat',cursive;font-size:16px;font-weight:500;letter-spacing:.04em;color:var(--muted);margin-top:8px}
 
 /* ═══ FIX: PRESSABLE OVERVIEW WORDS — the "Soda · Kombucha · Ice Herbal Tea · Fresh · Blended"
-   line under the Drinks title now doubles as a quick-jump nav: each word is its own button that
-   scrolls straight to that category's header (reuses jumpToHeader() via jumpToNamedHeader()).
-   They glow on a continuous, staggered pulse (not just once) since this sits right at the top of
-   the page where people look first — it needs to read as interactive before anyone starts
-   scrolling. (delete this block + the .sec-desc-link spans in the Drinks sec-desc to revert to
-   plain text) ═══ */
+   line (and the equivalent line on Coffee/Tea) doubles as a quick-jump nav: each word is its own
+   button that scrolls straight to that category's header (reuses jumpToHeader() via
+   jumpToNamedHeader()). They glow on a continuous, staggered pulse the whole time, not just once
+   on load, since the row itself is what needs to read as interactive.
+   The row (.sec-desc.quicknav) is position:sticky with NO background — it sits in its normal
+   in-page spot under the section title until you scroll past it, then pins itself right under the
+   main nav (top:var(--nav-h), kept in sync by syncNavHeight()); staying background-free means
+   card content keeps scrolling visibly behind the glowing words once it's pinned, same as flowing
+   past bare text. (Earlier this session tried a separate always-visible bar instead — dropped it:
+   it duplicated the row and was visible even before scrolling, which wasn't wanted. It also tried
+   making THIS row sticky first and it silently failed — caused by .section's overflow:hidden,
+   which has been removed a few lines up for exactly this reason.) (delete this block + the
+   .sec-desc-link spans + the .quicknav class to revert to plain non-interactive text) ═══ */
 .sec-desc-link{cursor:pointer;color:inherit;padding:0 2px;border-radius:3px;-webkit-tap-highlight-color:rgba(237,133,48,.25);animation:descLinkGlow 2.6s ease-in-out infinite}
 .sec-desc-link:hover,.sec-desc-link:active{color:var(--orange)}
 .sec-desc-link:nth-of-type(1){animation-delay:0s}
@@ -134,6 +152,18 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .sec-desc-link:nth-of-type(4){animation-delay:1.2s}
 .sec-desc-link:nth-of-type(5){animation-delay:1.6s}
 @keyframes descLinkGlow{0%,100%{color:var(--muted);text-shadow:0 0 0 rgba(237,133,48,0)}50%{color:var(--orange);text-shadow:0 0 10px rgba(237,133,48,.6)}}
+.sec-desc.quicknav{position:sticky;top:var(--nav-h,74px);z-index:90;background:transparent;padding:0 28px;text-align:center}
+/* .quicknav now lives outside .sec-header (see the HTML-side FIX comment above the Drinks/Coffee/
+   Tea section headers) so it lost .sec-header's padding:40px 28px 32px + text-align:center — restored
+   above (minus the top 40px, which stays with the title only) and the .sec-rule spacing restored
+   below, scoped to .quicknav's sibling only so Beer/Snacks (.sec-rule still nested in .sec-header,
+   untouched) keep their original margin:20px 0 0. Also drops .sec-header's own 32px bottom padding
+   ONLY when it's directly followed by .quicknav — that padding used to sit between the desc row and
+   the rule (both were inside .sec-header together); now that .quicknav is a sibling, leaving it in
+   place would double up with .sec-desc's own margin-top:8px and shove the words too far from the
+   title. Title→words gap is now just that 8px margin (matches the original spacing). */
+.sec-header:has(+ .sec-desc.quicknav){padding-bottom:0}
+.quicknav + .sec-rule{margin:20px 28px 32px}
 /* ═══ END FIX ═══ */
 .sec-rule{height:1px;background:linear-gradient(90deg,rgba(237,133,48,0.35),transparent);margin:20px 0 0;display:block}
 .sr-line{display:none}
@@ -208,12 +238,17 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 @media(max-width:480px){.opts-panel{margin:0 12px 18px;padding:14px}}
 /* ═══ END FIX ═══ */
 
-/* ═══ FIX: CLICKABLE SECTION HEADERS — Soda, Kombucha, Ice Herbal Tea and Fresh & Blended sub-headers jump-scroll to themselves when pressed/clicked, with a one-time flash on load to hint they're interactive. (delete this block + the .nav-jump class / onclick / tabindex attributes on those 4 sub-heads, and the jumpToHeader() function near the bottom of the file, to revert) ═══ */
+/* ═══ FIX: CLICKABLE SECTION HEADERS — every category sub-header jump-scrolls to itself when
+   pressed/clicked (press/hover highlight only — no auto-flash: an earlier version flashed once on
+   load, but since display:none→block re-triggers CSS animations, it was re-flashing every time a
+   tab was switched to, which read as an unwanted "lighting up" rather than a one-time hint. The
+   overview-word row above each section (.sec-desc-link) is the interactivity hint now instead —
+   it pulses continuously, so headers don't need to.) (delete this block + the .nav-jump class /
+   onclick / tabindex attributes on the sub-heads, and the jumpToHeader() function near the bottom
+   of the file, to revert) ═══ */
 .sub-head.nav-jump{cursor:pointer;border-radius:8px;-webkit-tap-highlight-color:rgba(237,133,48,.25);transition:background-color .15s ease}
 .sub-head.nav-jump:hover{background:rgba(237,133,48,.06)}
 .sub-head.nav-jump:active{background:rgba(237,133,48,.14)}
-@keyframes navHeaderFlash{0%,100%{box-shadow:none}45%{box-shadow:0 0 0 1px rgba(237,133,48,.55),0 0 18px rgba(237,133,48,.4)}}
-.sub-head.nav-jump{animation:navHeaderFlash 1.8s ease-in-out 1}
 /* ═══ END FIX ═══ */
 
 /* ─── GRID 2 (for larger items) ─────────────────────────── */
@@ -412,15 +447,23 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
 
   <div class="sec-header">
     <div class="sec-title" data-en="Non-Alcoholic<br><em>Drinks</em>" data-ru="Безалкогольные<br><em>Напитки</em>">Non-Alcoholic<br><em>Drinks</em></div>
-    <div class="sec-desc">
-      <span class="sec-desc-link" onclick="jumpToNamedHeader('Soda &amp; Softs')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Soda &amp; Softs')}" tabindex="0" role="button" data-en="Soda" data-ru="Газировка">Soda</span> ·
-      <span class="sec-desc-link" onclick="jumpToNamedHeader('Kombucha')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Kombucha')}" tabindex="0" role="button" data-en="Kombucha" data-ru="Комбуча">Kombucha</span> ·
-      <span class="sec-desc-link" onclick="jumpToNamedHeader('Ice Herbal Tea')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Ice Herbal Tea')}" tabindex="0" role="button" data-en="Ice Herbal Tea" data-ru="Чай со льдом">Ice Herbal Tea</span> ·
-      <span class="sec-desc-link" onclick="jumpToNamedHeader('Fresh')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Fresh')}" tabindex="0" role="button" data-en="Fresh" data-ru="Фреш">Fresh</span> ·
-      <span class="sec-desc-link" onclick="jumpToNamedHeader('Blended')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Blended')}" tabindex="0" role="button" data-en="Blended" data-ru="Смузи">Blended</span>
-    </div>
-    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
   </div>
+  <!-- ═══ FIX: .sec-desc.quicknav lives OUTSIDE .sec-header (as a direct child of the tall
+       .section, not the short .sec-header) on purpose — position:sticky can never hold an
+       element stuck past its OWN containing block's bottom edge, and .sec-header is only as tall
+       as the title above; nested inside it, the row got dragged away the moment .sec-header
+       itself scrolled out, instead of detaching and pinning under the nav. .section spans the
+       whole tab, so here it can actually stay stuck for the rest of the scroll. The .sec-rule
+       divider moved out alongside it just to keep the original title → words → divider order.
+       (moving this back inside .sec-header re-breaks its stickiness) ═══ -->
+  <div class="sec-desc quicknav">
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Soda &amp; Softs')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Soda &amp; Softs')}" tabindex="0" role="button" data-en="Soda" data-ru="Газировка">Soda</span> ·
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Kombucha')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Kombucha')}" tabindex="0" role="button" data-en="Kombucha" data-ru="Комбуча">Kombucha</span> ·
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Ice Herbal Tea')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Ice Herbal Tea')}" tabindex="0" role="button" data-en="Ice Herbal Tea" data-ru="Чай со льдом">Ice Herbal Tea</span> ·
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Fresh')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Fresh')}" tabindex="0" role="button" data-en="Fresh" data-ru="Фреш">Fresh</span> ·
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Blended')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Blended')}" tabindex="0" role="button" data-en="Blended" data-ru="Смузи">Blended</span>
+  </div>
+  <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
 
   <!-- Soda & Softs -->
   <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Soda & Softs"><div class="sub-dot"></div><span class="sub-title" data-en="Soda &amp; Softs" data-ru="Газировка">Soda &amp; Softs</span><div class="sub-rule"></div></div>
@@ -770,9 +813,12 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   </div>
   <div class="sec-header">
     <div class="sec-title" data-en="Coffee &amp;<br><em>Espresso</em>" data-ru="Кофе &amp;<br><em>Эспрессо</em>">Coffee &amp;<br><em>Espresso</em></div>
-    <div class="sec-desc" data-en="Single origin · All milk alternatives available" data-ru="Зёрна одного происхождения · Все виды молока">Single origin · All milk alternatives available</div>
-    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
   </div>
+  <div class="sec-desc quicknav">
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Espresso')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Espresso')}" tabindex="0" role="button" data-en="Hot Coffee" data-ru="Горячий кофе">Hot Coffee</span> ·
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Iced Coffee')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Iced Coffee')}" tabindex="0" role="button" data-en="Iced Coffee" data-ru="Холодный кофе">Iced Coffee</span>
+  </div>
+  <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Milk Options" data-ru="Выбор молока">Milk Options</span><div class="sub-rule"></div></div>
   <div class="opts-panel">
     <div class="opts-group">
@@ -793,7 +839,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     </div>
     <div class="opts-note" data-en="ALT milks are the second (higher) price shown on drinks with two prices." data-ru="Альт. молоко — вторая (более высокая) цена, указанная у напитков с двумя ценами.">ALT milks are the second (higher) price shown on drinks with two prices.</div>
   </div>
-  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Espresso" data-ru="Эспрессо">Espresso</span><div class="sub-rule"></div></div>
+  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Espresso"><div class="sub-dot"></div><span class="sub-title" data-en="Espresso" data-ru="Эспрессо">Espresso</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
@@ -836,7 +882,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
       </div></div>
     </div>
   </div>
-  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Iced Coffee" data-ru="Холодный кофе">Iced Coffee</span><div class="sub-rule"></div></div>
+  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Iced Coffee"><div class="sub-dot"></div><span class="sub-title" data-en="Iced Coffee" data-ru="Холодный кофе">Iced Coffee</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
@@ -889,12 +935,15 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   <div class="sec-atm"><div class="atm-orb atm-tea1"></div><div class="atm-orb atm-tea2"></div></div>
   <div class="sec-header">
     <div class="sec-title" data-en="Tea &amp;<br><em>Matcha</em>" data-ru="Чай &amp;<br><em>Матча</em>">Tea &amp;<br><em>Matcha</em></div>
-    <div class="sec-desc" data-en="Hot Tea · Matcha" data-ru="Горячий чай · Матча">Hot Tea · Matcha</div>
-    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
   </div>
+  <div class="sec-desc quicknav">
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Hot Tea')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Hot Tea')}" tabindex="0" role="button" data-en="Hot Tea" data-ru="Горячий чай">Hot Tea</span> ·
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Matcha')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Matcha')}" tabindex="0" role="button" data-en="Matcha" data-ru="Матча">Matcha</span>
+  </div>
+  <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
 
   <!-- Hot Tea -->
-  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Hot Tea" data-ru="Горячий чай">Hot Tea</span><div class="sub-rule"></div></div>
+  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Hot Tea"><div class="sub-dot"></div><span class="sub-title" data-en="Hot Tea" data-ru="Горячий чай">Hot Tea</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
@@ -954,7 +1003,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   </div>
 
   <!-- Matcha -->
-  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Matcha" data-ru="Матча">Matcha</span><div class="sub-rule"></div></div>
+  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Matcha"><div class="sub-dot"></div><span class="sub-title" data-en="Matcha" data-ru="Матча">Matcha</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
@@ -1134,10 +1183,15 @@ function setLang(l) {
 // (Plain scrollIntoView would align the header with the very top of the viewport, which is
 // exactly where the sticky nav bar sits — the header would land hidden behind it. We measure
 // the nav's actual rendered height instead of a guessed pixel value, since it changes across
-// breakpoints, and subtract that so the header lands right at its own border, just below nav.)
+// breakpoints, and subtract that so the header lands right at its own border, just below nav.
+// Also subtracts the active tab's .quicknav row height when present — it's sticky too now (see
+// its CSS rule) and stacks directly under the nav once you've scrolled past it, so a target
+// landing at just navH would land half-hidden under it.)
 function jumpToHeader(el) {
   const navH = document.querySelector('.nav-wrap').offsetHeight;
-  const y = el.getBoundingClientRect().top + window.scrollY - navH - 8;
+  const quicknav = document.querySelector('.section.visible .sec-desc.quicknav');
+  const quicknavH = quicknav ? quicknav.offsetHeight : 0;
+  const y = el.getBoundingClientRect().top + window.scrollY - navH - quicknavH - 8;
   window.scrollTo({top: y, left: 0, behavior: 'instant'});
 }
 // Looks up a nav-jump sub-head by its aria-label (e.g. "Soda & Softs") and reuses jumpToHeader()
@@ -1147,6 +1201,20 @@ function jumpToNamedHeader(label) {
   const target = document.querySelector('.sub-head.nav-jump[aria-label="Jump to ' + label + '"]');
   if (target) jumpToHeader(target);
 }
+// ═══ END FIX ═══
+
+// ═══ FIX: STICKY QUICK-NAV OFFSET — keeps the --nav-h custom property (used by .sec-desc.quicknav's
+// "top" so it pins directly under the main nav bar, not under/over it) equal to the nav bar's
+// REAL rendered height. Recomputed on load, once fonts finish loading (webfonts can change the
+// nav's text height after first paint), and on resize (nav-cats wraps differently on narrow
+// screens). (delete this block + the --nav-h usage in .quicknav to revert to a fixed guess)
+function syncNavHeight() {
+  const nav = document.querySelector('.nav-wrap');
+  if (nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
+}
+syncNavHeight();
+window.addEventListener('resize', syncNavHeight);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncNavHeight);
 // ═══ END FIX ═══
 
 // ═══ FIX: OPEN/CLOSED LIVE STATUS — reads the real clock in Cyprus (Asia/Nicosia, so it's
