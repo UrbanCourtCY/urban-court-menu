@@ -245,11 +245,10 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 /* Fresh & Blended group: bottom-anchor the whole row instead of vertically centering it. These cards have longer text (some with a base-selector), so centering left visible empty gaps above/below the photo on shorter cards like Simple Protein — anchoring to the bottom makes every glass look like it's actually resting on something, and keeps them level with each other regardless of how much text is in the card next to them. */
 /* (removed: align-items:flex-end for this group — it looked worse on Simple Protein specifically, since its image is much shorter than its text column, so bottom-anchoring just moved the empty space to one big awkward gap above the image instead of splitting it top/bottom. Reverted to the default center alignment; see the Simple Protein-specific fix further down instead.) */
 /* Fresh juices & smoothies: auto width from each photo's own aspect ratio at 190px height */
-img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{width:auto;height:190px;max-width:220px;min-width:80px;object-fit:contain;object-position:center;margin-right:0;flex-shrink:1;flex-grow:0}
-/* Orange Fresh: I measured this precisely from your screenshots (not eyeballing) — its BOX sits exactly 23px from the card's right edge, identical to Grapefruit Fresh and everything else in this row. The box is correct. The gap is inside the photo itself: comparing visible-content width against Grapefruit Fresh's (which reaches its own box edge almost exactly), Orange_fresh.png appears to have roughly 25-30% dead transparent space on its right side, baked into the file. So this switches from object-fit:contain (shows the whole file, gap included) to object-fit:cover with a narrower box and object-position:left — this crops the empty right-hand strip off instead of just resizing around it. The 175px width below is my best estimate of how much to crop based on that measurement — it is still a guess without the real file. If it's cropping too much (cutting into the glass) or too little (gap still visible), adjust the width number: smaller width = more aggressive crop, larger = less. This is the last CSS-only attempt I'd recommend — for an exact fix, send the actual Orange_fresh.png and I'll measure the real transparent margin directly instead of estimating it from a screenshot. */
-img[src*="Orange_fresh"]{width:175px;height:256px;max-width:175px;min-width:80px;object-fit:cover;object-position:left bottom;margin-right:0;margin-top:0;flex-shrink:1;flex-grow:0}
-/* Simple Protein: narrower source photo (no fruit garnish beside it), sized/positioned on its own so it doesn't look small next to its siblings. Same caveat as Orange Fresh above — if it still looks small/off once bottom-anchored, that's also likely file padding rather than something fixable from box sizing alone. */
-img[src*="Simple_protein"]{width:auto;height:218px;max-width:200px;min-width:80px;object-fit:contain;object-position:center bottom;margin-right:0;flex-shrink:1;flex-grow:0}
+/* Orange_fresh.png and Simple_protein.png were re-cropped at the file level (real transparent-margin measurement, not a screenshot guess) so they now match the ~92% content-fill of their siblings — the old object-fit:cover / oversized-box hacks are gone, both just use the shared rule now. */
+img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{width:auto;height:190px;max-width:220px;min-width:80px;object-fit:contain;object-position:center;margin-right:0;flex-shrink:1;flex-grow:0}
+/* Simple Protein: nudge a bit right within its box (per request) — the crop fix made it size correctly but it still reads slightly left/centered next to its garnished siblings. */
+img[src*="Simple_protein"]{transform:translateX(10px)}
 /* Powerade — bumped up from the 190px bottle default */
 img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:215px;max-width:112px;margin-top:0}
 /* Kombucha (all 6 flavours share this filename prefix) — bumped up from the 190px bottle default */
@@ -273,9 +272,7 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
   .card-img-can{height:130px;max-width:72px;min-width:40px}
   .card-img-bottle{height:150px;max-width:70px;min-width:40px}
   .card-img-tea{height:150px;max-width:150px;min-width:70px}
-  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{height:150px;max-width:150px;min-width:70px}
-  img[src*="Orange_fresh"]{width:138px;height:202px;max-width:138px;min-width:70px;object-fit:cover;object-position:left bottom}
-  img[src*="Simple_protein"]{height:172px;max-width:145px;min-width:70px}
+  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{height:150px;max-width:150px;min-width:70px}
   img[src*="mountain-blast-blue"],img[src*="powerade-orange"],img[src*="SCOBYSUN_Kombucha"]{height:165px;max-width:82px}
   img[src*="Corona-extra"],img[src*="Corona-zero"]{height:175px;max-width:88px;margin-top:10px}
   img[src*="heineken-00-bottle"]{height:150px;margin-top:14px;transform:scale(0.92);transform-origin:top center}
@@ -283,9 +280,7 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
 }
 @media(max-width:340px){
   .card-img-tea{height:120px;max-width:110px;min-width:60px}
-  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{height:120px;max-width:110px;min-width:60px}
-  img[src*="Orange_fresh"]{width:110px;height:162px;max-width:110px;min-width:60px;object-fit:cover;object-position:left bottom}
-  img[src*="Simple_protein"]{height:120px;max-width:95px;min-width:60px}
+  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{height:120px;max-width:110px;min-width:60px}
 }
 </style>
 </head>
