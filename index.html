@@ -34,6 +34,21 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .hero-title img{height:clamp(90px,18vw,170px);width:auto;display:inline-block}
 
 .hero-sub{font-family:'Caveat',cursive;font-size:18px;font-weight:500;letter-spacing:.04em;color:var(--muted);margin-top:20px;animation:fadeUp .8s .25s ease both}
+
+/* ═══ FIX: HERO OPEN-HOURS BADGE — the "Open daily" line already lived at the bottom of every tab's footer, easy to miss. This puts a prominent pulsing-dot pill right on the landing hero so it's the first thing a guest sees, no scrolling needed. Footer text below is untouched. (delete the .hero-hours block below + its CSS here to revert) ═══ */
+.hero-hours{display:inline-flex;align-items:center;gap:10px;margin-top:26px;padding:10px 22px;background:rgba(237,133,48,.08);border:1px solid rgba(237,133,48,.3);border-radius:30px;animation:fadeUp .8s .3s ease both}
+.hero-hours-dot{width:7px;height:7px;border-radius:50%;background:#7ed492;box-shadow:0 0 0 rgba(126,212,146,.6);flex-shrink:0;animation:hoursPulse 2s ease-in-out infinite}
+@keyframes hoursPulse{0%{box-shadow:0 0 0 0 rgba(126,212,146,.55)}70%{box-shadow:0 0 0 7px rgba(126,212,146,0)}100%{box-shadow:0 0 0 0 rgba(126,212,146,0)}}
+.hero-hours-txt{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cream)}
+.hero-hours-txt strong{color:var(--orange);font-weight:700}
+@media(max-width:480px){.hero-hours{padding:8px 16px;margin-top:20px}.hero-hours-txt{font-size:10.5px}}
+/* ═══ FIX: OPEN/CLOSED LIVE STATE — setOpenStatus() (bottom of file) checks the real Cyprus clock (Asia/Nicosia, DST-safe) against the 07:30–21:30 window on load and every minute, then toggles this .is-closed class: dot turns red, box replaces "Open Daily" with "Closed Now" / "Opens at 07:30". (remove the class rules below + the setOpenStatus() call/interval to revert to the plain always-green badge) ═══ */
+.hero-hours.is-closed{background:rgba(235,90,90,.08);border-color:rgba(235,90,90,.3)}
+.hero-hours.is-closed .hero-hours-dot{background:#e26a6a;box-shadow:0 0 0 rgba(226,106,106,.6);animation:hoursPulseRed 2s ease-in-out infinite}
+@keyframes hoursPulseRed{0%{box-shadow:0 0 0 0 rgba(226,106,106,.55)}70%{box-shadow:0 0 0 7px rgba(226,106,106,0)}100%{box-shadow:0 0 0 0 rgba(226,106,106,0)}}
+.hero-hours.is-closed .hero-hours-txt strong{color:#e28a6a}
+/* ═══ END FIX ═══ */
+
 .hero-enter{margin-top:48px;animation:fadeUp .8s .4s ease both}
 .hero-enter button{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--orange);background:transparent;border:1px solid rgba(237,133,48,0.3);padding:14px 36px;cursor:pointer;transition:all .3s;border-radius:4px}
 .hero-enter button:hover{border-color:rgba(237,133,48,.6);background:rgba(237,133,48,.06)}
@@ -103,6 +118,23 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .sec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(44px,8vw,48px);line-height:1;letter-spacing:.06em;text-transform:uppercase;color:var(--cream);margin-bottom:8px}
 .sec-title em{font-style:italic;color:var(--rose-gold)}
 .sec-desc{font-family:'Caveat',cursive;font-size:16px;font-weight:500;letter-spacing:.04em;color:var(--muted);margin-top:8px}
+
+/* ═══ FIX: PRESSABLE OVERVIEW WORDS — the "Soda · Kombucha · Ice Herbal Tea · Fresh · Blended"
+   line under the Drinks title now doubles as a quick-jump nav: each word is its own button that
+   scrolls straight to that category's header (reuses jumpToHeader() via jumpToNamedHeader()).
+   They glow on a continuous, staggered pulse (not just once) since this sits right at the top of
+   the page where people look first — it needs to read as interactive before anyone starts
+   scrolling. (delete this block + the .sec-desc-link spans in the Drinks sec-desc to revert to
+   plain text) ═══ */
+.sec-desc-link{cursor:pointer;color:inherit;padding:0 2px;border-radius:3px;-webkit-tap-highlight-color:rgba(237,133,48,.25);animation:descLinkGlow 2.6s ease-in-out infinite}
+.sec-desc-link:hover,.sec-desc-link:active{color:var(--orange)}
+.sec-desc-link:nth-of-type(1){animation-delay:0s}
+.sec-desc-link:nth-of-type(2){animation-delay:.4s}
+.sec-desc-link:nth-of-type(3){animation-delay:.8s}
+.sec-desc-link:nth-of-type(4){animation-delay:1.2s}
+.sec-desc-link:nth-of-type(5){animation-delay:1.6s}
+@keyframes descLinkGlow{0%,100%{color:var(--muted);text-shadow:0 0 0 rgba(237,133,48,0)}50%{color:var(--orange);text-shadow:0 0 10px rgba(237,133,48,.6)}}
+/* ═══ END FIX ═══ */
 .sec-rule{height:1px;background:linear-gradient(90deg,rgba(237,133,48,0.35),transparent);margin:20px 0 0;display:block}
 .sr-line{display:none}
 .sr-dot{display:none}
@@ -338,6 +370,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="hero-orn"><div class="ol"></div><div class="od"></div><div class="ol or"></div></div>
     <div class="hero-title"><img src="Images/Logo/urban-court-stacked-cream.png" alt="Urban Court"></div>
     <div class="hero-sub" data-en="A curated selection for our distinguished guests" data-ru="Специальная подборка для наших гостей">A curated selection for our distinguished guests</div>
+    <div class="hero-hours"><div class="hero-hours-dot"></div><div class="hero-hours-txt"><span class="hero-hours-status" data-en="Open Now" data-ru="Открыто">Open Now</span> · <strong>07:30 – 21:30</strong></div></div>
     <div class="hero-wifi" data-en="Wi-Fi · <strong>Urban Court</strong> · <span class='wifi-pw'>Tennis-2026</span>" data-ru="Wi-Fi · <strong>Urban Court</strong> · <span class='wifi-pw'>Tennis-2026</span>">Wi-Fi · <strong>Urban Court</strong> · <span class="wifi-pw">Tennis-2026</span></div>
     <div class="hero-enter">
       <button data-en="Explore the Menu" data-ru="Открыть меню">Explore the Menu</button>
@@ -379,7 +412,13 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
 
   <div class="sec-header">
     <div class="sec-title" data-en="Non-Alcoholic<br><em>Drinks</em>" data-ru="Безалкогольные<br><em>Напитки</em>">Non-Alcoholic<br><em>Drinks</em></div>
-    <div class="sec-desc" data-en="Soda · Kombucha · Ice Herbal Tea · Fresh &amp; Blended" data-ru="Газировка · Комбуча · Чай со льдом · Свежие">Soda · Kombucha · Ice Herbal Tea · Fresh &amp; Blended</div>
+    <div class="sec-desc">
+      <span class="sec-desc-link" onclick="jumpToNamedHeader('Soda &amp; Softs')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Soda &amp; Softs')}" tabindex="0" role="button" data-en="Soda" data-ru="Газировка">Soda</span> ·
+      <span class="sec-desc-link" onclick="jumpToNamedHeader('Kombucha')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Kombucha')}" tabindex="0" role="button" data-en="Kombucha" data-ru="Комбуча">Kombucha</span> ·
+      <span class="sec-desc-link" onclick="jumpToNamedHeader('Ice Herbal Tea')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Ice Herbal Tea')}" tabindex="0" role="button" data-en="Ice Herbal Tea" data-ru="Чай со льдом">Ice Herbal Tea</span> ·
+      <span class="sec-desc-link" onclick="jumpToNamedHeader('Fresh')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Fresh')}" tabindex="0" role="button" data-en="Fresh" data-ru="Фреш">Fresh</span> ·
+      <span class="sec-desc-link" onclick="jumpToNamedHeader('Blended')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Blended')}" tabindex="0" role="button" data-en="Blended" data-ru="Смузи">Blended</span>
+    </div>
     <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
   </div>
 
@@ -584,27 +623,8 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     </div>
   </div>
 
-  <!-- Fresh & Blended -->
-  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Fresh & Blended"><div class="sub-dot"></div><span class="sub-title" data-en="Fresh &amp; Blended" data-ru="Свежие и Смузи">Fresh &amp; Blended</span><div class="sub-rule"></div></div>
-  <div class="opts-panel">
-    <div class="opts-group">
-      <div class="opts-group-label" data-en="Smoothie milk base" data-ru="Молочная основа">Smoothie milk base</div>
-      <div class="opts-pills">
-        <span class="opts-pill" data-en="Regular" data-ru="Обычное">Regular</span>
-        <span class="opts-pill" data-en="Oat" data-ru="Овсяное">Oat</span>
-        <span class="opts-pill" data-en="Almond" data-ru="Миндальное">Almond</span>
-        <span class="opts-pill" data-en="Coconut" data-ru="Кокосовое">Coconut</span>
-      </div>
-    </div>
-    <div class="opts-group">
-      <div class="opts-group-label" data-en="Or water base" data-ru="Или на воде">Or water base</div>
-      <div class="opts-pills">
-        <span class="opts-pill" data-en="Still Water" data-ru="Обычная вода">Still Water</span>
-        <span class="opts-pill" data-en="Ice" data-ru="Лёд">Ice</span>
-      </div>
-    </div>
-    <div class="opts-note" data-en="Applies to Energy Mix, Blue Banana, Strawberry Banana &amp; Berry Mix — tell your server which base you'd like." data-ru="Для Energy Mix, Blue Banana, Strawberry Banana и Berry Mix — сообщите официанту нужную основу.">Applies to Energy Mix, Blue Banana, Strawberry Banana &amp; Berry Mix — tell your server which base you'd like.</div>
-  </div>
+  <!-- Fresh (fresh-pressed juices + protein) -->
+  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Fresh"><div class="sub-dot"></div><span class="sub-title" data-en="Fresh" data-ru="Фреш">Fresh</span><div class="sub-rule"></div></div>
   <div class="cards">
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
@@ -639,6 +659,39 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
         <img class="card-img-bottle" src="Images/Freshly%20Made/Orange_grapefruit.png" alt="" onerror="this.style.display='none'">
       </div></div>
     </div>
+  </div>
+
+  <!-- Blended (smoothies) -->
+  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Blended"><div class="sub-dot"></div><span class="sub-title" data-en="Blended" data-ru="Смузи">Blended</span><div class="sub-rule"></div></div>
+  <div class="opts-panel">
+    <div class="opts-group">
+      <div class="opts-group-label" data-en="Smoothie milk base" data-ru="Молочная основа">Smoothie milk base</div>
+      <div class="opts-pills">
+        <span class="opts-pill" data-en="Regular" data-ru="Обычное">Regular</span>
+        <span class="opts-pill" data-en="Lactose-free" data-ru="Безлактозное">Lactose-free</span>
+        <span class="opts-pill" data-en="Oat" data-ru="Овсяное">Oat</span>
+        <span class="opts-pill" data-en="Almond" data-ru="Миндальное">Almond</span>
+        <span class="opts-pill" data-en="Coconut" data-ru="Кокосовое">Coconut</span>
+      </div>
+    </div>
+    <div class="opts-group">
+      <div class="opts-group-label" data-en="Or water base" data-ru="Или на воде">Or water base</div>
+      <div class="opts-pills">
+        <span class="opts-pill" data-en="Still Water" data-ru="Обычная вода">Still Water</span>
+        <span class="opts-pill" data-en="Ice" data-ru="Лёд">Ice</span>
+      </div>
+    </div>
+    <div class="opts-group">
+      <div class="opts-group-label" data-en="Add protein" data-ru="Добавить протеин">Add protein</div>
+      <div class="opts-pills">
+        <span class="opts-pill" data-en="Chocolate" data-ru="Шоколад">Chocolate</span>
+        <span class="opts-pill" data-en="Vanilla" data-ru="Ваниль">Vanilla</span>
+        <span class="opts-pill" data-en="Strawberry" data-ru="Клубника">Strawberry</span>
+      </div>
+    </div>
+    <div class="opts-note" data-en="These are primarily protein smoothies — choose your base and flavour above. Applies to Simple Protein, Energy Mix, Blue Banana, Strawberry Banana &amp; Berry Mix — tell your server what you'd like." data-ru="В основном это протеиновые смузи — выберите основу и вкус выше. Для Simple Protein, Energy Mix, Blue Banana, Strawberry Banana и Berry Mix — сообщите официанту, что вы хотите.">These are primarily protein smoothies — choose your base and flavour above. Applies to Simple Protein, Energy Mix, Blue Banana, Strawberry Banana &amp; Berry Mix — tell your server what you'd like.</div>
+  </div>
+  <div class="cards">
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
@@ -1087,6 +1140,38 @@ function jumpToHeader(el) {
   const y = el.getBoundingClientRect().top + window.scrollY - navH - 8;
   window.scrollTo({top: y, left: 0, behavior: 'instant'});
 }
+// Looks up a nav-jump sub-head by its aria-label (e.g. "Soda & Softs") and reuses jumpToHeader()
+// on it — lets the overview-line words above trigger the exact same scroll as pressing the
+// header itself further down the page.
+function jumpToNamedHeader(label) {
+  const target = document.querySelector('.sub-head.nav-jump[aria-label="Jump to ' + label + '"]');
+  if (target) jumpToHeader(target);
+}
+// ═══ END FIX ═══
+
+// ═══ FIX: OPEN/CLOSED LIVE STATUS — reads the real clock in Cyprus (Asia/Nicosia, so it's
+// always local time there regardless of where the visitor/browser is), compares it to the
+// 07:30–21:30 window, and flips the hero badge between green "Open Now" and red "Closed Now".
+// Re-checks every 60s so it flips live if someone leaves the tab open across opening/closing
+// time, and re-applies after a language switch since setLang() only knows the CURRENT label.
+// (delete this block + the .hero-hours-status span's data-en/data-ru swap to revert to a
+// static always-green badge) ═══
+function setOpenStatus() {
+  const badge = document.querySelector('.hero-hours');
+  const statusEl = document.querySelector('.hero-hours-status');
+  if (!badge || !statusEl) return;
+  const parts = new Intl.DateTimeFormat('en-GB', {timeZone: 'Asia/Nicosia', hour: '2-digit', minute: '2-digit', hour12: false}).formatToParts(new Date());
+  const h = parseInt(parts.find(p => p.type === 'hour').value, 10);
+  const m = parseInt(parts.find(p => p.type === 'minute').value, 10);
+  const mins = h * 60 + m;
+  const isOpen = mins >= (7 * 60 + 30) && mins < (21 * 60 + 30);
+  badge.classList.toggle('is-closed', !isOpen);
+  statusEl.setAttribute('data-en', isOpen ? 'Open Now' : 'Closed Now');
+  statusEl.setAttribute('data-ru', isOpen ? 'Открыто' : 'Закрыто');
+  statusEl.innerHTML = statusEl.getAttribute('data-' + lang) || (isOpen ? 'Open Now' : 'Closed Now');
+}
+setOpenStatus();
+setInterval(setOpenStatus, 60000);
 // ═══ END FIX ═══
 
 const cards = document.querySelectorAll('.card');
