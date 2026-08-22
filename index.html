@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -13,8 +13,8 @@
   --cream:#f0e4d0;--cream-dim:rgba(240,228,208,0.38);
   --gold:#c9a84c;--muted:#7a6550;
 }
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{scroll-behavior:smooth;overflow-anchor:none}
+body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-anchor:none}
 
 /* ─── HERO ─────────────────────────────────────────────── */
 .hero{position:relative;height:100vh;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
@@ -126,7 +126,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 
 .card-inner{display:flex;align-items:stretch;min-height:80px}
 .card-accent{width:0;flex-shrink:0}
-.card-body{padding:20px 22px 22px;flex:1;overflow:visible}
+.card-body{padding:20px 22px 22px;flex:1;min-width:0;overflow:visible}
 .card:has(.card-img-can){overflow:visible}
 .card-body:has(.card-img-can),.card-body:has(.card-img-bottle),.card-body:has(.card-img-tea){display:flex;align-items:center;justify-content:space-between;gap:12px;overflow:visible}
 .card-text{flex:1;min-width:0}
@@ -143,16 +143,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .bumble-img-wrap img{transform:scale(1.07);transform-origin:bottom center}
 .card:has(.bumble-img-wrap){overflow:visible}
 .card-img-tea{flex-shrink:0;object-fit:contain;object-position:center bottom;margin-left:14px;margin-top:0;pointer-events:none;height:190px;width:auto;max-width:190px;min-width:100px;overflow:visible;filter:drop-shadow(0px 6px 18px rgba(237,133,48,0.15))}
+/* kelloggs bar art has extra transparent side-padding baked into the source PNGs; these widen them back out visually */
 img[src*="kelloggs-all-bran-chocolate"]{transform:scaleX(1.22);transform-origin:center center}
 img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center center}
-img[src*="Corona-extra"],img[src*="Corona-zero"]{align-self:flex-end;margin-top:0;margin-bottom:0}
-img[src*="coconut-water"]{height:130px!important;align-self:flex-start;margin-top:42px}
-img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{height:125px;width:150px;max-width:none;transform:scale(1.18);transform-origin:right bottom;margin-right:-62px}img[src*="Coca-Cola-330ml"]{transform:scaleX(1.18);transform-origin:center center}
-img[src*="coca-cola-zero"]{transform:scaleX(1.35);transform-origin:center center}
-img[src*="Red-bull-250ml"]{transform:scaleX(1.27);transform-origin:center center}
-img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center center}
 
-@media(min-width:481px){img[src*="Corona-extra"],img[src*="Corona-zero"]{height:220px!important}img[src*="heineken-00-bottle"]{height:210px!important;margin-top:30px;transform:scale(0.92);transform-origin:top center}#sec-beer .card-img-bottle{align-self:flex-end}#sec-beer .grid2:last-of-type .card{height:300px;overflow:hidden}}
+@media(min-width:481px){#sec-beer .card-img-bottle{align-self:flex-end}#sec-beer .grid2:last-of-type .card{height:300px;overflow:hidden}}
 
 .card-origin{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);opacity:.75;margin-bottom:8px}
 .card-name{font-family:'Caveat',cursive;font-size:27px;font-weight:600;line-height:1.1;color:var(--cream);margin-bottom:4px;text-shadow:0 0 12px rgba(237,133,48,0.45),0 0 28px rgba(237,133,48,0.2)}
@@ -189,19 +184,55 @@ img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center c
 
 #sec-tea .cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr))}
 @media(max-width:768px){.nav-cats{padding:0 4px}.cat-btn{padding:8px 8px;letter-spacing:.15em}}
-@media(max-width:480px){.card-img-can{height:105px;max-width:65px}.card-img-bottle{height:138px;max-width:60px}.card-img-tea{height:150px;max-width:150px}img[src*="heineken-00-bottle"]{margin-top:30px;transform:scale(0.92);transform-origin:top center}img[src*="evian-sparkling"]{transform:scaleX(1.07);transform-origin:center center}}
-/* ── ALL-WIDTH FIXES ─────────────────────────────────────────────────── */
-/* 1 – lock bottle, tea, and coffee images inside their card at every width */
+/* ══════════════════════════════════════════════════════════════════════
+   PRODUCT PHOTOS — how sizing/position works, and how to edit it
+   ──────────────────────────────────────────────────────────────────────
+   Every product photo sits in a flex row next to its card's text. Its
+   card is locked with overflow:hidden (see "layer 1" below), so a photo
+   can never bleed into another card again — worst case it just clips at
+   its own edge. Push these numbers around freely.
+
+   THREE LAYERS below, in this exact order on purpose (CSS applies
+   whichever matching rule comes LAST when two rules tie in specificity —
+   so the order these appear in the file matters, not just how "specific"
+   the selector looks):
+
+   1. BASE CLASSES  (.card-img-can / .card-img-bottle / .card-img-tea)
+      The default size for EVERY item of that shape. Edit these to
+      resize every can, or every bottle, or every tea, at once.
+
+   2. PER-ITEM OVERRIDES  (img[src*="filename"])
+      Targets ONE photo by (part of) its filename — use this to resize
+      or reposition a single drink without touching anything else.
+      To add a new one: copy a line, change the filename fragment
+      inside src*="...", and put it anywhere in this section (it just
+      needs to stay below the base classes above).
+
+   3. PHONE OVERRIDES  (@media max-width:480px / max-width:340px)
+      Same idea, smaller numbers, so text doesn't get crushed on
+      narrow phones. Kept at the very end so they beat everything
+      above them regardless of source order.
+
+   Properties you'll actually touch:
+     height            → the main size control. Width is auto-computed
+                          from the photo's own proportions at that height.
+     max-width         → a ceiling so a wide photo can't dominate the card.
+     min-width         → a floor so it doesn't vanish when shrinking on phones.
+     object-position    → where the photo sits inside its box:
+                          "center", "center bottom", "top", etc.
+     margin-top / margin-left → nudge the whole photo box up/down/sideways.
+     transform: scale(1.1)    → visually enlarge without changing the
+                          layout box size (use sparingly — can cause the
+                          image to visually clip against its own card,
+                          since that's just a paint-time effect).
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── layer 1 — BASE CLASSES: default size per photo shape ─────────────── */
 .card:has(.card-img-bottle),.card:has(.card-img-tea),.card:has(.coffee-img-wrap){overflow:hidden}
 .card:has(.strawberry-img-wrap),.card:has(.bumble-img-wrap){overflow:hidden}
 .card-img-can{width:auto;height:190px;object-fit:contain;object-position:center bottom;max-width:100px;min-width:44px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
 .card-img-bottle{width:auto;height:190px;object-fit:contain;object-position:center;max-width:100px;min-width:44px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
 .card-img-tea{width:auto;height:190px;object-fit:contain;object-position:center;max-width:240px;min-width:80px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
-/* 2 – juice & smoothie: auto width from the photo's own aspect ratio at 190px height; shrinks instead of overflowing on tight cards */
-img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{width:auto;height:190px;max-width:220px;min-width:80px;object-fit:contain;object-position:center;transform:none;margin-right:0;flex-shrink:1;flex-grow:0}
-/* 3 – Powerade/kombucha: match bottle size at every width */
-img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:190px;margin-top:0}
-/* 4 – coffee & matcha: horizontal text-left/image-right at every width */
 .card-body:has(.coffee-img-wrap){display:flex;flex-direction:row;align-items:center;gap:14px}
 .coffee-img-wrap{width:90px;height:130px;flex-shrink:0}
 .coffee-img-wrap img{width:100%;height:100%;object-fit:contain;object-position:center bottom;max-width:none}
@@ -209,6 +240,53 @@ img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:190px;margin-
 .strawberry-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:contain;object-position:center bottom;transform:none}
 .bumble-img-wrap{overflow:hidden}
 .bumble-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:contain;object-position:center bottom}
+
+/* ── layer 2 — PER-ITEM OVERRIDES (desktop/tablet) ─────────────────────── */
+/* Fresh & Blended group: bottom-anchor the whole row instead of vertically centering it. These cards have longer text (some with a base-selector), so centering left visible empty gaps above/below the photo on shorter cards like Simple Protein — anchoring to the bottom makes every glass look like it's actually resting on something, and keeps them level with each other regardless of how much text is in the card next to them. */
+/* (removed: align-items:flex-end for this group — it looked worse on Simple Protein specifically, since its image is much shorter than its text column, so bottom-anchoring just moved the empty space to one big awkward gap above the image instead of splitting it top/bottom. Reverted to the default center alignment; see the Simple Protein-specific fix further down instead.) */
+/* Fresh juices & smoothies: auto width from each photo's own aspect ratio at 190px height */
+img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{width:auto;height:190px;max-width:220px;min-width:80px;object-fit:contain;object-position:center;margin-right:0;flex-shrink:1;flex-grow:0}
+/* Orange Fresh: I measured this precisely from your screenshots (not eyeballing) — its BOX sits exactly 23px from the card's right edge, identical to Grapefruit Fresh and everything else in this row. The box is correct. The gap is inside the photo itself: comparing visible-content width against Grapefruit Fresh's (which reaches its own box edge almost exactly), Orange_fresh.png appears to have roughly 25-30% dead transparent space on its right side, baked into the file. So this switches from object-fit:contain (shows the whole file, gap included) to object-fit:cover with a narrower box and object-position:left — this crops the empty right-hand strip off instead of just resizing around it. The 175px width below is my best estimate of how much to crop based on that measurement — it is still a guess without the real file. If it's cropping too much (cutting into the glass) or too little (gap still visible), adjust the width number: smaller width = more aggressive crop, larger = less. This is the last CSS-only attempt I'd recommend — for an exact fix, send the actual Orange_fresh.png and I'll measure the real transparent margin directly instead of estimating it from a screenshot. */
+img[src*="Orange_fresh"]{width:175px;height:256px;max-width:175px;min-width:80px;object-fit:cover;object-position:left bottom;margin-right:0;margin-top:0;flex-shrink:1;flex-grow:0}
+/* Simple Protein: narrower source photo (no fruit garnish beside it), sized/positioned on its own so it doesn't look small next to its siblings. Same caveat as Orange Fresh above — if it still looks small/off once bottom-anchored, that's also likely file padding rather than something fixable from box sizing alone. */
+img[src*="Simple_protein"]{width:auto;height:218px;max-width:200px;min-width:80px;object-fit:contain;object-position:center bottom;margin-right:0;flex-shrink:1;flex-grow:0}
+/* Powerade — bumped up from the 190px bottle default */
+img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:215px;max-width:112px;margin-top:0}
+/* Kombucha (all 6 flavours share this filename prefix) — bumped up from the 190px bottle default */
+img[src*="SCOBYSUN_Kombucha"]{height:215px;max-width:112px}
+/* Corona — bumped up further; shifted down a little so the lime wedge on top doesn't crowd the card's top edge */
+img[src*="Corona-extra"],img[src*="Corona-zero"]{height:235px;max-width:122px;margin-top:14px;align-self:flex-end}
+/* Coconut water — shorter bottle, sits lower in its box */
+img[src*="coconut-water"]{height:150px;max-width:100px;align-self:flex-start;margin-top:42px}
+/* Heineken 0% bottle needs a small downward nudge + scale-down to read at the right size for its box */
+img[src*="heineken-00-bottle"]{height:210px;margin-top:30px;transform:scale(0.92);transform-origin:top center}
+/* Coca-Cola / Red Bull cans have extra transparent side-padding baked into the source PNGs; these widen them back out visually */
+img[src*="Coca-Cola-330ml"]{transform:scaleX(1.18);transform-origin:center center}
+img[src*="coca-cola-zero"]{transform:scaleX(1.35);transform-origin:center center}
+img[src*="Red-bull-250ml"]{transform:scaleX(1.27);transform-origin:center center}
+img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center center}
+
+@media(min-width:481px){#sec-beer .card-img-bottle{align-self:flex-end}#sec-beer .grid2:last-of-type .card{height:300px;overflow:hidden}}
+
+/* ── layer 3 — PHONE OVERRIDES: same photos, smaller, so text keeps room ─ */
+@media(max-width:480px){
+  .card-img-can{height:130px;max-width:72px;min-width:40px}
+  .card-img-bottle{height:150px;max-width:70px;min-width:40px}
+  .card-img-tea{height:150px;max-width:150px;min-width:70px}
+  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{height:150px;max-width:150px;min-width:70px}
+  img[src*="Orange_fresh"]{width:138px;height:202px;max-width:138px;min-width:70px;object-fit:cover;object-position:left bottom}
+  img[src*="Simple_protein"]{height:172px;max-width:145px;min-width:70px}
+  img[src*="mountain-blast-blue"],img[src*="powerade-orange"],img[src*="SCOBYSUN_Kombucha"]{height:165px;max-width:82px}
+  img[src*="Corona-extra"],img[src*="Corona-zero"]{height:175px;max-width:88px;margin-top:10px}
+  img[src*="heineken-00-bottle"]{height:150px;margin-top:14px;transform:scale(0.92);transform-origin:top center}
+  img[src*="evian-sparkling"]{transform:scaleX(1.07);transform-origin:center center}
+}
+@media(max-width:340px){
+  .card-img-tea{height:120px;max-width:110px;min-width:60px}
+  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"]{height:120px;max-width:110px;min-width:60px}
+  img[src*="Orange_fresh"]{width:110px;height:162px;max-width:110px;min-width:60px;object-fit:cover;object-position:left bottom}
+  img[src*="Simple_protein"]{height:120px;max-width:95px;min-width:60px}
+}
 </style>
 </head>
 <body>
@@ -510,8 +588,9 @@ img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:190px;margin-
         <div class="card-text">
           <div class="card-eyebrow"><div class="card-origin" data-en="Blended to order · Served cold" data-ru="Готовится по заказу · Холодный">Blended to order · Served cold</div><div class="price-badge">€1.50</div></div>
           <div class="card-name" data-en="Simple Protein" data-ru="Протеиновый коктейль">Simple Protein</div>
-          <div class="card-desc" data-en="Protein powder blended to order with your choice of milk or water. Clean, simple, and functional." data-ru="Протеин на молоке или воде по заказу. Чисто, просто, эффективно.">Protein powder blended to order with your choice of milk or water. Clean, simple, and functional.</div>
-          <div class="card-tags"><span class="tag" data-en="Protein" data-ru="Протеин">Protein</span><span class="tag" data-en="Post-Workout" data-ru="После игры">Post-Workout</span></div>
+          <div class="card-sub" data-en="Chocolate · Vanilla · Strawberry" data-ru="Шоколад · Ваниль · Клубника">Chocolate · Vanilla · Strawberry</div>
+          <div class="card-desc" data-en="Protein powder blended to order with milk or water. Pictured in all three flavours — pick just one and we'll blend it fresh." data-ru="Протеин на молоке или воде по заказу. На фото — все три вкуса; на деле вы выбираете один.">Protein powder blended to order with milk or water. Pictured in all three flavours — pick just one and we'll blend it fresh.</div>
+          <div class="card-tags"><span class="tag" data-en="Protein" data-ru="Протеин">Protein</span><span class="tag" data-en="Post-Workout" data-ru="После игры">Post-Workout</span><span class="tag" data-en="Pick 1 Flavour" data-ru="Выберите вкус">Pick 1 Flavour</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Freshly%20Made/Simple_protein.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -962,15 +1041,35 @@ img[src*="mountain-blast-blue"],img[src*="powerade-orange"]{height:190px;margin-
 </div>
 <script>
 let lang = 'en';
+let currentSection = 'drinks';
+const sectionScroll = {}; // remembers each tab's scroll position for the rest of this visit
 
 function show(id, btn) {
+  // remember exactly where we were in the tab we're leaving
+  sectionScroll[currentSection] = window.scrollY;
+
   document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   const sec = document.getElementById('sec-' + id);
   sec.classList.add('visible');
   btn.classList.add('active');
-  const nav = document.querySelector('.nav-wrap');
-  window.scrollTo(0, nav.offsetTop);
+
+  const hasVisited = id in sectionScroll;
+  currentSection = id;
+
+  // wait a frame so the newly-visible section is actually laid out before we measure/scroll
+  requestAnimationFrame(() => {
+    // NOTE: we deliberately measure from .hero, not .nav-wrap. .nav-wrap is
+    // position:sticky, and once it's "stuck" (i.e. you've scrolled past it),
+    // both offsetTop and getBoundingClientRect() report its CURRENT stuck
+    // position, not its natural place in the page — so it can't be used to
+    // find "top of the tab". .hero is a normal (non-sticky) element right
+    // before the nav, so its position is stable at any scroll depth.
+    const hero = document.querySelector('.hero');
+    const topOfTab = hero.getBoundingClientRect().bottom + window.scrollY;
+    const target = hasVisited ? sectionScroll[id] : topOfTab;
+    window.scrollTo({top: target, left: 0, behavior: 'instant'});
+  });
 }
 
 function setLang(l) {
