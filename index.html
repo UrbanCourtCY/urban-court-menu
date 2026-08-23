@@ -13,7 +13,18 @@
   --cream:#f0e4d0;--cream-dim:rgba(240,228,208,0.38);
   --gold:#c9a84c;--muted:#7a6550;
 }
-html{scroll-behavior:smooth;overflow-anchor:none}
+/* ═══ FIX: SCROLL CATCH AT HERO/MENU SEAM — a fast upward flick from deep in a menu tab used to
+   sail straight through the top of the menu and back onto the hero/welcome screen in one motion.
+   scroll-snap-type + scroll-snap-stop:always on a 0-height marker (.scroll-snap-catch, placed as
+   the last thing inside .hero, so it sits exactly at the hero/nav-wrap seam) is the browser-native
+   way to do this: unlike a JS scroll listener, it also catches real touch-momentum flinging on
+   phones, which JS can't intercept mid-flight. "proximity" (not "mandatory") means this ONLY
+   engages near that one seam — ordinary scrolling anywhere else in the (very long) menu is
+   completely unaffected. Once actually resting at the seam, a further deliberate scroll in either
+   direction passes through it normally — the catch only stops scrolls that would otherwise skip
+   over it entirely. (delete this rule + the .scroll-snap-catch element + its CSS rule to revert)
+   ═══ */
+html{scroll-behavior:smooth;overflow-anchor:none;scroll-snap-type:y proximity}
 body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-anchor:none}
 
 /* ─── HERO ─────────────────────────────────────────────── */
@@ -52,11 +63,16 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .hero-enter{margin-top:48px;animation:fadeUp .8s .4s ease both}
 .hero-enter button{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--orange);background:transparent;border:1px solid rgba(237,133,48,0.3);padding:14px 36px;cursor:pointer;transition:all .3s;border-radius:4px}
 .hero-enter button:hover{border-color:rgba(237,133,48,.6);background:rgba(237,133,48,.06)}
-.hero-scroll{position:absolute;bottom:90px;left:0;right:0;width:100%;margin:0 auto;display:block;text-align:center;animation:fadeUp .8s .6s ease both;cursor:pointer;opacity:.5}
+.hero-scroll{position:absolute;bottom:90px;left:0;right:0;width:100%;margin:0 auto;display:block;text-align:center;animation:fadeUp .8s .6s ease both;opacity:.5}
 .hero-scroll span{font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
 .scroll-line{width:1px;height:50px;margin:10px auto 0;position:relative;background:rgba(237,133,48,0.12)}
 .scroll-fill{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom,#ed8530,rgba(237,133,48,0.2));transform-origin:top;transform:scaleY(0);animation:scrollFill 1.4s ease-in infinite}
 @keyframes scrollFill{0%{transform:scaleY(0)}70%{transform:scaleY(1)}100%{transform:scaleY(1)}}
+
+/* 0-height marker sitting exactly at the hero/nav-wrap seam — see the HTML comment above it and the
+   html{scroll-snap-type} rule near the top of the file for the full explanation. scroll-snap-stop:
+   always is what actually catches a fast fling that would otherwise skip straight past this point. */
+.scroll-snap-catch{height:0;scroll-snap-align:start;scroll-snap-stop:always}
 
 /* ─── NAV ────────────────────────────────────────────────── */
 .nav-wrap{position:sticky;top:0;z-index:100;background:rgba(12,9,6,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(237,133,48,0.12)}
@@ -461,7 +477,12 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
 <body>
 
 <!-- ═══ HERO ═══════════════════════════════════════════════ -->
-<div class="hero" onclick="document.querySelector('.nav-wrap').scrollIntoView({behavior:'smooth'})">
+<!-- ═══ FIX: only the "Explore the Menu" button navigates down now — the whole-hero onclick used to
+     fire on ANY tap/click anywhere on this screen (background, logo, hours badge, empty space),
+     which felt accidental. Moved the handler onto just the button; the "SCROLL" hint at the bottom
+     is now purely a decorative cue (cursor:pointer removed from it too), not a hidden button.
+     (move the onclick back onto this .hero div and delete it from the button to revert) ═══ -->
+<div class="hero">
   <div class="hero-orb orb1"></div>
   <div class="hero-orb orb2"></div>
   <div class="hero-orb orb3"></div>
@@ -473,7 +494,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="hero-hours"><div class="hero-hours-dot"></div><div class="hero-hours-txt"><span class="hero-hours-status" data-en="Open Now" data-ru="Открыто">Open Now</span> · <strong>07:30 – 21:30</strong></div></div>
     <div class="hero-wifi" data-en="Wi-Fi · <strong>Urban Court</strong> · <span class='wifi-pw'>Tennis-2026</span>" data-ru="Wi-Fi · <strong>Urban Court</strong> · <span class='wifi-pw'>Tennis-2026</span>">Wi-Fi · <strong>Urban Court</strong> · <span class="wifi-pw">Tennis-2026</span></div>
     <div class="hero-enter">
-      <button data-en="Explore the Menu" data-ru="Открыть меню">Explore the Menu</button>
+      <button onclick="document.querySelector('.nav-wrap').scrollIntoView({behavior:'smooth'})" data-en="Explore the Menu" data-ru="Открыть меню">Explore the Menu</button>
     </div>
   </div>
   <div class="hero-scroll">
@@ -481,6 +502,12 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="scroll-line"><div class="scroll-fill"></div></div>
   </div>
 </div>
+<!-- the scroll-snap catch point lives HERE, as a sibling of .hero rather than inside it — .hero
+     has overflow:hidden, which (per spec) makes it its own scroll-snap container, so a snap target
+     placed inside it would only ever snap within the hero's own clipped box, not the actual page
+     scroll. As a direct sibling it sits at exactly the hero/nav-wrap seam and snaps correctly
+     against the real page scroll. See the .scroll-snap-catch CSS rule for the full explanation. -->
+<div class="scroll-snap-catch"></div>
 
 <!-- ═══ NAV ════════════════════════════════════════════════ -->
 <div class="nav-wrap">
