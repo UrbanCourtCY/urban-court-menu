@@ -216,10 +216,23 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .card::before{display:none}
 .card:hover,.card-glow{transform:translateY(-5px);border-color:rgba(237,133,48,.3);box-shadow:0 24px 48px rgba(0,0,0,.6),-6px 0 24px rgba(237,133,48,.15)}
 .card-glow .card-name{animation:namePulse .7s ease-in-out infinite alternate}
-.card-glow img.card-img-can,.card-glow img.card-img-bottle{animation:imgPulse .7s ease-in-out infinite alternate}
+/* ═══ FIX: GLOW BUGS — two separate bugs fixed here:
+   1. Desktop hover glow never fired on ANY card, drinks included: the media query below was
+      written as "@media(hover:hover)and(pointer:fine)" with no space before "and" — browsers
+      require whitespace around the "and" combinator in a media query (unlike in CSS selectors),
+      so this silently failed to parse and matched nothing at all, ever. Fixed by adding the space.
+   2. Snack (and Tea, and Coffee-glass) images never got the pulse glow on either mobile tap or
+      desktop hover: both image-glow selectors only listed img.card-img-can/img.card-img-bottle
+      (used by cans/bottles), leaving out img.card-img-bar (snacks), img.card-img-tea (tea leaves)
+      and .coffee-img-wrap img (coffee/matcha glasses) — so only the drink NAME glowed for those,
+      never the picture. Broadened both selectors to cover every image type used in a card.
+   (revert the selector lists to img.card-img-can,img.card-img-bottle only, and remove the space
+   before "and" in the media query, to undo) ═══ */
+.card-glow img.card-img-can,.card-glow img.card-img-bottle,.card-glow img.card-img-bar,.card-glow img.card-img-tea,.card-glow .coffee-img-wrap img{animation:imgPulse .7s ease-in-out infinite alternate}
 @keyframes namePulsePC{from{text-shadow:0 0 12px rgba(237,133,48,0.45),0 0 28px rgba(237,133,48,0.2)}to{text-shadow:0 0 20px rgba(237,133,48,0.9),0 0 45px rgba(237,133,48,0.55)}}
 @keyframes imgPulsePC{from{filter:drop-shadow(0px 6px 18px rgba(237,133,48,0.18))}to{filter:drop-shadow(0px 6px 32px rgba(237,133,48,0.75))}}
-@media(hover:hover)and(pointer:fine){.card:hover .card-name{animation:namePulsePC .7s ease-in-out infinite alternate}.card:hover img.card-img-can,.card:hover img.card-img-bottle{animation:imgPulsePC .7s ease-in-out infinite alternate}}
+@media (hover:hover) and (pointer:fine){.card:hover .card-name{animation:namePulsePC .7s ease-in-out infinite alternate}.card:hover img.card-img-can,.card:hover img.card-img-bottle,.card:hover img.card-img-bar,.card:hover img.card-img-tea,.card:hover .coffee-img-wrap img{animation:imgPulsePC .7s ease-in-out infinite alternate}}
+/* ═══ END FIX ═══ */
 
 .card-inner{display:flex;align-items:stretch;min-height:80px}
 .card-accent{width:0;flex-shrink:0}
@@ -1258,12 +1271,15 @@ function setLang(l) {
 // Also subtracts the active tab's .quicknav row height when present — it's sticky too now (see
 // its CSS rule) and stacks directly under the nav once you've scrolled past it, so a target
 // landing at just navH would land half-hidden under it.)
+// behavior:'smooth' animates the scroll instead of teleporting straight there — matches the page's
+// own html{scroll-behavior:smooth}, so this now scrolls the same way a finger/mouse-wheel scroll
+// does, just faster. (was 'instant' — change back to 'instant' to revert to an immediate jump)
 function jumpToHeader(el) {
   const navH = document.querySelector('.nav-wrap').offsetHeight;
   const quicknav = document.querySelector('.section.visible .sec-desc.quicknav');
   const quicknavH = quicknav ? quicknav.offsetHeight : 0;
   const y = el.getBoundingClientRect().top + window.scrollY - navH - quicknavH - 8;
-  window.scrollTo({top: y, left: 0, behavior: 'instant'});
+  window.scrollTo({top: y, left: 0, behavior: 'smooth'});
 }
 // Looks up a nav-jump sub-head by its aria-label (e.g. "Soft Drinks") and reuses jumpToHeader()
 // on it — lets the overview-line words above trigger the exact same scroll as pressing the
