@@ -13,33 +13,42 @@
   --cream:#f0e4d0;--cream-dim:rgba(240,228,208,0.38);
   --gold:#c9a84c;--muted:#7a6550;
 }
-/* ═══ FIX v3: SCROLL CATCH AT HERO/MENU SEAM — a fast upward flick from deep in a menu tab used to
+/* ═══ FIX v4: SCROLL CATCH AT HERO/MENU SEAM — a fast upward flick from deep in a menu tab used to
    sail straight through the top of the menu and back onto the hero/welcome screen in one motion.
-   Full history of how this got here (kept because it explains why v3 ends up where it does):
+   Full history (kept because it explains why v4 lands where it does — each version fixed the
+   symptom reported and surfaced a new one on a real phone):
    v1 used native CSS scroll-snap-type:y proximity, left ON permanently — that snapped back ANY
    scroll, slow or fast, that happened to rest near the seam (a "pull zone" roughly a full screen
    tall in Chrome), so a deliberate scroll needed fighting past Coca-Cola before it let go.
-   v2 kept native CSS scroll-snap but only switched it on (via a .snap-armed class) for the span of
-   a detected fast upward scroll, gated on velocity so a slow scroll never armed it at all. This
-   fixed the "well", but on a real phone a genuinely hard flick could still leak through — sometimes
-   cleanly bouncing through once, sometimes catching and oscillating up/down a few times before
-   escaping anyway. The cause: TWO separate mechanisms (native CSS scroll-snap-stop:always doing its
-   own compositor-level catch, AND a JS fallback correcting the position directly for flicks fast
-   enough to skip past before the CSS could react) were BOTH trying to control the same scroll at
-   once, on top of the phone's own still-live touch-momentum animation underneath both of them — three
-   things pushing the scroll position around in the same moment is exactly what an oscillation looks
-   like, each "winning" briefly before the next one overrides it.
-   v3 drops native CSS scroll-snap entirely and uses ONE single JS-driven mechanism instead: watch
-   scroll velocity, and the instant a fast upward scroll reaches the seam, forcibly kill whatever
-   momentum animation the browser/OS still has in flight (by briefly setting the page's overflow to
-   hidden — this is what actually stops native momentum rather than just repositioning on top of it,
-   see hardStopAt() near "SCROLL CATCH ARMING" below) and set the exact resting position in the same
-   step. With only one thing ever touching scroll position during a catch, there's nothing left to
-   fight or oscillate against. A slow/deliberate scroll never reaches the velocity threshold this is
-   gated on, so it's just as unaffected as it was in v2.
-   (delete this rule + the "SCROLL CATCH ARMING" script block + the .scroll-snap-catch element and
-   its CSS rule to revert to plain unassisted scrolling) ═══ */
+   v2/v2.1/v2.2 kept native CSS scroll-snap but only switched it on (via a .snap-armed class) once a
+   fast upward scroll was DETECTED from 'scroll' event velocity, plus a JS scrollTo() fallback to
+   correct flicks fast enough to skip past before the CSS reacted. On a real phone this meant TWO
+   separate mechanisms (the native compositor-level snap, and the JS correction) fighting each other
+   AND the phone's own still-live momentum at once — that's what produced the catch/bounce and
+   catch/oscillate/leak-through symptoms.
+   v3 tried dropping CSS scroll-snap entirely for a single reactive JS mechanism (detect the crossing
+   from 'scroll' events, forcibly cancel native momentum via an overflow toggle, then scrollTo the
+   exact spot). That made things worse, not better: real momentum only got caught at slow speeds
+   where there was barely any momentum to fight in the first place — at any real flick speed the
+   correction couldn't reliably win against native momentum once it was already in flight, so almost
+   everything leaked straight through to the home screen. The lesson: native CSS scroll-snap-stop:
+   always is the one mechanism that has ever ACTUALLY stopped real momentum reliably (that's exactly
+   what made v1's "well" so sticky) — the real bugs were always (a) its pull zone being too wide, and
+   (b) nothing releasing it after one catch, never that it failed to stop things.
+   v4 goes back to native CSS scroll-snap as the ONLY mechanism that ever sets scroll position — no
+   JS scrollTo, no overflow toggling, nothing else touching scroll position, ever. The two real bugs
+   are fixed directly instead of routing around the mechanism: the .snap-armed class is now armed
+   purely by PROXIMITY (within ARM_ZONE px of the seam, moving upward) rather than by velocity, so
+   it's already active well before a fast flick reaches the seam — no race to detect a crossing in
+   time, the browser has the constraint from the moment the scroll enters the zone. That fixes the
+   "hard flick sometimes not caught" problem. And once a catch is detected (armed + arrived at the
+   seam), it's a one-shot: the class comes off immediately and won't re-arm until the scroll goes
+   back down past REARM_ZONE, well below the seam — so the very next scroll attempt, of any speed,
+   sails straight through to the home screen, without needing to fight all the way down to Coca-Cola
+   first. (delete this rule + the "SCROLL CATCH ARMING" script block + the .scroll-snap-catch element
+   and its CSS rule to revert to plain unassisted scrolling) ═══ */
 html{scroll-behavior:smooth;overflow-anchor:none}
+html.snap-armed{scroll-snap-type:y proximity}
 body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-anchor:none}
 
 /* ─── HERO ─────────────────────────────────────────────── */
@@ -85,10 +94,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 @keyframes scrollFill{0%{transform:scaleY(0)}70%{transform:scaleY(1)}100%{transform:scaleY(1)}}
 
 /* 0-height marker sitting exactly at the hero/nav-wrap seam — see the html{} rule near the top of
-   the file (FIX v3) for the full explanation. As of v3 this is purely a position reference the
-   "SCROLL CATCH ARMING" JS reads to know where the seam is; it no longer carries any scroll-snap
-   CSS itself. */
-.scroll-snap-catch{height:0}
+   the file (FIX v4) for the full explanation. This is the actual native CSS scroll-snap target:
+   scroll-snap-align:start makes it the point the browser pulls to, scroll-snap-stop:always forces a
+   fast fling to genuinely stop here rather than glide past — but only while html carries
+   .snap-armed, which the "SCROLL CATCH ARMING" JS (bottom of file) toggles on/off by proximity. */
+.scroll-snap-catch{height:0;scroll-snap-align:start;scroll-snap-stop:always}
 
 /* ─── NAV ────────────────────────────────────────────────── */
 .nav-wrap{position:sticky;top:0;z-index:100;background:rgba(12,9,6,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(237,133,48,0.12)}
@@ -555,11 +565,11 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="scroll-line"><div class="scroll-fill"></div></div>
   </div>
 </div>
-<!-- marks the exact hero/nav-wrap seam position for the "SCROLL CATCH ARMING" JS (bottom of file) to
-     measure against — as of FIX v3 it's a plain position reference, not a CSS scroll-snap target.
-     Kept as a sibling of .hero (not inside it) since that's still the one stable spot: .hero itself
-     scales/animates on load, so a marker inside it wouldn't be reliably positioned before that
-     settles. -->
+<!-- marks the exact hero/nav-wrap seam position — both the native CSS scroll-snap target (see
+     .scroll-snap-catch in the CSS, FIX v4) and the point the "SCROLL CATCH ARMING" JS (bottom of
+     file) measures proximity against. Kept as a sibling of .hero (not inside it) since that's still
+     the one stable spot: .hero itself scales/animates on load, so a marker inside it wouldn't be
+     reliably positioned before that settles. -->
 <div class="scroll-snap-catch"></div>
 
 <!-- ═══ NAV ════════════════════════════════════════════════ -->
@@ -1416,68 +1426,72 @@ function jumpToNamedHeader(label) {
 }
 // ═══ END FIX ═══
 
-// ═══ FIX: SCROLL CATCH ARMING v3 (see the FIX v3 comment on the html{} rule near the top of the CSS
-// for the full history of why this moved off native CSS scroll-snap) — a single JS-driven mechanism,
-// nothing else touches scroll position during a catch. On every 'scroll' event we compute velocity
-// (px/ms) from the previous sample. The instant that's fast and upward (below -FLING_VELOCITY) AND
-// we're at or have just crossed the seam (y <= boundaryY, having been above it a moment ago), we
-// call hardStopAt(boundaryY):
-//   1. set the page's overflow to hidden for one frame — this is what actually kills the phone's
-//      still-live native momentum animation, not just repositions on top of it. A plain scrollTo()
-//      alone doesn't reliably do this: the OS/browser's own inertia can keep running underneath a
-//      simple position change and immediately overwrite it, which is exactly what caused the
-//      catch/bounce/leak-through and catch/oscillate/leak-through behaviour in earlier versions —
-//      TWO things (our correction and the still-running native momentum) fighting over the same
-//      scroll position, each briefly "winning" before the other overrides it again.
-//   2. restore overflow and set the exact resting scrollY, instantly, in the same tick.
-// LOCK_MS after a catch, the catch won't re-trigger — this is what lets "scroll again to reach the
-// home screen" work: it's just long enough to make sure a hard flick's full deceleration has really
-// finished (not just the current one 'scroll' event), but far shorter than the pause a real second,
-// separate flick would naturally have before it.
-// A slow/deliberate scroll never reaches FLING_VELOCITY no matter how close it comes to resting at
-// the seam, so it's completely unaffected — same guarantee v2 had, just with a single mechanism
-// doing the catching instead of two potentially competing ones.
-// FLING_VELOCITY is the one knob worth tuning after testing on a real phone — raise it if normal
-// brisk scrolling ever gets caught by mistake, lower it if a hard flick isn't being caught.
+// ═══ FIX: SCROLL CATCH ARMING v4 (see the FIX v4 comment on the html{} rule near the top of the CSS
+// for the full history) — native CSS scroll-snap is the ONLY thing that ever sets scroll position;
+// this script only ever toggles the .snap-armed class on <html>, it never calls scrollTo() or
+// touches overflow itself. That was the actual fix: earlier versions either left native snap
+// permanently on (too wide a catch zone) or paired it with JS position corrections that ended up
+// fighting the native snap and the phone's own momentum for control of the same scroll (bounce /
+// oscillate), or dropped native snap for JS-only correction which turned out not to be able to
+// reliably beat real momentum at all (everything but a slow scroll leaked through).
+//
+// Arming is by PROXIMITY, not velocity: as soon as scrollY is within ARM_ZONE px of the seam AND
+// still moving upward, .snap-armed goes on — well before a fast flick actually reaches the seam, so
+// there's no race to detect a crossing in time; the browser already has scroll-snap-stop:always
+// active by the time the flick gets there, which is what actually arrests real momentum (this is
+// exactly the mechanism that made v1's "pull zone" so effective — it was just left on far too wide
+// and far too long). Moving down, or scrolling in from further than ARM_ZONE away, disarms it.
+//
+// Release is a one-shot: the instant an armed scroll settles back at the seam (within CATCH_EPS),
+// that counts as a catch — usedUp goes true and the class comes off immediately, so the very next
+// scroll attempt of any speed sails straight through with no snap fighting it. usedUp only resets
+// (allowing a fresh catch) once the scroll has gone back down past REARM_ZONE, well below the seam —
+// i.e. the user has actually returned to browsing the menu, not just nudged an inch away from it.
 // (delete this block + the .scroll-snap-catch element and its CSS rule to revert to plain
 // unassisted scrolling) ═══
 (function () {
   const catchEl = document.querySelector('.scroll-snap-catch');
   if (!catchEl) return;
-  const FLING_VELOCITY = 1.0; // px/ms — a real hard flick is well above this; ordinary scrolling isn't
-  const LOCK_MS = 400; // ms after a catch before it's allowed to trigger again
+  const html = document.documentElement;
+  const ARM_ZONE = Math.max(180, Math.round(window.innerHeight * 0.35)); // px below the seam that arms the catch
+  const REARM_ZONE = Math.round(ARM_ZONE * 1.5); // must clear this far below the seam (a bit past ARM_ZONE, not double it) to re-enable a catch
+  const CATCH_EPS = 6; // px — "essentially arrived at the seam" while armed counts as a catch
   let boundaryY = 0;
   let lastY = window.scrollY;
-  let lastT = performance.now();
-  let locked = false;
+  let armed = false;
+  let usedUp = false;
   function measure() { boundaryY = catchEl.getBoundingClientRect().top + window.scrollY; }
   measure();
   window.addEventListener('resize', measure);
 
-  function hardStopAt(y) {
-    const htmlEl = document.documentElement;
-    const prevOverflow = htmlEl.style.overflow;
-    htmlEl.style.overflow = 'hidden'; // forcibly cancels any native momentum still in flight
-    void htmlEl.offsetHeight; // force the browser to apply the change before we undo it
-    htmlEl.style.overflow = prevOverflow;
-    window.scrollTo({top: y, left: 0, behavior: 'instant'});
+  function setArmed(on) {
+    if (armed === on) return;
+    armed = on;
+    html.classList.toggle('snap-armed', armed);
   }
 
   window.addEventListener('scroll', () => {
     const y = window.scrollY;
-    const t = performance.now();
-    const dt = Math.max(t - lastT, 1);
-    const v = (y - lastY) / dt; // negative while scrolling up (toward the hero)
-    if (!locked && v < -FLING_VELOCITY && lastY > boundaryY && y <= boundaryY) {
-      hardStopAt(boundaryY);
-      locked = true;
-      setTimeout(() => { locked = false; }, LOCK_MS);
-      lastY = boundaryY;
-      lastT = t;
+    const dist = y - boundaryY; // > 0 = inside the menu, below the seam
+    const movingUp = y < lastY;
+
+    if (usedUp) {
+      if (dist > REARM_ZONE) usedUp = false;
+      setArmed(false);
+      lastY = y;
       return;
     }
+
+    if (armed && Math.abs(dist) < CATCH_EPS) {
+      // Arrived at the seam while armed — this is the catch. One-shot: release immediately.
+      usedUp = true;
+      setArmed(false);
+      lastY = y;
+      return;
+    }
+
+    setArmed(dist > 0 && dist <= ARM_ZONE && movingUp);
     lastY = y;
-    lastT = t;
   }, {passive: true});
 })();
 // ═══ END FIX ═══
