@@ -1429,6 +1429,15 @@ function jumpToNamedHeader(label) {
 // disarms immediately, so the normal case never waits out the timer. FLING_VELOCITY is the one knob
 // worth tuning after testing on a real phone — raise it if normal brisk scrolling ever gets caught
 // by mistake, lower it if a hard flick isn't being caught.
+// v2.1: a REALLY hard flick (e.g. flung from the very bottom of a long tab, covering the whole
+// menu in one motion) can move so far between two consecutive 'scroll' events that the position
+// jumps clean from well above the seam to at-or-past it in a single sample — the browser coalesces
+// very fast momentum into fewer events, so there's no in-between sample left for the native
+// scroll-snap-stop:always to act on before the position has already blown past. When that specific
+// jump is detected (previous sample above the seam, this one at/below it, moving fast), we correct
+// it immediately with a direct scrollTo back to the seam — a deliberate slow scroll can never
+// trigger this because it can't produce that combination of "crossed the whole gap in one tick" and
+// "moving fast enough to count as a fling" at the same time.
 // (delete this block + the .snap-armed CSS rule to go back to no scroll-snap at all) ═══
 (function () {
   const catchEl = document.querySelector('.scroll-snap-catch');
@@ -1451,10 +1460,23 @@ function jumpToNamedHeader(label) {
     const t = performance.now();
     const dt = Math.max(t - lastT, 1);
     const v = (y - lastY) / dt; // negative while scrolling up (toward the hero)
-    if (v < -FLING_VELOCITY && y > boundaryY) {
-      root.classList.add('snap-armed');
-      clearTimeout(armTimer);
-      armTimer = setTimeout(disarm, ARM_TIMEOUT);
+    if (v < -FLING_VELOCITY) {
+      // Already skipped clean past the seam in one sample — native scroll-snap didn't get a chance
+      // to act in time (an extremely hard flick). Correct it directly instead of letting it sail
+      // through onto the hero.
+      if (lastY > boundaryY && y <= boundaryY) {
+        window.scrollTo({top: boundaryY, left: 0, behavior: 'auto'});
+        clearTimeout(armTimer);
+        disarm();
+        lastY = boundaryY;
+        lastT = t;
+        return;
+      }
+      if (y > boundaryY) {
+        root.classList.add('snap-armed');
+        clearTimeout(armTimer);
+        armTimer = setTimeout(disarm, ARM_TIMEOUT);
+      }
     }
     if (y <= boundaryY + 4) { clearTimeout(armTimer); disarm(); }
     lastY = y;
