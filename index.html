@@ -13,18 +13,31 @@
   --cream:#f0e4d0;--cream-dim:rgba(240,228,208,0.38);
   --gold:#c9a84c;--muted:#7a6550;
 }
-/* ═══ FIX: SCROLL CATCH AT HERO/MENU SEAM — a fast upward flick from deep in a menu tab used to
+/* ═══ FIX v2: SCROLL CATCH AT HERO/MENU SEAM — a fast upward flick from deep in a menu tab used to
    sail straight through the top of the menu and back onto the hero/welcome screen in one motion.
-   scroll-snap-type + scroll-snap-stop:always on a 0-height marker (.scroll-snap-catch, placed as
-   the last thing inside .hero, so it sits exactly at the hero/nav-wrap seam) is the browser-native
-   way to do this: unlike a JS scroll listener, it also catches real touch-momentum flinging on
-   phones, which JS can't intercept mid-flight. "proximity" (not "mandatory") means this ONLY
-   engages near that one seam — ordinary scrolling anywhere else in the (very long) menu is
-   completely unaffected. Once actually resting at the seam, a further deliberate scroll in either
-   direction passes through it normally — the catch only stops scrolls that would otherwise skip
-   over it entirely. (delete this rule + the .scroll-snap-catch element + its CSS rule to revert)
-   ═══ */
-html{scroll-behavior:smooth;overflow-anchor:none;scroll-snap-type:y proximity}
+   scroll-snap-stop:always on a 0-height marker (.scroll-snap-catch) is still what actually catches
+   real touch-momentum flinging on phones — a JS scroll listener can't reposition mid-flight without
+   visibly fighting the phone's own momentum animation, only the browser's own compositor can do
+   that cleanly, which is why this still leans on native CSS scroll-snap rather than pure JS.
+   v1 left scroll-snap-type:y proximity ON permanently, which was the actual bug reported: proximity
+   snapping doesn't just catch fast flings, it also pulls back ANY scroll — slow, deliberate, tiny —
+   that happens to come to rest near the seam. In Chrome that "pull zone" turned out to be roughly a
+   full screen tall, so you had to fight your way down past the Coca-Cola card before it let go, and
+   the same magnetism was active on the hero itself since the rule was global.
+   v2 fixes this properly: scroll-snap-type now starts OFF (see plain html{} below, no snap type),
+   and is only switched on for the .snap-armed class, which JS (search "SCROLL CATCH ARMING" near
+   the other scroll fixes) adds for the DURATION OF A SINGLE FAST UPWARD SCROLL ONLY — arming is
+   gated on actual scroll velocity crossing a fling threshold while still below the seam, not on
+   position. A slow/deliberate scroll, however close it ends up resting to the seam, never reaches
+   that velocity, so snapping never engages for it and it passes straight through with zero pull —
+   that's what actually fixes the "well". A genuine fast flick crosses the threshold well before it
+   reaches the seam, arming the native catch in time so scroll-snap-stop:always can do its job of
+   stopping it exactly there. Either way, the class is removed again on the 'scrollend' event, so
+   the very next scroll — fast or slow — starts from a clean, completely unarmed state.
+   (delete this rule + the .snap-armed rule below + the .scroll-snap-catch element + its CSS rule +
+   the "SCROLL CATCH ARMING" script block to revert to plain unassisted scrolling) ═══ */
+html{scroll-behavior:smooth;overflow-anchor:none}
+html.snap-armed{scroll-snap-type:y proximity}
 body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-anchor:none}
 
 /* ─── HERO ─────────────────────────────────────────────── */
@@ -70,8 +83,9 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 @keyframes scrollFill{0%{transform:scaleY(0)}70%{transform:scaleY(1)}100%{transform:scaleY(1)}}
 
 /* 0-height marker sitting exactly at the hero/nav-wrap seam — see the HTML comment above it and the
-   html{scroll-snap-type} rule near the top of the file for the full explanation. scroll-snap-stop:
-   always is what actually catches a fast fling that would otherwise skip straight past this point. */
+   html.snap-armed{scroll-snap-type} rule near the top of the file (FIX v2) for the full explanation.
+   scroll-snap-stop:always is what actually catches a fast fling that would otherwise skip straight
+   past this point, whenever scroll-snap-type is currently armed. */
 .scroll-snap-catch{height:0;scroll-snap-align:start;scroll-snap-stop:always}
 
 /* ─── NAV ────────────────────────────────────────────────── */
@@ -90,6 +104,19 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .card-eyebrow{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
 .card-eyebrow .card-origin{margin-bottom:0}
 .price-chips{display:flex;flex-wrap:wrap;gap:3px;flex-shrink:0}
+/* ═══ FIX: DEACTIVATED-CARD STRUCTURE UNIFIED — every .card.deactivated below (Red Bull, Red Bull
+   Zero, Évian x2, Coconut Water, Freddo Cappuccino, Iced Latte, Heineken, Heineken 0%, both Special
+   K bars) previously used a shortened, category-inconsistent markup: some skipped the card-eyebrow/
+   card-text wrapper entirely, image tags appeared in a different order than their active siblings,
+   and origin/price/description/tags were sometimes present and sometimes missing outright — fine
+   for a hand-written static file, but exactly the kind of per-card inconsistency that'll cause real
+   mishaps once a Firebase-driven admin panel is rendering these from a single template. Every
+   deactivated card's DOM shape now matches its own category's active cards exactly (same wrapper
+   divs, same element order, same img attribute order/onerror convention for that category). Price,
+   description and tags are left genuinely EMPTY (not invented) wherever real data doesn't exist yet
+   — see the per-card comments for exactly what's still missing before each can go live. Purely
+   structural, and every one of these cards is still display:none — nothing visible on the live menu
+   changed. (revert per-card by comparing against the file history) ═══ */
 .deactivated{display:none!important}
 .hero-wifi{font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:14px;animation:fadeUp .8s .3s ease both}
 .hero-wifi strong{color:var(--cream);font-weight:600}
@@ -295,6 +322,16 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 .card-desc{font-family:'Montserrat',sans-serif;font-size:10px;line-height:1.9;color:rgba(240,228,208,0.52);font-weight:300;letter-spacing:.06em}
 .card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
 .tag{font-family:'Montserrat',sans-serif;font-size:8px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);background:rgba(237,133,48,.12);border:1px solid rgba(237,133,48,.25);border-radius:20px;padding:3px 10px;opacity:.72}
+/* ═══ FIX: EMPTY PLACEHOLDER FIELDS COLLAPSE — every card now has a .card-origin/.card-desc/
+   .card-tags/.price-badge element present even where there's no real data yet (see the
+   "DEACTIVATED-CARD STRUCTURE UNIFIED" comment on .deactivated, and the same unification applied
+   to the handful of live cards that were missing a field). Without this, a genuinely empty field
+   still takes up its own line-height/margin/flex space — e.g. an empty .card-origin sitting next
+   to a lone .price-badge in a space-between row would visibly push that badge over, or leave a
+   small blank gap where a field never used to be. :empty collapses a truly blank field to nothing,
+   so every live card looks pixel-identical to before — the field is just there now, ready for real
+   data. (delete this rule to make blank fields take up space again) ═══ */
+.card-origin:empty,.card-desc:empty,.card-tags:empty,.price-badge:empty{display:none}
 
 /* ─── SMOOTHIE BASE SELECTOR ────────────────────────────── */
 .base-selector{margin-top:16px;border-top:1px solid rgba(237,133,48,.08);padding-top:14px}
@@ -406,6 +443,20 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 .coffee-img-wrap{width:150px;height:190px;flex-shrink:0}
 /* ═══ END FIX ═══ */
 .coffee-img-wrap img{width:100%;height:100%;object-fit:contain;object-position:center bottom;max-width:none}
+/* ═══ FIX: COFFEE/MATCHA GLOW CLIPPED INTO A SQUARE — .coffee-img-wrap needs overflow:hidden so an
+   intentionally oversized/cropped cup or glass can never bleed into a neighbouring card (see the
+   "PRODUCT PHOTOS" note above) — that protection is still exactly what it was. But the glow's own
+   filter:drop-shadow on the image was ALSO being clipped by that same tight box, and since the box
+   is sized to closely fit the cup, the shadow's soft irregular edge got cut off in a hard rectangle
+   instead of fading out around the drink's real shape — the "square box" glow. Cans/bottles/bars/tea
+   leaves never had this problem because nothing clips that tightly around them (only the outer
+   .card does, with plenty of padding to spare). This class also covers Iced Strawberry Latte and
+   Bumble, since strawberry-img-wrap/bumble-img-wrap are additional classes layered ON TOP of
+   coffee-img-wrap, not replacements for it. Letting just this wrapper go overflow:visible while a
+   card is actually glowing (touch or hover) fixes it without touching the outer .card clip that
+   exists to stop real image bleed. (delete these two rules to go back to the glow being boxed in) ═══ */
+.card-glow .coffee-img-wrap{overflow:visible}
+@media (hover:hover) and (pointer:fine){.card:hover .coffee-img-wrap{overflow:visible}}
 .strawberry-img-wrap{overflow:hidden;align-items:center}
 .strawberry-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:contain;object-position:center bottom;transform:none}
 .bumble-img-wrap{overflow:hidden}
@@ -566,6 +617,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
         <div class="card-text">
           <div class="card-eyebrow"><div class="card-origin" data-en="Classic · 330ml" data-ru="Классическая · 330мл">Classic · 330ml</div><div class="price-badge">€1.00</div></div>
           <div class="card-name">Coca-Cola</div>
+          <div class="card-desc" data-en="" data-ru=""></div>
           <div class="card-tags"><span class="tag">Classic</span></div>
         </div>
         <img class="card-img-can" src="Images/Non-Alchoholic/Coca-Cola-330ml.png" alt="">
@@ -576,25 +628,32 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
         <div class="card-text">
           <div class="card-eyebrow"><div class="card-origin" data-en="Zero Sugar · 330ml" data-ru="Без сахара · 330мл">Zero Sugar · 330ml</div><div class="price-badge">€1.00</div></div>
           <div class="card-name">Coca-Cola Zero</div>
+          <div class="card-desc" data-en="" data-ru=""></div>
           <div class="card-tags"><span class="tag" data-en="Zero Sugar" data-ru="Без сахара">Zero Sugar</span></div>
         </div>
         <img class="card-img-can" src="Images/Non-Alchoholic/coca-cola-zero-330ml-can.png" alt="">
       </div></div>
     </div>
+    <!-- needs: price, description, tags before activating -->
     <div class="card deactivated">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Energy · 250ml" data-ru="Энергетик · 250мл">Energy · 250ml</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Energy · 250ml" data-ru="Энергетик · 250мл">Energy · 250ml</div><div class="price-badge"></div></div>
           <div class="card-name">Red Bull</div>
+          <div class="card-desc" data-en="" data-ru=""></div>
+          <div class="card-tags"></div>
         </div>
         <img class="card-img-can" src="Images/Non-Alchoholic/Red-bull-250ml.png" alt="">
       </div></div>
     </div>
+    <!-- needs: price, description, tags before activating -->
     <div class="card deactivated">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Sugar-free Energy · 250ml" data-ru="Без сахара · 250мл">Sugar-free Energy · 250ml</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Sugar-free Energy · 250ml" data-ru="Без сахара · 250мл">Sugar-free Energy · 250ml</div><div class="price-badge"></div></div>
           <div class="card-name">Red Bull Zero</div>
+          <div class="card-desc" data-en="" data-ru=""></div>
+          <div class="card-tags"></div>
         </div>
         <img class="card-img-can" src="Images/Non-Alchoholic/Red-bull-sugar-free-250ml.png" alt="">
       </div></div>
@@ -621,31 +680,40 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
         <img class="card-img-bottle" src="Images/Non-Alchoholic/powerade-orange.png" alt="">
       </div></div>
     </div>
+    <!-- needs: price, description, tags before activating -->
     <div class="card deactivated">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Évian · France" data-ru="Évian · Франция">Évian · France</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Évian · France" data-ru="Évian · Франция">Évian · France</div><div class="price-badge"></div></div>
           <div class="card-name" data-en="Still" data-ru="Без газа">Still</div>
+          <div class="card-desc" data-en="" data-ru=""></div>
+          <div class="card-tags"></div>
         </div>
         <img class="card-img-bottle" src="Images/Non-Alchoholic/evian-water-glass-bottle-330-ml.png" alt="">
       </div></div>
     </div>
+    <!-- needs: price, description, tags before activating -->
     <div class="card deactivated">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="Évian · France" data-ru="Évian · Франция">Évian · France</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Évian · France" data-ru="Évian · Франция">Évian · France</div><div class="price-badge"></div></div>
           <div class="card-name" data-en="Sparkling" data-ru="С газом">Sparkling</div>
+          <div class="card-desc" data-en="" data-ru=""></div>
+          <div class="card-tags"></div>
         </div>
         <img class="card-img-bottle" src="Images/Non-Alchoholic/evian-sparkling-water-330mL.png" alt="">
       </div></div>
     </div>
+    <!-- needs: price, description, tags before activating -->
     <div class="card deactivated">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-origin" data-en="KARA COCO · 330ML" data-ru="KARA COCO · 330МЛ">KARA COCO · 330ML</div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="KARA COCO · 330ML" data-ru="KARA COCO · 330МЛ">KARA COCO · 330ML</div><div class="price-badge"></div></div>
           <div class="card-name" data-en="Coconut Water" data-ru="Кокосовая вода">Coconut Water</div>
+          <div class="card-desc" data-en="" data-ru=""></div>
+          <div class="card-tags"></div>
         </div>
-        <img src="Images/Non-Alchoholic/coconut-water-330ml.png" alt="Coconut Water" class="card-img-bottle">
+        <img class="card-img-bottle" src="Images/Non-Alchoholic/coconut-water-330ml.png" alt="">
       </div></div>
     </div>
   </div>
@@ -692,7 +760,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Kombucha Orange" data-ru="Комбуча Апельсин">Kombucha Orange</div>
           <div class="card-desc" data-en="Citrus-forward kombucha with bright orange notes and active cultures. Light and refreshing." data-ru="Комбуча с яркими апельсиновыми нотами. Лёгкая и освежающая.">Citrus-forward kombucha with bright orange notes and active cultures. Light and refreshing.</div>
-          <div class="card-tags"><span class="tag">Citrus</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
+          <div class="card-tags"><span class="tag" data-en="Citrus" data-ru="Цитрус">Citrus</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Kombucha/SCOBYSUN_Kombucha_Orange.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -714,7 +782,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="SCOBYSUN · Raw Fermented" data-ru="SCOBYSUN · Живое брожение">SCOBYSUN · Raw Fermented</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Kombucha Grapefruit" data-ru="Комбуча Грейпфрут">Kombucha Grapefruit</div>
           <div class="card-desc" data-en="Bittersweet grapefruit kombucha with a clean citrus finish and live cultures." data-ru="Горько-сладкая комбуча с грейпфрутом. Яркая и бодрящая.">Bittersweet grapefruit kombucha with a clean citrus finish and live cultures.</div>
-          <div class="card-tags"><span class="tag">Citrus</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
+          <div class="card-tags"><span class="tag" data-en="Citrus" data-ru="Цитрус">Citrus</span><span class="tag" data-en="Live Cultures" data-ru="Живые культуры">Live Cultures</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Kombucha/SCOBYSUN_Kombucha_Grapefruit.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -768,7 +836,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="Freshly pressed · Served cold" data-ru="Свежевыжатый · Холодный">Freshly pressed · Served cold</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Orange Fresh" data-ru="Апельсиновый фреш">Orange Fresh</div>
           <div class="card-desc" data-en="Sun-ripened oranges, pressed to order. Bright, vibrant, and naturally sweet." data-ru="Спелые апельсины, отжатые по заказу. Яркий вкус и натуральная сладость.">Sun-ripened oranges, pressed to order. Bright, vibrant, and naturally sweet.</div>
-          <div class="card-tags"><span class="tag" data-en="Fresh" data-ru="Свежий">Fresh</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
+          <div class="card-tags"><span class="tag" data-en="Vitamin C" data-ru="Витамин C">Vitamin C</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Freshly%20Made/Orange_fresh.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -779,7 +847,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="Freshly pressed · Served cold" data-ru="Свежевыжатый · Холодный">Freshly pressed · Served cold</div><div class="price-badge">€2.50</div></div>
           <div class="card-name" data-en="Grapefruit Fresh" data-ru="Грейпфрутовый фреш">Grapefruit Fresh</div>
           <div class="card-desc" data-en="Deeply refreshing with a pleasant bittersweet edge. A classic post-court citrus ritual." data-ru="Освежающий, с приятной горчинкой. Классический цитрусовый ритуал после игры.">Deeply refreshing with a pleasant bittersweet edge. A classic post-court citrus ritual.</div>
-          <div class="card-tags"><span class="tag" data-en="Fresh" data-ru="Свежий">Fresh</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
+          <div class="card-tags"><span class="tag" data-en="Vitamin C" data-ru="Витамин C">Vitamin C</span><span class="tag" data-en="Vegan" data-ru="Веган">Vegan</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Freshly%20Made/Grapefruit_fresh.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -790,7 +858,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="Freshly pressed blend · Served cold" data-ru="Свежевыжатый микс · Холодный">Freshly pressed blend · Served cold</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Orange &amp; Grapefruit" data-ru="Апельсин + Грейпфрут">Orange &amp; Grapefruit</div>
           <div class="card-desc" data-en="The sweetness of orange meets the invigorating bite of grapefruit. Our signature citrus blend." data-ru="Сладость апельсина и горчинка грейпфрута. Наш фирменный цитрусовый микс.">The sweetness of orange meets the invigorating bite of grapefruit. Our signature citrus blend.</div>
-          <div class="card-tags"><span class="tag" data-en="Signature Blend" data-ru="Фирменный микс">Signature Blend</span></div>
+          <div class="card-tags"><span class="tag" data-en="Citrus Duo" data-ru="Цитрусовый дуэт">Citrus Duo</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Freshly%20Made/Orange_grapefruit.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -847,7 +915,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
             <span class="card-choice-pill" data-en="Strawberry" data-ru="Клубника">Strawberry</span>
           </div>
           <div class="card-desc" data-en="Protein powder blended to order with milk or water. Pictured in all three flavours — pick just one and we'll blend it fresh." data-ru="Протеин на молоке или воде по заказу. На фото — все три вкуса; на деле вы выбираете один.">Protein powder blended to order with milk or water. Pictured in all three flavours — pick just one and we'll blend it fresh.</div>
-          <div class="card-tags"><span class="tag" data-en="Protein" data-ru="Протеин">Protein</span><span class="tag" data-en="Post-Workout" data-ru="После игры">Post-Workout</span></div>
+          <div class="card-tags"><span class="tag" data-en="Protein" data-ru="Протеин">Protein</span><span class="tag" data-en="Post-Match" data-ru="После матча">Post-Match</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Freshly%20Made/Simple_protein.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -859,7 +927,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-name" data-en="Energy Mix" data-ru="Energy Mix">Energy Mix</div>
           <div class="card-sub" data-en="Banana · Strawberry · Blueberry" data-ru="Банан · Клубника · Голубика">Banana · Strawberry · Blueberry</div>
           <div class="card-desc" data-en="Our most powerful recovery blend. Ripe banana, strawberry for antioxidants, and blueberry for rich berry depth." data-ru="Мощнейший восстановительный купаж. Банан, клубника и голубика.">Our most powerful recovery blend. Ripe banana, strawberry for antioxidants, and blueberry for rich berry depth.</div>
-          <div class="card-tags"><span class="tag" data-en="Post-Workout" data-ru="После игры">Post-Workout</span><span class="tag" data-en="Antioxidant" data-ru="Антиоксидант">Antioxidant</span></div>
+          <div class="card-tags"><span class="tag" data-en="Post-Match" data-ru="После матча">Post-Match</span><span class="tag" data-en="Antioxidant" data-ru="Антиоксидант">Antioxidant</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Freshly%20Made/Energy_mix.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -895,7 +963,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-name" data-en="Berry Mix" data-ru="Berry Mix">Berry Mix</div>
           <div class="card-sub" data-en="Blueberry · Strawberry" data-ru="Голубика · Клубника">Blueberry · Strawberry</div>
           <div class="card-desc" data-en="Intensely flavoured, rich in antioxidants, with a vivid deep colour and clean, bright finish." data-ru="Насыщенный вкус, богатый антиоксидантами. Яркий цвет и чистое послевкусие.">Intensely flavoured, rich in antioxidants, with a vivid deep colour and clean, bright finish.</div>
-          <div class="card-tags"><span class="tag" data-en="Antioxidant Rich" data-ru="Богат антиоксидантами">Antioxidant Rich</span></div>
+          <div class="card-tags"><span class="tag" data-en="Antioxidant" data-ru="Антиоксидант">Antioxidant</span></div>
         </div>
         <img class="card-img-bottle" src="Images/Freshly%20Made/Berry_mix.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -950,9 +1018,10 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-eyebrow"><div class="price-chips"><div class="price-badge">Single €0.50</div><div class="price-badge">Double €1.00</div></div></div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="" data-ru=""></div><div class="price-chips"><div class="price-badge">Single €0.50</div><div class="price-badge">Double €1.00</div></div></div>
           <div class="card-name" data-en="Espresso" data-ru="Эспрессо">Espresso</div>
           <div class="card-desc" data-en="Pure and concentrated. Rich crema, dark fruit, and a clean, lingering finish." data-ru="Чистый и концентрированный. Насыщенная крема, тёмные фрукты.">Pure and concentrated. Rich crema, dark fruit, and a clean, lingering finish.</div>
+          <div class="card-tags"></div>
         </div>
         <div class="coffee-img-wrap"><img src="Images/Coffee/Espresso.png" alt="Espresso" onerror="this.style.display='none'"></div>
       </div></div>
@@ -963,6 +1032,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Hot water · 200ml" data-ru="Эспрессо · Горячая вода · 200мл">Espresso · Hot water · 200ml</div><div class="price-badge">€0.70</div></div>
           <div class="card-name" data-en="Americano" data-ru="Американо">Americano</div>
           <div class="card-desc" data-en="Espresso lengthened with hot water to reveal a longer, gentler extraction. Clear and flavourful." data-ru="Эспрессо с горячей водой. Открывает более длинный и мягкий вкус.">Espresso lengthened with hot water to reveal a longer, gentler extraction. Clear and flavourful.</div>
+          <div class="card-tags"></div>
         </div>
         <div class="coffee-img-wrap"><img src="Images/Coffee/Americano.png" alt="Americano" onerror="this.style.display='none'"></div>
       </div></div>
@@ -973,6 +1043,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Steamed milk · 180ml" data-ru="Эспрессо · Взбитое молоко · 180мл">Espresso · Steamed milk · 180ml</div><div class="price-chips"><div class="price-badge">€1.00</div><div class="price-badge">alt €1.50</div></div></div>
           <div class="card-name" data-en="Cappuccino" data-ru="Капучино">Cappuccino</div>
           <div class="card-desc" data-en="Equal thirds of espresso, steamed milk, and dense velvety foam. The perfect balance of strength and softness." data-ru="Равные части эспрессо, молока и густой бархатной пенки. Идеальный баланс.">Equal thirds of espresso, steamed milk, and dense velvety foam. The perfect balance of strength and softness.</div>
+          <div class="card-tags"></div>
         </div>
         <div class="coffee-img-wrap"><img src="Images/Coffee/Cappuccino.png" alt="Cappuccino" onerror="this.style.display='none'"></div>
       </div></div>
@@ -983,6 +1054,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Steamed milk · 240ml" data-ru="Эспрессо · Горячее молоко · 240мл">Espresso · Steamed milk · 240ml</div><div class="price-chips"><div class="price-badge">€1.00</div><div class="price-badge">alt €1.50</div></div></div>
           <div class="card-name" data-en="Latte" data-ru="Латте">Latte</div>
           <div class="card-desc" data-en="Espresso softened by a generous pour of steamed milk with a thin layer of silky microfoam. Smooth, mellow, and satisfying." data-ru="Эспрессо с обильным количеством горячего молока и тонким слоем микропены.">Espresso softened by a generous pour of steamed milk with a thin layer of silky microfoam. Smooth, mellow, and satisfying.</div>
+          <div class="card-tags"></div>
         </div>
         <div class="coffee-img-wrap"><img src="Images/Coffee/Latte.png" alt="Latte" onerror="this.style.display='none'"></div>
       </div></div>
@@ -1001,14 +1073,25 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
         <div class="coffee-img-wrap"><img src="Images/Coffee/Freddo-Espresso.png" alt="Freddo Espresso" onerror="this.style.display='none'"></div>
       </div></div>
     </div>
+    <!-- needs: price, description, tags before activating -->
     <div class="card deactivated"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-text">
+        <div class="card-eyebrow"><div class="card-origin" data-en="Greek cold coffee · With milk foam" data-ru="Греческий холодный кофе · С молочной пенкой">Greek cold coffee · With milk foam</div><div class="price-badge"></div></div>
+        <div class="card-name" data-en="Freddo Cappuccino" data-ru="Фреддо Капучино">Freddo Cappuccino</div>
+        <div class="card-desc" data-en="" data-ru=""></div>
+        <div class="card-tags"></div>
+      </div>
       <div class="coffee-img-wrap"><img src="Images/Coffee/Freddo-Cappuccino.png" alt="Freddo Cappuccino" onerror="this.style.display='none'"></div>
-      <div class="card-origin" data-en="Greek cold coffee · With milk foam" data-ru="Греческий холодный кофе · С молочной пенкой">Greek cold coffee · With milk foam</div>
-      <div class="card-name" data-en="Freddo Cappuccino" data-ru="Фреддо Капучино">Freddo Cappuccino</div>
     </div></div></div>
+    <!-- needs: origin, price, description, tags before activating -->
     <div class="card deactivated"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
+      <div class="card-text">
+        <div class="card-eyebrow"><div class="card-origin" data-en="" data-ru=""></div><div class="price-badge"></div></div>
+        <div class="card-name" data-en="Iced Latte" data-ru="Айс-латте">Iced Latte</div>
+        <div class="card-desc" data-en="" data-ru=""></div>
+        <div class="card-tags"></div>
+      </div>
       <div class="coffee-img-wrap"><img src="Images/Coffee/Iced-Latte.png" alt="Iced Latte" onerror="this.style.display='none'"></div>
-      <div class="card-name" data-en="Iced Latte" data-ru="Айс-латте">Iced Latte</div>
     </div></div></div>
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
@@ -1055,7 +1138,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-eyebrow"><div class="price-badge">€2.00</div></div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="" data-ru=""></div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Earl Grey" data-ru="Эрл Грей">Earl Grey</div>
           <div class="card-desc" data-en="Black tea infused with natural bergamot. Aromatic, elegant, and timeless." data-ru="Чёрный чай с натуральным бергамотом. Ароматный и элегантный.">Black tea infused with natural bergamot. Aromatic, elegant, and timeless.</div>
           <div class="card-tags"><span class="tag" data-en="Black Tea" data-ru="Чёрный чай">Black Tea</span></div>
@@ -1069,7 +1152,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="Japan · Shade-grown" data-ru="Япония · Тенистое выращивание">Japan · Shade-grown</div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Gyokuro" data-ru="Гёкуро">Gyokuro</div>
           <div class="card-desc" data-en="Japan's finest green tea, shade-grown before harvest. Deep umami richness with a sweet, oceanic character." data-ru="Один из лучших зелёных чаёв Японии. Глубокий умами с морским и сладким послевкусием.">Japan's finest green tea, shade-grown before harvest. Deep umami richness with a sweet, oceanic character.</div>
-          <div class="card-tags"><span class="tag" data-en="Green Tea" data-ru="Зелёный чай">Green Tea</span><span class="tag" data-en="Premium" data-ru="Премиум">Premium</span></div>
+          <div class="card-tags"><span class="tag" data-en="Green Tea" data-ru="Зелёный чай">Green Tea</span><span class="tag" data-en="Umami" data-ru="Умами">Umami</span></div>
         </div>
         <img class="card-img-tea" src="Images/Tea/Gyokuro.png" alt="" onerror="this.style.display='none'">
       </div></div>
@@ -1088,7 +1171,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-eyebrow"><div class="price-badge">€2.00</div></div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="" data-ru=""></div><div class="price-badge">€2.00</div></div>
           <div class="card-name" data-en="Chamomile" data-ru="Ромашка">Chamomile</div>
           <div class="card-desc" data-en="A mild herbal tea with a relaxing effect. Gentle, soothing, and naturally caffeine-free." data-ru="Мягкий травяной чай с расслабляющим эффектом. Нежный и успокаивающий.">A mild herbal tea with a relaxing effect. Gentle, soothing, and naturally caffeine-free.</div>
           <div class="card-tags"><span class="tag" data-en="Herbal" data-ru="Травяной">Herbal</span><span class="tag" data-en="Caffeine-free" data-ru="Без кофеина">Caffeine-free</span></div>
@@ -1129,7 +1212,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
           <div class="card-eyebrow"><div class="card-origin" data-en="Matcha · Orange juice" data-ru="Матча · Апельсиновый сок">Matcha · Orange juice</div><div class="price-badge">€2.80</div></div>
           <div class="card-name" data-en="Matcha with OJ" data-ru="Матча с апельсином">Matcha with OJ</div>
           <div class="card-desc" data-en="Ceremonial matcha blended with fresh orange juice. Bright, citrusy, and surprisingly refreshing." data-ru="Церемониальная матча со свежевыжатым апельсиновым соком. Яркая и бодрящая.">Ceremonial matcha blended with fresh orange juice. Bright, citrusy, and surprisingly refreshing.</div>
-          <div class="card-tags"><span class="tag">Citrus</span><span class="tag" data-en="Refreshing" data-ru="Освежающий">Refreshing</span></div>
+          <div class="card-tags"><span class="tag" data-en="Citrus" data-ru="Цитрус">Citrus</span><span class="tag" data-en="Bright" data-ru="Яркий">Bright</span></div>
         </div>
         <div class="coffee-img-wrap"><img src="Images/Matcha/Match_orange.png" alt="Matcha Orange" onerror="this.style.display='none'"></div>
       </div></div>
@@ -1159,9 +1242,13 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   </div>
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="With Alcohol" data-ru="С алкоголем">With Alcohol</span><div class="sub-rule"></div></div>
   <div class="grid2">
+    <!-- needs: origin, price, description, tags before activating -->
     <div class="card deactivated"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
       <div class="card-text">
+        <div class="card-eyebrow"><div class="card-origin" data-en="" data-ru=""></div><div class="price-badge"></div></div>
         <div class="card-name">Heineken</div>
+        <div class="card-desc" data-en="" data-ru=""></div>
+        <div class="card-tags"></div>
       </div>
       <img class="card-img-can" src="Images/Non-Alchoholic/heineken-original-can.png" alt="">
     </div></div></div>
@@ -1179,9 +1266,13 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   </div>
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Alcohol Free" data-ru="Безалкогольное">Alcohol Free</span><div class="sub-rule"></div></div>
   <div class="grid2">
+    <!-- needs: origin, price, description, tags before activating -->
     <div class="card deactivated"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
       <div class="card-text">
+        <div class="card-eyebrow"><div class="card-origin" data-en="" data-ru=""></div><div class="price-badge"></div></div>
         <div class="card-name">Heineken 0%</div>
+        <div class="card-desc" data-en="" data-ru=""></div>
+        <div class="card-tags"></div>
       </div>
       <img class="card-img-bottle" src="Images/Non-Alchoholic/heineken-00-bottle.png" alt="">
     </div></div></div>
@@ -1209,14 +1300,20 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   </div>
   <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Protein Bars" data-ru="Протеиновые батончики">Protein Bars</span><div class="sub-rule"></div></div>
   <div class="cards">
+    <!-- needs: price, description, tags before activating -->
     <div class="card deactivated"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
-      <div class="card-origin">SPECIAL K · JUICY RED BERRY</div>
+      <div class="card-eyebrow"><div class="card-origin">SPECIAL K · JUICY RED BERRY</div><div class="price-badge"></div></div>
       <div class="card-name" data-en="Juicy Red Berry Bar" data-ru="Батончик Красная Ягода">Juicy Red Berry Bar</div>
+      <div class="card-desc" data-en="" data-ru=""></div>
+      <div class="card-tags"></div>
       <img class="card-img-bar" src="Images/Snacks/special-k-juicy-red-berry.png" alt="">
     </div></div></div>
+    <!-- needs: price, description, tags before activating -->
     <div class="card deactivated"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
-      <div class="card-origin">SPECIAL K · MILK CHOCOLATE</div>
+      <div class="card-eyebrow"><div class="card-origin">SPECIAL K · MILK CHOCOLATE</div><div class="price-badge"></div></div>
       <div class="card-name" data-en="Milk Chocolate Cereal Bar" data-ru="Батончик Молочный Шоколад">Milk Chocolate Cereal Bar</div>
+      <div class="card-desc" data-en="" data-ru=""></div>
+      <div class="card-tags"></div>
       <img class="card-img-bar" src="Images/Snacks/special-k-milk-chocolate.png" alt="">
     </div></div></div>
     <div class="card">
@@ -1224,7 +1321,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
         <div class="card-eyebrow"><div class="card-origin">KELLOGG'S · COCO POPS</div><div class="price-badge">€0.80</div></div>
         <div class="card-name" data-en="Coco Pops Bar" data-ru="Батончик Коко Попс">Coco Pops Bar</div>
         <div class="card-desc" data-en="Crunchy chocolatey rice cereal bar with a smooth undercoat. Source of Vitamin D. No artificial colours or flavours." data-ru="Хрустящий шоколадный рисовый батончик. Источник витамина D. Без искусственных красителей.">Crunchy chocolatey rice cereal bar with a smooth undercoat. Source of Vitamin D. No artificial colours or flavours.</div>
-        <div class="card-tags"><span class="tag">82 KCAL</span><span class="tag">VITAMIN D</span></div>
+        <div class="card-tags"><span class="tag" data-en="82 Kcal" data-ru="82 ККАЛ">82 Kcal</span><span class="tag" data-en="Vitamin D" data-ru="Витамин D">Vitamin D</span></div>
         <img class="card-img-bar" src="Images/Snacks/kelloggs-coco-pops-bar.png" alt="">
       </div></div>
     </div>
@@ -1233,7 +1330,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
         <div class="card-eyebrow"><div class="card-origin">KELLOGG'S · ALL-BRAN</div><div class="price-badge">€1.00</div></div>
         <div class="card-name" data-en="All-Bran Chocolate Bar" data-ru="Батончик Олл-Бран Шоколад">All-Bran Chocolate Bar</div>
         <div class="card-desc" data-en="Hearty bran bar with chocolate coating and wholegrain wheat. High in fibre." data-ru="Сытный отрубной батончик с шоколадной глазурью и цельной пшеницей. Высокое содержание клетчатки.">Hearty bran bar with chocolate coating and wholegrain wheat. High in fibre.</div>
-        <div class="card-tags"><span class="tag">171 KCAL</span><span class="tag">HIGH FIBRE</span></div>
+        <div class="card-tags"><span class="tag" data-en="171 Kcal" data-ru="171 ККАЛ">171 Kcal</span><span class="tag" data-en="High Fibre" data-ru="Много клетчатки">High Fibre</span></div>
         <img class="card-img-bar" src="Images/Snacks/kelloggs-all-bran-chocolate.png" alt="">
       </div></div>
     </div>
@@ -1315,6 +1412,55 @@ function jumpToNamedHeader(label) {
   const target = document.querySelector('.sub-head.nav-jump[aria-label="Jump to ' + label + '"]');
   if (target) jumpToHeader(target);
 }
+// ═══ END FIX ═══
+
+// ═══ FIX: SCROLL CATCH ARMING (see the FIX v2 comment on the html{} rule near the top of the CSS
+// for the full story) — toggles the .snap-armed class on <html> so the native scroll-snap catch at
+// the hero/menu seam is only ever "live" for the span of a single fast UPWARD scroll, never for an
+// ordinary one. Arming is triggered purely by velocity: on every 'scroll' event we compute how fast
+// the page just moved (px/ms) from the previous sample, and only add .snap-armed when that's above
+// FLING_VELOCITY, moving upward, and still below the seam — a slow/deliberate scroll never reaches
+// that speed no matter how close it ends up resting to the seam, so it never engages scroll-snap at
+// all (this is what actually fixes the old "sticky well" — v1 armed permanently, this arms almost
+// never, only for genuine flicks). Every fast tick re-arms and pushes out a short auto-release timer
+// rather than relying on the 'scrollend' event to know when to let go — testing showed 'scrollend'
+// can fire on a brief lull between individual scroll ticks well before a fling has actually reached
+// the seam, releasing the catch mid-flight. Reaching the seam itself (y <= boundaryY+4) still
+// disarms immediately, so the normal case never waits out the timer. FLING_VELOCITY is the one knob
+// worth tuning after testing on a real phone — raise it if normal brisk scrolling ever gets caught
+// by mistake, lower it if a hard flick isn't being caught.
+// (delete this block + the .snap-armed CSS rule to go back to no scroll-snap at all) ═══
+(function () {
+  const catchEl = document.querySelector('.scroll-snap-catch');
+  if (!catchEl) return;
+  const root = document.documentElement;
+  const FLING_VELOCITY = 1.0; // px/ms — a real hard flick is well above this; ordinary scrolling isn't
+  const ARM_TIMEOUT = 500; // ms with no further fast tick before a still-armed catch auto-releases
+  let boundaryY = 0;
+  let lastY = window.scrollY;
+  let lastT = performance.now();
+  let armTimer = null;
+  function measure() { boundaryY = catchEl.getBoundingClientRect().top + window.scrollY; }
+  measure();
+  window.addEventListener('resize', measure);
+
+  function disarm() { root.classList.remove('snap-armed'); }
+
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    const t = performance.now();
+    const dt = Math.max(t - lastT, 1);
+    const v = (y - lastY) / dt; // negative while scrolling up (toward the hero)
+    if (v < -FLING_VELOCITY && y > boundaryY) {
+      root.classList.add('snap-armed');
+      clearTimeout(armTimer);
+      armTimer = setTimeout(disarm, ARM_TIMEOUT);
+    }
+    if (y <= boundaryY + 4) { clearTimeout(armTimer); disarm(); }
+    lastY = y;
+    lastT = t;
+  }, {passive: true});
+})();
 // ═══ END FIX ═══
 
 // ═══ FIX: STICKY QUICK-NAV OFFSET — keeps the --nav-h custom property (used by .sec-desc.quicknav's
