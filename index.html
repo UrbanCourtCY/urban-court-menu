@@ -113,8 +113,9 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .card-eyebrow .card-origin{margin-bottom:0}
 .price-chips{display:flex;flex-wrap:wrap;gap:3px;flex-shrink:0}
 /* ═══ FIX: DEACTIVATED-CARD STRUCTURE UNIFIED — every .card.deactivated below (Red Bull, Red Bull
-   Zero, Évian x2, Coconut Water, Freddo Cappuccino, Iced Latte, Heineken, Heineken 0%, both Special
-   K bars) previously used a shortened, category-inconsistent markup: some skipped the card-eyebrow/
+   Zero, Évian x2, Coconut Water, Freddo Cappuccino, Heineken, Heineken 0%, both Special K bars —
+   Iced Latte was later filled in with real data and reactivated) previously used a shortened,
+   category-inconsistent markup: some skipped the card-eyebrow/
    card-text wrapper entirely, image tags appeared in a different order than their active siblings,
    and origin/price/description/tags were sometimes present and sometimes missing outright — fine
    for a hand-written static file, but exactly the kind of per-card inconsistency that'll cause real
@@ -469,6 +470,24 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 .strawberry-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:contain;object-position:center bottom;transform:none}
 .bumble-img-wrap{overflow:hidden}
 .bumble-img-wrap img{width:100%!important;height:100%!important;max-width:none;object-fit:contain;object-position:center bottom}
+
+/* ═══ FIX: STEAM / GARNISH CLIPPED AT THE TOP OF THE COFFEE BOX — same root cause as the square-glow
+   bug above, different symptom. The "COFFEE GLASS SIZE" pass further down (img[src*="/Americano.png"]
+   etc.) scales Americano/Cappuccino/Latte/iced-strawberry-latte/Freddo-Espresso up 7% from the bottom
+   so they all match Bumble's natural render size — growing from the bottom pushes the TOP of the
+   photo past the wrap's own tight box. Most of these cups have empty transparent margin up there so
+   it was invisible, but Americano's steam wisp and Iced Strawberry Latte's garnish sit close enough
+   to the top of their own source photo that the 7% growth pushed them past the box edge and the
+   still-hidden-by-default .coffee-img-wrap/.strawberry-img-wrap/.bumble-img-wrap clipped them —
+   exactly reproducible by hovering, which already flips .coffee-img-wrap to overflow:visible for the
+   glow and reveals both fully intact, proving the OUTER .card clip alone (with its generous padding
+   in the text/photo row) already stops any of this from bleeding into a neighbouring card. So instead
+   of only relieving the clip during glow/hover, this makes it visible by default for all three photo
+   wrappers — the two rules above stay as a narrower fallback if this block is ever deleted. Checked
+   every coffee/matcha card after this change: nothing else was touching an edge, this was the only
+   pair actually cutting into real photo content. (delete this rule to go back to clipping at the
+   wrap's own edge by default) ═══ */
+.coffee-img-wrap,.strawberry-img-wrap,.bumble-img-wrap{overflow:visible}
 
 /* ── layer 2 — PER-ITEM OVERRIDES (desktop/tablet) ─────────────────────── */
 /* Fresh & Blended group: bottom-anchor the whole row instead of vertically centering it. These cards have longer text (some with a base-selector), so centering left visible empty gaps above/below the photo on shorter cards like Simple Protein — anchoring to the bottom makes every glass look like it's actually resting on something, and keeps them level with each other regardless of how much text is in the card next to them. */
@@ -1026,7 +1045,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-eyebrow"><div class="card-origin" data-en="" data-ru=""></div><div class="price-chips"><div class="price-badge">Single €0.50</div><div class="price-badge">Double €1.00</div></div></div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Single 30ml · Double 60ml" data-ru="Одинарный 30мл · Двойной 60мл">Single 30ml · Double 60ml</div><div class="price-chips"><div class="price-badge">Single €0.50</div><div class="price-badge">Double €1.00</div></div></div>
           <div class="card-name" data-en="Espresso" data-ru="Эспрессо">Espresso</div>
           <div class="card-desc" data-en="Pure and concentrated. Rich crema, dark fruit, and a clean, lingering finish." data-ru="Чистый и концентрированный. Насыщенная крема, тёмные фрукты.">Pure and concentrated. Rich crema, dark fruit, and a clean, lingering finish.</div>
           <div class="card-tags"></div>
@@ -1037,7 +1056,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
-          <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Hot water · 200ml" data-ru="Эспрессо · Горячая вода · 200мл">Espresso · Hot water · 200ml</div><div class="price-badge">€0.70</div></div>
+          <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Hot water · 150ml" data-ru="Эспрессо · Горячая вода · 150мл">Espresso · Hot water · 150ml</div><div class="price-badge">€0.70</div></div>
           <div class="card-name" data-en="Americano" data-ru="Американо">Americano</div>
           <div class="card-desc" data-en="Espresso lengthened with hot water to reveal a longer, gentler extraction. Clear and flavourful." data-ru="Эспрессо с горячей водой. Открывает более длинный и мягкий вкус.">Espresso lengthened with hot water to reveal a longer, gentler extraction. Clear and flavourful.</div>
           <div class="card-tags"></div>
@@ -1091,16 +1110,17 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
       </div>
       <div class="coffee-img-wrap"><img src="Images/Coffee/Freddo-Cappuccino.png" alt="Freddo Cappuccino" onerror="this.style.display='none'"></div>
     </div></div></div>
-    <!-- needs: origin, price, description, tags before activating -->
-    <div class="card deactivated"><div class="card-inner"><div class="card-accent"></div><div class="card-body">
-      <div class="card-text">
-        <div class="card-eyebrow"><div class="card-origin" data-en="" data-ru=""></div><div class="price-badge"></div></div>
-        <div class="card-name" data-en="Iced Latte" data-ru="Айс-латте">Iced Latte</div>
-        <div class="card-desc" data-en="" data-ru=""></div>
-        <div class="card-tags"></div>
-      </div>
-      <div class="coffee-img-wrap"><img src="Images/Coffee/Iced-Latte.png" alt="Iced Latte" onerror="this.style.display='none'"></div>
-    </div></div></div>
+    <div class="card">
+      <div class="card-inner"><div class="card-accent"></div><div class="card-body">
+        <div class="card-text">
+          <div class="card-eyebrow"><div class="card-origin" data-en="Espresso · Cold milk · Ice · 300ml" data-ru="Эспрессо · Холодное молоко · Лёд · 300мл">Espresso · Cold milk · Ice · 300ml</div><div class="price-chips"><div class="price-badge">€1.00</div><div class="price-badge">alt €1.50</div></div></div>
+          <div class="card-name" data-en="Iced Latte" data-ru="Айс-латте">Iced Latte</div>
+          <div class="card-desc" data-en="Espresso poured over cold milk and ice, keeping the same smooth balance as our Latte — just cold and refreshing." data-ru="Эспрессо, налитый на холодное молоко со льдом. Тот же мягкий баланс, что и у нашего латте — только холодный и освежающий.">Espresso poured over cold milk and ice, keeping the same smooth balance as our Latte — just cold and refreshing.</div>
+          <div class="card-tags"><span class="tag" data-en="Cold" data-ru="Холодный">Cold</span></div>
+        </div>
+        <div class="coffee-img-wrap"><img src="Images/Coffee/Iced-Latte.png" alt="Iced Latte" onerror="this.style.display='none'"></div>
+      </div></div>
+    </div>
     <div class="card">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-text">
@@ -1333,13 +1353,29 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
         <img class="card-img-bar" src="Images/Snacks/kelloggs-coco-pops-bar.png" alt="">
       </div></div>
     </div>
-    <div class="card">
+    <!-- Temporarily deactivated on request — replaced on the live menu by Extra Chocolate & Almond
+         Bar below. Content untouched, just hidden; flip .card back off deactivated to restore it. -->
+    <div class="card deactivated">
       <div class="card-inner"><div class="card-accent"></div><div class="card-body">
         <div class="card-eyebrow"><div class="card-origin">KELLOGG'S · ALL-BRAN</div><div class="price-badge">€1.00</div></div>
         <div class="card-name" data-en="All-Bran Chocolate Bar" data-ru="Батончик Олл-Бран Шоколад">All-Bran Chocolate Bar</div>
         <div class="card-desc" data-en="Hearty bran bar with chocolate coating and wholegrain wheat. High in fibre." data-ru="Сытный отрубной батончик с шоколадной глазурью и цельной пшеницей. Высокое содержание клетчатки.">Hearty bran bar with chocolate coating and wholegrain wheat. High in fibre.</div>
         <div class="card-tags"><span class="tag" data-en="171 Kcal" data-ru="171 ККАЛ">171 Kcal</span><span class="tag" data-en="High Fibre" data-ru="Много клетчатки">High Fibre</span></div>
         <img class="card-img-bar" src="Images/Snacks/kelloggs-all-bran-chocolate.png" alt="">
+      </div></div>
+    </div>
+    <!-- New product, replaces All-Bran above. Price/size confirmed from the cost sheet (1pcs, €1.00).
+         Using the Milk Chocolate bar's image as a placeholder per request — swap
+         Images/Snacks/special-k-milk-chocolate.png for the real Extra Chocolate & Almond photo once
+         you have it, nothing else needs to change. Kcal/nutrition tag left off since that figure
+         wasn't supplied — add a tag here once you have it, same pattern as the other bars. -->
+    <div class="card">
+      <div class="card-inner"><div class="card-accent"></div><div class="card-body">
+        <div class="card-eyebrow"><div class="card-origin">KELLOGG'S · EXTRA CHOCOLATE &amp; ALMOND</div><div class="price-badge">€1.00</div></div>
+        <div class="card-name" data-en="Extra Chocolate &amp; Almond Bar" data-ru="Батончик Шоколад и Миндаль">Extra Chocolate &amp; Almond Bar</div>
+        <div class="card-desc" data-en="Kellogg's cereal bar with a rich chocolate coating and crunchy almond pieces." data-ru="Батончик Kellogg's с насыщенной шоколадной глазурью и хрустящими кусочками миндаля.">Kellogg's cereal bar with a rich chocolate coating and crunchy almond pieces.</div>
+        <div class="card-tags"><span class="tag" data-en="Chocolate" data-ru="Шоколад">Chocolate</span><span class="tag" data-en="Almond" data-ru="Миндаль">Almond</span></div>
+        <img class="card-img-bar" src="Images/Snacks/special-k-milk-chocolate.png" alt="">
       </div></div>
     </div>
   </div>
