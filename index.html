@@ -13,38 +13,18 @@
   --cream:#f0e4d0;--cream-dim:rgba(240,228,208,0.38);
   --gold:#c9a84c;--muted:#7a6550;
 }
-/* ═══ FIX v3: SCROLL CATCH AT HERO/MENU SEAM — a fast upward flick from deep in a menu tab used to
-   sail straight through the top of the menu and back onto the hero/welcome screen in one motion.
-   Full history of how this got here (kept because it explains why v3 ends up where it does):
-   v1 used native CSS scroll-snap-type:y proximity, left ON permanently — that snapped back ANY
-   scroll, slow or fast, that happened to rest near the seam (a "pull zone" roughly a full screen
-   tall in Chrome), so a deliberate scroll needed fighting past Coca-Cola before it let go.
-   v2 kept native CSS scroll-snap but only switched it on (via a .snap-armed class) for the span of
-   a detected fast upward scroll, gated on velocity so a slow scroll never armed it at all. This
-   fixed the "well", but on a real phone a genuinely hard flick could still leak through — sometimes
-   cleanly bouncing through once, sometimes catching and oscillating up/down a few times before
-   escaping anyway. The cause: TWO separate mechanisms (native CSS scroll-snap-stop:always doing its
-   own compositor-level catch, AND a JS fallback correcting the position directly for flicks fast
-   enough to skip past before the CSS could react) were BOTH trying to control the same scroll at
-   once, on top of the phone's own still-live touch-momentum animation underneath both of them — three
-   things pushing the scroll position around in the same moment is exactly what an oscillation looks
-   like, each "winning" briefly before the next one overrides it.
-   v3 drops native CSS scroll-snap entirely and uses ONE single JS-driven mechanism instead: watch
-   scroll velocity, and the instant a fast upward scroll reaches the seam, forcibly kill whatever
-   momentum animation the browser/OS still has in flight (by briefly setting the page's overflow to
-   hidden — this is what actually stops native momentum rather than just repositioning on top of it,
-   see hardStopAt() near "SCROLL CATCH ARMING" below) and set the exact resting position in the same
-   step. With only one thing ever touching scroll position during a catch, there's nothing left to
-   fight or oscillate against. A slow/deliberate scroll never reaches the velocity threshold this is
-   gated on, so it's just as unaffected as it was in v2.
-   A v4 was also tried (native CSS scroll-snap armed by proximity to the seam instead of velocity) —
-   on a real phone it was worse still: the "magnet" pull-zone feel came back AND flicks still skipped
-   through inconsistently. Reverted back to this v3 on request. v3's known limitation stands: a soft/
-   slow scroll near the seam catches cleanly; a hard flick sometimes isn't caught and goes straight to
-   the home screen. Left as-is for now rather than attempting a v5 — this scroll-catch mechanic has
-   gone through four real-device iterations without landing cleanly, so it's paused here.
-   (delete this rule + the "SCROLL CATCH ARMING" script block + the .scroll-snap-catch element and
-   its CSS rule to revert to plain unassisted scrolling) ═══ */
+/* ═══ FIX v7: HERO IS ONE-WAY PAST THE SEAM, ONLY THE HOME BUTTON BRINGS IT BACK — replaces
+   v6. v6 (and v5, v3 before it — full blow-by-blow of v1–v6 is in this file's git history if it's
+   ever needed again) all tried to let a deliberate second scroll-up gesture bring the hero back once
+   you were resting at the seam. On a real phone that auto-restore never quite felt right — removed
+   entirely on request.
+   v7 is simpler: crossing the seam going down removes the hero from the page exactly as v6 did
+   (still nothing above the menu to overshoot into, so a hard flick still can't skip anywhere), but
+   nothing brings it back on its own anymore. Once you've scrolled into the menu, that's the only
+   thing scrolling can reach for the rest of this page view. The hero only reappears via the "← Home"
+   button in the nav bar (calls goHome(), scrolls to the top and un-hides it) or a manual refresh.
+   (delete this rule + the "HERO REMOVE, HOME BUTTON RESTORES" script block, and the .nav-home-btn
+   button + its CSS, to revert to plain unassisted scrolling) ═══ */
 html{scroll-behavior:smooth;overflow-anchor:none}
 body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-anchor:none}
 
@@ -57,23 +37,33 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 @keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(30px,20px) scale(1.08)}}
 
 .hero-inner{position:relative;z-index:2;text-align:center;padding:0 28px}
-.hero-venue{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:500;letter-spacing:.5em;text-transform:uppercase;color:var(--orange);margin-bottom:24px;animation:fadeUp .8s ease both}
-.hero-orn{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:28px;animation:fadeUp .8s .1s ease both}
-.ol{height:1px;width:80px;background:linear-gradient(to right,transparent,var(--orange))}
+.hero-venue{font-family:'Rajdhani',sans-serif;font-size:clamp(11px,2.4vw,15px);font-weight:500;letter-spacing:.5em;text-transform:uppercase;color:var(--orange);margin-bottom:30px;animation:fadeUp .8s ease both}
+.hero-orn{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:34px;animation:fadeUp .8s .1s ease both}
+.ol{height:1px;width:clamp(60px,9vw,100px);background:linear-gradient(to right,transparent,var(--orange))}
 .or{background:linear-gradient(to left,transparent,var(--orange))}
-.od{width:5px;height:5px;background:var(--orange);transform:rotate(45deg)}
+.od{width:6px;height:6px;background:var(--orange);transform:rotate(45deg)}
 .hero-title{animation:fadeUp .9s .15s ease both}
-.hero-title img{height:clamp(90px,18vw,170px);width:auto;display:inline-block}
+.hero-title img{height:clamp(105px,20vw,210px);width:auto;display:inline-block}
 
-.hero-sub{font-family:'Caveat',cursive;font-size:18px;font-weight:500;letter-spacing:.04em;color:var(--muted);margin-top:20px;animation:fadeUp .8s .25s ease both}
+.hero-sub{font-family:'Caveat',cursive;font-size:clamp(19px,3vw,25px);font-weight:500;letter-spacing:.04em;color:var(--muted);margin-top:26px;animation:fadeUp .8s .25s ease both}
 
 /* ═══ FIX: HERO OPEN-HOURS BADGE — the "Open daily" line already lived at the bottom of every tab's footer, easy to miss. This puts a prominent pulsing-dot pill right on the landing hero so it's the first thing a guest sees, no scrolling needed. Footer text below is untouched. (delete the .hero-hours block below + its CSS here to revert) ═══ */
-.hero-hours{display:inline-flex;align-items:center;gap:10px;margin-top:26px;padding:10px 22px;background:rgba(237,133,48,.08);border:1px solid rgba(237,133,48,.3);border-radius:30px;animation:fadeUp .8s .3s ease both}
-.hero-hours-dot{width:7px;height:7px;border-radius:50%;background:#7ed492;box-shadow:0 0 0 rgba(126,212,146,.6);flex-shrink:0;animation:hoursPulse 2s ease-in-out infinite}
+.hero-hours{display:inline-flex;align-items:center;gap:12px;margin-top:32px;padding:clamp(10px,1.8vw,14px) clamp(20px,3.2vw,30px);background:rgba(237,133,48,.08);border:1px solid rgba(237,133,48,.3);border-radius:30px;animation:fadeUp .8s .3s ease both}
+.hero-hours-dot{width:8px;height:8px;border-radius:50%;background:#7ed492;box-shadow:0 0 0 rgba(126,212,146,.6);flex-shrink:0;animation:hoursPulse 2s ease-in-out infinite}
 @keyframes hoursPulse{0%{box-shadow:0 0 0 0 rgba(126,212,146,.55)}70%{box-shadow:0 0 0 7px rgba(126,212,146,0)}100%{box-shadow:0 0 0 0 rgba(126,212,146,0)}}
-.hero-hours-txt{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cream)}
+.hero-hours-txt{font-family:'Rajdhani',sans-serif;font-size:clamp(12px,1.9vw,15px);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cream)}
 .hero-hours-txt strong{color:var(--orange);font-weight:700}
-@media(max-width:480px){.hero-hours{padding:8px 16px;margin-top:20px}.hero-hours-txt{font-size:10.5px}}
+/* ═══ FIX: HERO SCALES UP TOGETHER ON DESKTOP AND MOBILE — every hero element above and below now
+   sizes itself with clamp(min, vw, max) instead of one fixed px value, so it grows smoothly with
+   the viewport rather than jumping between a small mobile size and a small desktop size at a
+   handful of breakpoints. This replaces the old fixed mobile-only shrink that used to live here
+   (padding/font-size overrides for .hero-hours at max-width:480px) — no longer needed since the
+   clamp() minimum now IS the mobile size, and it's bigger than the old fixed one on purpose: the
+   hero had a lot of empty, unused space around a small central block before. (delete every clamp()
+   above and this comment, restore the plain px values, and re-add a
+   @media(max-width:480px){.hero-hours{padding:8px 16px;margin-top:20px}.hero-hours-txt{font-size:10.5px}}
+   rule to revert) ═══ */
+/* ═══ END FIX ═══ */
 /* ═══ FIX: OPEN/CLOSED LIVE STATE — setOpenStatus() (bottom of file) checks the real Cyprus clock (Asia/Nicosia, DST-safe) against the 07:30–21:30 window on load and every minute, then toggles this .is-closed class: dot turns red, box replaces "Open Daily" with "Closed Now" / "Opens at 07:30". (remove the class rules below + the setOpenStatus() call/interval to revert to the plain always-green badge) ═══ */
 .hero-hours.is-closed{background:rgba(235,90,90,.08);border-color:rgba(235,90,90,.3)}
 .hero-hours.is-closed .hero-hours-dot{background:#e26a6a;box-shadow:0 0 0 rgba(226,106,106,.6);animation:hoursPulseRed 2s ease-in-out infinite}
@@ -81,12 +71,12 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .hero-hours.is-closed .hero-hours-txt strong{color:#e28a6a}
 /* ═══ END FIX ═══ */
 
-.hero-enter{margin-top:48px;animation:fadeUp .8s .4s ease both}
-.hero-enter button{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--orange);background:transparent;border:1px solid rgba(237,133,48,0.3);padding:14px 36px;cursor:pointer;transition:all .3s;border-radius:4px}
+.hero-enter{margin-top:58px;animation:fadeUp .8s .4s ease both}
+.hero-enter button{font-family:'Rajdhani',sans-serif;font-size:clamp(11px,1.6vw,13px);font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--orange);background:transparent;border:1px solid rgba(237,133,48,0.3);padding:clamp(14px,2vw,18px) clamp(38px,5vw,50px);cursor:pointer;transition:all .3s;border-radius:4px}
 .hero-enter button:hover{border-color:rgba(237,133,48,.6);background:rgba(237,133,48,.06)}
 .hero-scroll{position:absolute;bottom:90px;left:0;right:0;width:100%;margin:0 auto;display:block;text-align:center;animation:fadeUp .8s .6s ease both;opacity:.5}
-.hero-scroll span{font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
-.scroll-line{width:1px;height:50px;margin:10px auto 0;position:relative;background:rgba(237,133,48,0.12)}
+.hero-scroll span{font-family:'Rajdhani',sans-serif;font-size:clamp(13px,1.7vw,15px);letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.scroll-line{width:1px;height:56px;margin:10px auto 0;position:relative;background:rgba(237,133,48,0.12)}
 .scroll-fill{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom,#ed8530,rgba(237,133,48,0.2));transform-origin:top;transform:scaleY(0);animation:scrollFill 1.4s ease-in infinite}
 @keyframes scrollFill{0%{transform:scaleY(0)}70%{transform:scaleY(1)}100%{transform:scaleY(1)}}
 
@@ -98,7 +88,9 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 
 /* ─── NAV ────────────────────────────────────────────────── */
 .nav-wrap{position:sticky;top:0;z-index:100;background:rgba(12,9,6,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(237,133,48,0.12)}
-.nav-top{display:flex;justify-content:flex-end;align-items:center;padding:0 20px;height:44px;position:relative}
+.nav-top{display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;position:relative}
+.nav-home-btn{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid rgba(237,133,48,.18);border-radius:4px;padding:6px 11px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s}
+.nav-home-btn:hover{border-color:rgba(237,133,48,.45);color:var(--orange)}
 .nav-logo{position:absolute;left:50%;transform:translateX(-50%);text-align:center;line-height:1.15;pointer-events:none}
 .nav-logo img{height:22px;width:auto;display:inline-block}
 .nav-cats-row{display:flex;justify-content:center;border-top:1px solid rgba(237,133,48,0.08)}
@@ -127,7 +119,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
    structural, and every one of these cards is still display:none — nothing visible on the live menu
    changed. (revert per-card by comparing against the file history) ═══ */
 .deactivated{display:none!important}
-.hero-wifi{font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:14px;animation:fadeUp .8s .3s ease both}
+.hero-wifi{font-family:'Rajdhani',sans-serif;font-size:clamp(10px,1.5vw,12.5px);font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:18px;animation:fadeUp .8s .3s ease both}
 .hero-wifi strong{color:var(--cream);font-weight:600}
 .hero-wifi .wifi-pw{color:var(--orange);font-weight:600}
 .lang-tog{display:flex;border:1px solid rgba(237,133,48,0.2);border-radius:4px;overflow:hidden}
@@ -251,6 +243,12 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
    same in both states and nothing jumps. */
 .quicknav-pill{display:inline-block;border-radius:999px;padding:6px 16px;border:1px solid transparent;background:transparent;transition:background-color .3s ease,box-shadow .3s ease,border-color .3s ease}
 .quicknav.stuck .quicknav-pill{background:rgba(14,10,8,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(237,133,48,.16);box-shadow:0 6px 22px rgba(0,0,0,.35)}
+/* ═══ FIX: BIGGER, MORE READABLE TABS/QUICKNAV ON PHONES — see the matching FIX comment near
+   .cat-btn above for the full note; this is the same change applied to the quicknav row. Already
+   wraps to two lines on a phone either way, so this just makes each line bigger/easier to read and
+   lets the row use more of the screen width, rather than trying to force it back to one line. ═══ */
+@media(max-width:480px){.sec-desc{font-size:20px}.sec-desc.quicknav{padding:0 14px}}
+/* ═══ END FIX ═══ */
 /* ═══ END FIX ═══ */
 .sec-rule{height:1px;background:linear-gradient(90deg,rgba(237,133,48,0.35),transparent);margin:20px 0 0;display:block}
 .sr-line{display:none}
@@ -268,6 +266,10 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .card::before{display:none}
 .card:hover,.card-glow{transform:translateY(-5px);border-color:rgba(237,133,48,.3);box-shadow:0 24px 48px rgba(0,0,0,.6),-6px 0 24px rgba(237,133,48,.15)}
 .card-glow .card-name{animation:namePulse .7s ease-in-out infinite alternate}
+.card-glow .card-choice-pill{animation:descLinkGlow 2.6s ease-in-out infinite}
+.card-glow .card-choice-pill:nth-of-type(1){animation-delay:0s}
+.card-glow .card-choice-pill:nth-of-type(2){animation-delay:.4s}
+.card-glow .card-choice-pill:nth-of-type(3){animation-delay:.8s}
 /* ═══ FIX: GLOW BUGS — two separate bugs fixed here:
    1. Desktop hover glow never fired on ANY card, drinks included: the media query below was
       written as "@media(hover:hover)and(pointer:fine)" with no space before "and" — browsers
@@ -283,14 +285,14 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .card-glow img.card-img-can,.card-glow img.card-img-bottle,.card-glow img.card-img-bar,.card-glow img.card-img-tea,.card-glow .coffee-img-wrap img{animation:imgPulse .7s ease-in-out infinite alternate}
 @keyframes namePulsePC{from{text-shadow:0 0 12px rgba(237,133,48,0.45),0 0 28px rgba(237,133,48,0.2)}to{text-shadow:0 0 20px rgba(237,133,48,0.9),0 0 45px rgba(237,133,48,0.55)}}
 @keyframes imgPulsePC{from{filter:drop-shadow(0px 6px 18px rgba(237,133,48,0.18))}to{filter:drop-shadow(0px 6px 32px rgba(237,133,48,0.75))}}
-@media (hover:hover) and (pointer:fine){.card:hover .card-name{animation:namePulsePC .7s ease-in-out infinite alternate}.card:hover img.card-img-can,.card:hover img.card-img-bottle,.card:hover img.card-img-bar,.card:hover img.card-img-tea,.card:hover .coffee-img-wrap img{animation:imgPulsePC .7s ease-in-out infinite alternate}}
+@media (hover:hover) and (pointer:fine){.card:hover .card-name{animation:namePulsePC .7s ease-in-out infinite alternate}.card:hover .card-choice-pill{animation:descLinkGlow 2.6s ease-in-out infinite}.card:hover .card-choice-pill:nth-of-type(1){animation-delay:0s}.card:hover .card-choice-pill:nth-of-type(2){animation-delay:.4s}.card:hover .card-choice-pill:nth-of-type(3){animation-delay:.8s}.card:hover img.card-img-can,.card:hover img.card-img-bottle,.card:hover img.card-img-bar,.card:hover img.card-img-tea,.card:hover .coffee-img-wrap img{animation:imgPulsePC .7s ease-in-out infinite alternate}}
 /* ═══ END FIX ═══ */
 
 .card-inner{display:flex;align-items:stretch;min-height:80px}
 .card-accent{width:0;flex-shrink:0}
 .card-body{padding:20px 22px 22px;flex:1;min-width:0;overflow:visible}
 .card:has(.card-img-can){overflow:visible}
-.card-body:has(.card-img-can),.card-body:has(.card-img-bottle),.card-body:has(.card-img-tea){display:flex;align-items:center;justify-content:space-between;gap:12px;overflow:visible}
+.card-body:has(.card-img-can),.card-body:has(.card-img-bottle),.card-body:has(.card-img-tea){display:flex;align-items:flex-start;justify-content:space-between;gap:12px;overflow:visible}
 .card-text{flex:1;min-width:0}
 .card-img-can,.card-img-bottle{flex-shrink:0;object-fit:contain;object-position:center bottom;margin-left:14px;margin-top:0;pointer-events:none;filter:drop-shadow(0px 6px 18px rgba(237,133,48,0.18));overflow:visible}
 .card-img-can{height:125px;width:auto;max-width:78px;min-width:48px}
@@ -398,6 +400,12 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 
 #sec-tea .cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr))}
 @media(max-width:768px){.nav-cats{padding:0 4px}.cat-btn{padding:8px 8px;letter-spacing:.15em}}
+/* ═══ FIX: BIGGER, MORE READABLE TABS/QUICKNAV ON PHONES — both rows had plenty of unused side
+   margin on a real phone screen, and the small text was harder to read for guests who don't want
+   to squint. Same layout/format as before, just bigger type that fills the width better. (delete
+   this rule + the .sec-desc/.sec-desc.quicknav one further down to revert to the smaller sizes) ═══ */
+@media(max-width:480px){.cat-btn{font-size:14px;padding:9px 11px}}
+/* ═══ END FIX ═══ */
 /* ══════════════════════════════════════════════════════════════════════
    PRODUCT PHOTOS — how sizing/position works, and how to edit it
    ──────────────────────────────────────────────────────────────────────
@@ -447,7 +455,7 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 .card-img-can{width:auto;height:190px;object-fit:contain;object-position:center bottom;max-width:100px;min-width:44px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
 .card-img-bottle{width:auto;height:190px;object-fit:contain;object-position:center;max-width:100px;min-width:44px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
 .card-img-tea{width:auto;height:190px;object-fit:contain;object-position:center;max-width:240px;min-width:80px;flex-shrink:1;flex-grow:0;margin-left:12px;margin-right:0}
-.card-body:has(.coffee-img-wrap){display:flex;flex-direction:row;align-items:center;gap:14px}
+.card-body:has(.coffee-img-wrap){display:flex;flex-direction:row;align-items:flex-start;gap:14px}
 /* ═══ FIX: COFFEE & MATCHA — match Fresh & Smoothies sizing (delete this rule + restore width:90px;height:130px to revert) ═══ */
 .coffee-img-wrap{width:150px;height:190px;flex-shrink:0}
 /* ═══ END FIX ═══ */
@@ -494,7 +502,17 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 /* (removed: align-items:flex-end for this group — it looked worse on Simple Protein specifically, since its image is much shorter than its text column, so bottom-anchoring just moved the empty space to one big awkward gap above the image instead of splitting it top/bottom. Reverted to the default center alignment; see the Simple Protein-specific fix further down instead.) */
 /* Fresh juices & smoothies: auto width from each photo's own aspect ratio at 190px height */
 /* Orange_fresh.png and Simple_protein.png were re-cropped at the file level (real transparent-margin measurement, not a screenshot guess) so they now match the ~92% content-fill of their siblings — the old object-fit:cover / oversized-box hacks are gone, both just use the shared rule now. */
-img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{width:auto;height:190px;max-width:220px;min-width:80px;object-fit:contain;object-position:center;margin-right:0;flex-shrink:1;flex-grow:0}
+/* ═══ FIX: MATCHA — the Matcha items were switched from the coffee-glass wrap style to plain
+   card-img-bottle (to match Blue Banana/Berry Mix/etc. now that Matcha sits in this same Drinks
+   row), but they were still falling back to the BASE .card-img-bottle rule's max-width:100px cap —
+   these glass photos are proportionally wide enough that at height:190px their natural width exceeds
+   100px, so the browser was shrinking them back down (height included) to fit that narrower cap,
+   rendering visibly smaller than their neighbours despite the same height:190px on paper. Adding the
+   three Matcha filenames to this same group gives them the same max-width:220px headroom as Blue
+   Banana/Berry Mix, so they render at their full natural size like everything else in this row.
+   (delete "img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]," from
+   this selector to revert to the narrower base cap) ═══ */
+img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{width:auto;height:190px;max-width:220px;min-width:80px;object-fit:contain;object-position:center;margin-right:0;flex-shrink:1;flex-grow:0}
 /* ═══ FIX: SIMPLE PROTEIN position — REMOVED (delete this comment to clean up) ═══ */
 /* v1 (10px) and v2 (4px) rightward nudges both overshot per feedback — measured against */
 /* its siblings' actual right-edge gap and it turns out no nudge was needed at all: once  */
@@ -540,7 +558,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   .card-img-can{height:130px;max-width:72px;min-width:40px}
   .card-img-bottle{height:150px;max-width:70px;min-width:40px}
   .card-img-tea{height:150px;max-width:150px;min-width:70px}
-  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{height:150px;max-width:150px;min-width:70px}
+  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{height:150px;max-width:150px;min-width:70px}
   img[src*="mountain-blast-blue"],img[src*="powerade-orange"],img[src*="SCOBYSUN_Kombucha"]{height:165px;max-width:82px}
   img[src*="Corona-extra"],img[src*="Corona-zero"]{height:175px;max-width:88px;margin-top:10px}
   img[src*="heineken-00-bottle"]{height:150px;margin-top:14px;transform:scale(0.92);transform-origin:top center}
@@ -548,7 +566,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
 }
 @media(max-width:340px){
   .card-img-tea{height:120px;max-width:110px;min-width:60px}
-  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"]{height:120px;max-width:110px;min-width:60px}
+  img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{height:120px;max-width:110px;min-width:60px}
 }
 </style>
 </head>
@@ -590,6 +608,7 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
 <!-- ═══ NAV ════════════════════════════════════════════════ -->
 <div class="nav-wrap">
   <div class="nav-top">
+    <button class="nav-home-btn" onclick="goHome()" data-en="&larr; Home" data-ru="&larr; Главная">&larr; Home</button>
     <div class="nav-logo"><img src="Images/Logo/urban-court-horizontal-cream.png" alt="Urban Court"></div>
     <div class="lang-tog">
       <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -632,7 +651,8 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <span class="sec-desc-link" onclick="jumpToNamedHeader('Kombucha')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Kombucha')}" tabindex="0" role="button" data-en="Kombucha" data-ru="Комбуча">Kombucha</span> ·
     <span class="sec-desc-link" onclick="jumpToNamedHeader('Ice Herbal Tea')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Ice Herbal Tea')}" tabindex="0" role="button" data-en="Ice Herbal Tea" data-ru="Чай со льдом">Ice Herbal Tea</span> ·
     <span class="sec-desc-link" onclick="jumpToNamedHeader('Fresh')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Fresh')}" tabindex="0" role="button" data-en="Fresh" data-ru="Фреш">Fresh</span> ·
-    <span class="sec-desc-link" onclick="jumpToNamedHeader('Blended')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Blended')}" tabindex="0" role="button" data-en="Blended" data-ru="Смузи">Blended</span>
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Blended')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Blended')}" tabindex="0" role="button" data-en="Blended" data-ru="Смузи">Blended</span> ·
+    <span class="sec-desc-link" onclick="jumpToNamedHeader('Matcha')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Matcha')}" tabindex="0" role="button" data-en="Matcha" data-ru="Матча">Matcha</span>
   </span></div>
   <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
 
@@ -691,6 +711,10 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   </div>
   <div class="cards" data-section="drinks" data-subcat="Blended"><div class="menu-loading" data-en="Loading menu…" data-ru="Загрузка меню…" style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:13px;">Loading menu…</div></div>
 
+  <!-- Matcha (moved here from Tea — Tea is now Hot Tea only) -->
+  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Matcha"><div class="sub-dot"></div><span class="sub-title" data-en="Matcha" data-ru="Матча">Matcha</span><div class="sub-rule"></div></div>
+  <div class="cards" data-section="drinks" data-subcat="Matcha"><div class="menu-loading" data-en="Loading menu…" data-ru="Загрузка меню…" style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:13px;">Loading menu…</div></div>
+
   <div class="footer">
     <div class="f-dots"><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div></div>
     <div class="f-logo"><img src="Images/Logo/urban-court-horizontal-orange.png" alt="Urban Court"></div>
@@ -745,22 +769,14 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
 <div id="sec-tea" class="section">
   <div class="sec-atm"><div class="atm-orb atm-tea1"></div><div class="atm-orb atm-tea2"></div></div>
   <div class="sec-header">
-    <div class="sec-title" data-en="Tea &amp;<br><em>Matcha</em>" data-ru="Чай &amp;<br><em>Матча</em>">Tea &amp;<br><em>Matcha</em></div>
+    <div class="sec-title" data-en="Hot<br><em>Tea</em>" data-ru="Горячий<br><em>Чай</em>">Hot<br><em>Tea</em></div>
+    <div class="sec-desc" data-en="Freshly steeped · Served hot" data-ru="Свежезаваренный · Подаётся горячим">Freshly steeped · Served hot</div>
+    <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
   </div>
-  <div class="quicknav-sentinel"></div>
-  <div class="sec-desc quicknav"><span class="quicknav-pill">
-    <span class="sec-desc-link" onclick="jumpToNamedHeader('Hot Tea')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Hot Tea')}" tabindex="0" role="button" data-en="Hot Tea" data-ru="Горячий чай">Hot Tea</span> ·
-    <span class="sec-desc-link" onclick="jumpToNamedHeader('Matcha')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('Matcha')}" tabindex="0" role="button" data-en="Matcha" data-ru="Матча">Matcha</span>
-  </span></div>
-  <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div>
 
   <!-- Hot Tea -->
-  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Hot Tea"><div class="sub-dot"></div><span class="sub-title" data-en="Hot Tea" data-ru="Горячий чай">Hot Tea</span><div class="sub-rule"></div></div>
+  <div class="sub-head"><div class="sub-dot"></div><span class="sub-title" data-en="Hot Tea" data-ru="Горячий чай">Hot Tea</span><div class="sub-rule"></div></div>
   <div class="cards" data-section="tea" data-subcat="Hot Tea"><div class="menu-loading" data-en="Loading menu…" data-ru="Загрузка меню…" style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:13px;">Loading menu…</div></div>
-
-  <!-- Matcha -->
-  <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Matcha"><div class="sub-dot"></div><span class="sub-title" data-en="Matcha" data-ru="Матча">Matcha</span><div class="sub-rule"></div></div>
-  <div class="cards" data-section="tea" data-subcat="Matcha"><div class="menu-loading" data-en="Loading menu…" data-ru="Загрузка меню…" style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:13px;">Loading menu…</div></div>
 
   <div class="footer"><div class="f-dots"><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div></div><div class="f-logo"><img src="Images/Logo/urban-court-horizontal-orange.png" alt="Urban Court"></div><div class="f-txt" data-en="Open daily · 07:30 – 21:30" data-ru="Ежедневно · 07:30 – 21:30">Open daily · 07:30 – 21:30</div></div>
 </div>
@@ -867,72 +883,43 @@ function jumpToNamedHeader(label) {
 }
 // ═══ END FIX ═══
 
-// ═══ FIX: SCROLL CATCH ARMING v3 (see the FIX v3 comment on the html{} rule near the top of the CSS
-// for the full history of why this moved off native CSS scroll-snap) — a single JS-driven mechanism,
-// nothing else touches scroll position during a catch. On every 'scroll' event we compute velocity
-// (px/ms) from the previous sample. The instant that's fast and upward (below -FLING_VELOCITY) AND
-// we're at or have just crossed the seam (y <= boundaryY, having been above it a moment ago), we
-// call hardStopAt(boundaryY):
-//   1. set the page's overflow to hidden for one frame — this is what actually kills the phone's
-//      still-live native momentum animation, not just repositions on top of it. A plain scrollTo()
-//      alone doesn't reliably do this: the OS/browser's own inertia can keep running underneath a
-//      simple position change and immediately overwrite it, which is exactly what caused the
-//      catch/bounce/leak-through and catch/oscillate/leak-through behaviour in earlier versions —
-//      TWO things (our correction and the still-running native momentum) fighting over the same
-//      scroll position, each briefly "winning" before the other overrides it again.
-//   2. restore overflow and set the exact resting scrollY, instantly, in the same tick.
-// LOCK_MS after a catch, the catch won't re-trigger — this is what lets "scroll again to reach the
-// home screen" work: it's just long enough to make sure a hard flick's full deceleration has really
-// finished (not just the current one 'scroll' event), but far shorter than the pause a real second,
-// separate flick would naturally have before it.
-// A slow/deliberate scroll never reaches FLING_VELOCITY no matter how close it comes to resting at
-// the seam, so it's completely unaffected — same guarantee v2 had, just with a single mechanism
-// doing the catching instead of two potentially competing ones.
-// FLING_VELOCITY is the one knob worth tuning after testing on a real phone — raise it if normal
-// brisk scrolling ever gets caught by mistake, lower it if a hard flick isn't being caught.
-// Status: reverted here from a v4 (native CSS scroll-snap armed by proximity) that tested worse on a
-// real phone. This v3 is the version where a soft/slow scroll near the seam catches cleanly; a hard
-// flick sometimes isn't caught and goes straight to the home screen instead. Left as-is for now.
-// (delete this block + the .scroll-snap-catch element and its CSS rule to revert to plain
-// unassisted scrolling) ═══
+// ═══ FIX: HERO REMOVE, HOME BUTTON RESTORES v7 (see the FIX v7 comment on the html{} rule
+// near the top of the CSS) — crossing the seam removes the hero one-way; only goHome() (wired to
+// the "← Home" nav button) brings it back.
 (function () {
+  const hero = document.querySelector('.hero');
   const catchEl = document.querySelector('.scroll-snap-catch');
-  if (!catchEl) return;
-  const FLING_VELOCITY = 1.0; // px/ms — a real hard flick is well above this; ordinary scrolling isn't
-  const LOCK_MS = 400; // ms after a catch before it's allowed to trigger again
-  let boundaryY = 0;
-  let lastY = window.scrollY;
-  let lastT = performance.now();
-  let locked = false;
-  function measure() { boundaryY = catchEl.getBoundingClientRect().top + window.scrollY; }
-  measure();
-  window.addEventListener('resize', measure);
+  if (!hero || !catchEl) return;
+  let removed = false;
 
-  function hardStopAt(y) {
-    const htmlEl = document.documentElement;
-    const prevOverflow = htmlEl.style.overflow;
-    htmlEl.style.overflow = 'hidden'; // forcibly cancels any native momentum still in flight
-    void htmlEl.offsetHeight; // force the browser to apply the change before we undo it
-    htmlEl.style.overflow = prevOverflow;
-    window.scrollTo({top: y, left: 0, behavior: 'instant'});
+  function seamY() { return catchEl.getBoundingClientRect().top + window.scrollY; }
+
+  function removeHero() {
+    const h = hero.offsetHeight;
+    hero.style.display = 'none';
+    removed = true;
+    window.scrollTo({top: window.scrollY - h, left: 0, behavior: 'instant'});
   }
 
+  // initial state: page could load already scrolled past the seam (refresh, deep link)
+  if (window.scrollY >= seamY()) removeHero();
+
   window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    const t = performance.now();
-    const dt = Math.max(t - lastT, 1);
-    const v = (y - lastY) / dt; // negative while scrolling up (toward the hero)
-    if (!locked && v < -FLING_VELOCITY && lastY > boundaryY && y <= boundaryY) {
-      hardStopAt(boundaryY);
-      locked = true;
-      setTimeout(() => { locked = false; }, LOCK_MS);
-      lastY = boundaryY;
-      lastT = t;
-      return;
-    }
-    lastY = y;
-    lastT = t;
+    if (!removed && window.scrollY >= seamY()) removeHero();
   }, {passive: true});
+
+  // safety net for the hardest flicks: mobile scroll-event coalescing can occasionally skip past
+  // the seam without ever firing a 'scroll' event that satisfies the check above — this re-checks
+  // once the touch gesture itself has ended, when the position has caught up for real
+  window.addEventListener('touchend', () => {
+    if (!removed && window.scrollY >= seamY()) removeHero();
+  }, {passive: true});
+
+  window.goHome = function () {
+    hero.style.display = ''; // removing the inline override lets .hero{display:flex} apply again
+    removed = false;
+    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+  };
 })();
 // ═══ END FIX ═══
 
