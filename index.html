@@ -915,11 +915,21 @@ function jumpToNamedHeader(label) {
     if (!removed && window.scrollY >= seamY()) removeHero();
   }, {passive: true});
 
+  /* ═══ FIX: HOME BUTTON = INSTANT JUMP, NOT AN ANIMATED SCROLL (delete this comment and change
+     'instant' back to 'smooth' below to revert) ═══
+     goHome() used the page's own html{scroll-behavior:smooth}. That's fine for a short jumpToHeader()
+     hop, but from deep in the menu (say, the Fresh section near the bottom) it meant the "← Home"
+     button visibly scrolled UP through every section in between — Blended, Matcha, Ice Herbal Tea,
+     Kombucha, Soft Drinks — before finally reaching the top, i.e. it behaved like a browser Back
+     button's scroll animation instead of a home button. behavior:'instant' overrides the page's
+     smooth default just for this jump, so clicking Home now always teleports straight to the top in
+     one step, no matter where on the page you are. */
   window.goHome = function () {
     hero.style.display = ''; // removing the inline override lets .hero{display:flex} apply again
     removed = false;
-    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+    window.scrollTo({top: 0, left: 0, behavior: 'instant'});
   };
+  /* ═══ END FIX ═══ */
 })();
 // ═══ END FIX ═══
 
