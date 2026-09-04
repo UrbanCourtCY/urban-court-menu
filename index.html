@@ -265,7 +265,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .card{background:var(--card);border:1px solid rgba(237,133,48,0.08);border-left:3px solid var(--orange);border-radius:10px;overflow:hidden;position:relative;transition:all .3s ease;-webkit-tap-highlight-color:transparent}
 .card::before{display:none}
 .card:hover,.card-glow{transform:translateY(-5px);border-color:rgba(237,133,48,.3);box-shadow:0 24px 48px rgba(0,0,0,.6),-6px 0 24px rgba(237,133,48,.15)}
-.card-glow .card-name{animation:namePulse .7s ease-in-out infinite alternate}
+.card-glow .card-name,.card-glow .card-choice-label{animation:namePulse .7s ease-in-out infinite alternate}
 .card-glow .card-choice-pill{animation:descLinkGlow 2.6s ease-in-out infinite}
 .card-glow .card-choice-pill:nth-of-type(1){animation-delay:0s}
 .card-glow .card-choice-pill:nth-of-type(2){animation-delay:.4s}
@@ -285,7 +285,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 .card-glow img.card-img-can,.card-glow img.card-img-bottle,.card-glow img.card-img-bar,.card-glow img.card-img-tea,.card-glow .coffee-img-wrap img{animation:imgPulse .7s ease-in-out infinite alternate}
 @keyframes namePulsePC{from{text-shadow:0 0 12px rgba(237,133,48,0.45),0 0 28px rgba(237,133,48,0.2)}to{text-shadow:0 0 20px rgba(237,133,48,0.9),0 0 45px rgba(237,133,48,0.55)}}
 @keyframes imgPulsePC{from{filter:drop-shadow(0px 6px 18px rgba(237,133,48,0.18))}to{filter:drop-shadow(0px 6px 32px rgba(237,133,48,0.75))}}
-@media (hover:hover) and (pointer:fine){.card:hover .card-name{animation:namePulsePC .7s ease-in-out infinite alternate}.card:hover .card-choice-pill{animation:descLinkGlow 2.6s ease-in-out infinite}.card:hover .card-choice-pill:nth-of-type(1){animation-delay:0s}.card:hover .card-choice-pill:nth-of-type(2){animation-delay:.4s}.card:hover .card-choice-pill:nth-of-type(3){animation-delay:.8s}.card:hover img.card-img-can,.card:hover img.card-img-bottle,.card:hover img.card-img-bar,.card:hover img.card-img-tea,.card:hover .coffee-img-wrap img{animation:imgPulsePC .7s ease-in-out infinite alternate}}
+@media (hover:hover) and (pointer:fine){.card:hover .card-name,.card:hover .card-choice-label{animation:namePulsePC .7s ease-in-out infinite alternate}.card:hover .card-choice-pill{animation:descLinkGlow 2.6s ease-in-out infinite}.card:hover .card-choice-pill:nth-of-type(1){animation-delay:0s}.card:hover .card-choice-pill:nth-of-type(2){animation-delay:.4s}.card:hover .card-choice-pill:nth-of-type(3){animation-delay:.8s}.card:hover img.card-img-can,.card:hover img.card-img-bottle,.card:hover img.card-img-bar,.card:hover img.card-img-tea,.card:hover .coffee-img-wrap img{animation:imgPulsePC .7s ease-in-out infinite alternate}}
 /* ═══ END FIX ═══ */
 
 .card-inner{display:flex;align-items:stretch;min-height:80px}
@@ -702,17 +702,33 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
     <div class="opts-group">
       <div class="opts-group-label" data-en="Add protein" data-ru="Добавить протеин">Add protein</div>
       <div class="opts-pills">
-        <span class="opts-pill" data-en="Chocolate" data-ru="Шоколад">Chocolate</span>
         <span class="opts-pill" data-en="Vanilla" data-ru="Ваниль">Vanilla</span>
-        <span class="opts-pill" data-en="Strawberry" data-ru="Клубника">Strawberry</span>
+        <span class="opts-pill" data-en="Chocolate-Hazelnut" data-ru="Шоколад-Фундук">Chocolate-Hazelnut</span>
+        <span class="opts-pill" data-en="Raspberry-Yogurt" data-ru="Малина-Йогурт">Raspberry-Yogurt</span>
+        <span class="opts-pill" data-en="Strawberry-Yogurt" data-ru="Клубника-Йогурт">Strawberry-Yogurt</span>
+        <span class="opts-pill" data-en="Mango" data-ru="Манго">Mango</span>
       </div>
     </div>
-    <div class="opts-note" data-en="These are primarily protein smoothies — choose your base and flavour above. Applies to Simple Protein, Energy Mix, Blue Banana, Strawberry Banana &amp; Berry Mix — tell your server what you'd like." data-ru="В основном это протеиновые смузи — выберите основу и вкус выше. Для Simple Protein, Energy Mix, Blue Banana, Strawberry Banana и Berry Mix — сообщите официанту, что вы хотите.">These are primarily protein smoothies — choose your base and flavour above. Applies to Simple Protein, Energy Mix, Blue Banana, Strawberry Banana &amp; Berry Mix — tell your server what you'd like.</div>
   </div>
   <div class="cards" data-section="drinks" data-subcat="Blended"><div class="menu-loading" data-en="Loading menu…" data-ru="Загрузка меню…" style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:13px;">Loading menu…</div></div>
 
   <!-- Matcha (moved here from Tea — Tea is now Hot Tea only) -->
   <div class="sub-head nav-jump" onclick="jumpToHeader(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToHeader(this)}" tabindex="0" role="button" aria-label="Jump to Matcha"><div class="sub-dot"></div><span class="sub-title" data-en="Matcha" data-ru="Матча">Matcha</span><div class="sub-rule"></div></div>
+  <div class="opts-panel">
+    <div class="opts-group">
+      <div class="opts-group-label" data-en="Original Matcha" data-ru="Матча Ориджинал">Original Matcha</div>
+      <div class="opts-pills">
+        <span class="opts-pill" data-en="Vibrant &amp; grassy" data-ru="Насыщенный, травяной вкус">Vibrant &amp; grassy</span>
+      </div>
+    </div>
+    <div class="opts-group">
+      <div class="opts-group-label" data-en="Hojicha Matcha" data-ru="Матча Ходзича">Hojicha Matcha</div>
+      <div class="opts-pills">
+        <span class="opts-pill" data-en="Roasted, low-caffeine" data-ru="Обжаренный, мало кофеина">Roasted, low-caffeine</span>
+      </div>
+    </div>
+    <div class="opts-note" style="font-style:normal;font-size:11.5px;color:var(--cream);opacity:.85" data-en="Add a fruit pur&eacute;e to your latte: mango, strawberry, raspberry or passionfruit." data-ru="В латте можно добавить фруктовое пюре: манго, клубника, малина или маракуйя.">Add a fruit pur&eacute;e to your latte: mango, strawberry, raspberry or passionfruit.</div>
+  </div>
   <div class="cards" data-section="drinks" data-subcat="Matcha"><div class="menu-loading" data-en="Loading menu…" data-ru="Загрузка меню…" style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:13px;">Loading menu…</div></div>
 
   <div class="footer">
@@ -814,6 +830,18 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
 let lang = 'en';
 let currentSection = 'drinks';
 const sectionScroll = {}; // remembers each tab's scroll position for the rest of this visit
+// ═══ FIX (v2): TAB SWITCH LANDING MID-PAGE — the first fix here cached hero's position once at
+// page load to avoid crashing on a removed .hero, but that introduced a different bug: once
+// .hero is actually removed (v7 hero-removal, further down), the page gets SHORTER by hero's
+// height — everything below it shifts up — so the stale cached number pointed too far down the
+// page instead of at the real top, landing tab switches mid-section. Fixed properly: check live
+// whether .hero still exists each time. If it does, measure it (same as the original approach).
+// If it's gone, "top of tab" is just 0 — once hero's removed, the nav bar IS the top of the
+// document. (revert to a single cached constant to reintroduce this bug) ═══
+function getTopOfTab() {
+  const hero = document.querySelector('.hero');
+  return hero ? hero.getBoundingClientRect().bottom + window.scrollY : 0;
+}
 
 function show(id, btn) {
   // remember exactly where we were in the tab we're leaving
@@ -830,15 +858,9 @@ function show(id, btn) {
 
   // wait a frame so the newly-visible section is actually laid out before we measure/scroll
   requestAnimationFrame(() => {
-    // NOTE: we deliberately measure from .hero, not .nav-wrap. .nav-wrap is
-    // position:sticky, and once it's "stuck" (i.e. you've scrolled past it),
-    // both offsetTop and getBoundingClientRect() report its CURRENT stuck
-    // position, not its natural place in the page — so it can't be used to
-    // find "top of the tab". .hero is a normal (non-sticky) element right
-    // before the nav, so its position is stable at any scroll depth.
-    const hero = document.querySelector('.hero');
-    const topOfTab = hero.getBoundingClientRect().bottom + window.scrollY;
-    const target = hasVisited ? sectionScroll[id] : topOfTab;
+    // getTopOfTab() checks live whether .hero still exists — see the FIX (v2) comment above for
+    // why a cached value goes stale once hero is removed.
+    const target = hasVisited ? sectionScroll[id] : getTopOfTab();
     window.scrollTo({top: target, left: 0, behavior: 'instant'});
     // re-sync the quicknav "stuck" pill state right away — see recomputeQuicknavStuck() further
     // down — so it doesn't wait on the IntersectionObserver's own async callback and show a stale
@@ -1093,12 +1115,20 @@ function renderCard(item) {
   const subtitleHtml = item.subtitle
     ? `<div class="card-sub" ${subtitle.attrs}>${subtitle.text}</div>` : '';
 
-  const choiceHtml = (item.choiceLabel && item.choiceOptions && item.choiceOptions.length)
-    ? `<div class="card-choice-label" ${choiceLabel.attrs}>${choiceLabel.text}</div>
-       <div class="card-choice-pills">${item.choiceOptions.map(o => {
+  // ═══ FIX: label can now stand alone without pills — Simple Protein's flavours moved up to the
+  // shared "Add protein" panel above this whole subcategory, so its card just needs to say
+  // "Choose 1 Flavour of Protein" with no repeated (and now stale) flavour names underneath.
+  // Old behaviour required both choiceLabel AND a non-empty choiceOptions to show anything; now
+  // the label renders on its own whenever it's set, and the pills row only appears if options
+  // exist. (restore the combined condition on choiceHtml to revert) ═══
+  const pillsHtml = (item.choiceOptions && item.choiceOptions.length)
+    ? `<div class="card-choice-pills">${item.choiceOptions.map(o => {
          const a = bilingualAttrs(o);
          return `<span class="card-choice-pill" ${a.attrs}>${a.text}</span>`;
        }).join('')}</div>`
+    : '';
+  const choiceHtml = item.choiceLabel
+    ? `<div class="card-choice-label" ${choiceLabel.attrs}>${choiceLabel.text}</div>${pillsHtml}`
     : '';
 
   const tagsHtml = (item.tags || []).map(t => {
