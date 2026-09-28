@@ -78,6 +78,42 @@ input:checked + .slider::before{transform:translateX(18px);background:var(--oran
 .hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--orange);padding:10px 20px;border-radius:8px;font-size:13px;z-index:300}
 .toast.err{border-color:var(--red);color:var(--red)}
+
+/* ── NEW: modes, layout editor, save bar ── */
+.modes{display:flex;gap:6px;margin-bottom:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:4px}
+.mode{flex:1;background:transparent;color:var(--muted);padding:9px 10px;border-radius:7px;font-size:13px;font-weight:600}
+.mode.active{background:var(--orange);color:#0c0906}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:18px}
+.panel h2{font-size:14px;margin-bottom:4px}
+.panel .hint{margin-bottom:12px}
+.lrow{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.lrow.is-hidden{opacity:.55}
+.lrow-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lrow-top .grow{flex:1;min-width:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lrow-top input{padding:7px 9px;font-size:13px}
+.mv{display:flex;flex-direction:column;gap:3px}
+.mv button,.row .mv button{background:transparent;border:1px solid var(--border);color:var(--muted);width:26px;height:20px;border-radius:4px;font-size:10px;line-height:1}
+.mv button:hover:not(:disabled){color:var(--cream);border-color:var(--orange)}
+.mv button:disabled{opacity:.25;cursor:default}
+.key-tag{font-size:10.5px;color:var(--muted);letter-spacing:.04em;margin:0 0 6px 34px}
+.small-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 10px;border-radius:6px;font-size:12px;white-space:nowrap}
+.small-btn:hover{color:var(--cream);border-color:var(--orange)}
+.small-btn.on{color:var(--orange);border-color:var(--orange)}
+.small-btn.danger:hover{color:var(--red);border-color:var(--red)}
+.details{margin:10px 0 2px 34px;padding-top:10px;border-top:1px dashed var(--border)}
+.details .field-group{margin-bottom:12px}
+.add-btn{width:100%;padding:10px;background:transparent;border:1px dashed var(--orange);color:var(--orange);font-weight:600;border-radius:8px;margin-top:4px}
+.pgroup{border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:10px}
+.pill-row{display:grid;grid-template-columns:1fr 1fr auto auto auto;gap:6px;align-items:center;margin-bottom:6px}
+.pill-row input[type=text]{padding:6px 8px;font-size:12.5px}
+.chk{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);white-space:nowrap}
+.chk input{width:auto}
+.savebar{position:sticky;bottom:0;z-index:150;margin:10px -16px -16px;padding:12px 16px;background:rgba(12,9,6,.94);border-top:1px solid var(--orange);display:flex;align-items:center;gap:10px;backdrop-filter:blur(6px)}
+.savebar .msg{flex:1;font-size:13px;color:var(--orange)}
+.savebar .primary{background:var(--orange);color:#0c0906;font-weight:600;padding:10px 18px}
+.grid2f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+select.inline{width:auto;padding:7px 10px;font-size:13px}
+@media(max-width:560px){.lrow-top .grow{grid-template-columns:1fr}.pill-row{grid-template-columns:1fr 1fr auto}.grid2f{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -101,16 +137,61 @@ input:checked + .slider::before{transform:translateX(18px);background:var(--oran
     <button id="signOutBtn">Sign Out</button>
   </div>
 
-  <div class="tabs" id="tabs">
-    <button class="tab" data-section="drinks">Drinks</button>
-    <button class="tab" data-section="coffee">Coffee</button>
-    <button class="tab" data-section="tea">Tea</button>
-    <button class="tab" data-section="beer">Beer</button>
-    <button class="tab" data-section="snacks">Snacks</button>
+  <div class="modes">
+    <button class="mode active" data-mode="items">Menu items</button>
+    <button class="mode" data-mode="layout">Sections &amp; layout</button>
+    <button class="mode" data-mode="site">Hours &amp; Wi-Fi</button>
   </div>
 
-  <button id="addBtn">+ Add Drink</button>
-  <div id="list"></div>
+  <!-- MENU ITEMS: drinks per section, same as before + ▲▼ to reorder inside a subcategory -->
+  <div id="itemsView">
+    <div class="tabs" id="tabs"></div>
+    <button id="addBtn">+ Add Drink</button>
+    <div id="list"></div>
+  </div>
+
+  <!-- SECTIONS & LAYOUT: tabs, subcategories, options panels (saved to config/layout) -->
+  <div id="layoutView" class="hidden">
+    <div class="panel">
+      <h2>Sections (the tabs at the top of the menu)</h2>
+      <div class="hint">▲▼ changes the tab order; the first visible one opens when guests arrive. "Titles" edits the big heading of that tab. A section can only be removed once it has no items.</div>
+      <div id="secRows"></div>
+      <button class="add-btn" id="addSecBtn">+ Add section</button>
+    </div>
+    <div class="panel">
+      <h2 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">Subcategories in
+        <select id="layoutSecSel" class="inline"></select></h2>
+      <div class="hint">Order, names and visibility of the groups inside a section. "More" opens the quick-link name and the options panel (e.g. milk choices). The small grey name is the internal key drinks are saved under; it never changes.</div>
+      <div id="subRows"></div>
+      <button class="add-btn" id="addSubBtn">+ Add subcategory</button>
+    </div>
+  </div>
+
+  <!-- HOURS & WI-FI -->
+  <div id="siteView" class="hidden">
+    <div class="panel">
+      <h2>Opening hours</h2>
+      <div class="hint">Used for the hero badge, the live Open / Closed status and every footer.</div>
+      <div class="grid2f">
+        <div class="field-group"><label>Opens</label><input type="time" id="s_open"></div>
+        <div class="field-group"><label>Closes</label><input type="time" id="s_close"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Wi-Fi</h2>
+      <div class="hint">Shown on the landing screen of the menu.</div>
+      <div class="grid2f">
+        <div class="field-group"><label>Network name</label><input id="s_wifi"></div>
+        <div class="field-group"><label>Password</label><input id="s_pw"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="savebar hidden" id="saveBar">
+    <div class="msg">Unsaved layout / site changes</div>
+    <button class="small-btn" id="discardBtn">Discard</button>
+    <button class="primary" id="saveLayoutBtn">Save changes</button>
+  </div>
 </div>
 
 <div id="formOverlay" class="hidden">
@@ -128,13 +209,7 @@ input:checked + .slider::before{transform:translateX(18px);background:var(--oran
       <div class="field-group">
         <label>Section / Subcategory</label>
         <div class="field-pair">
-          <select id="f_section">
-            <option value="drinks">Drinks</option>
-            <option value="coffee">Coffee</option>
-            <option value="tea">Tea</option>
-            <option value="beer">Beer</option>
-            <option value="snacks">Snacks</option>
-          </select>
+          <select id="f_section"></select>
           <select id="f_subcat" required></select>
         </div>
         <!-- ═══ FIX: SECTION/SUBCATEGORY = DRAG-FREE REPOSITIONING (delete this input + revert
@@ -190,6 +265,7 @@ input:checked + .slider::before{transform:translateX(18px);background:var(--oran
         <select id="f_imgtype">
           <option value="can">Can (soda / energy drink)</option>
           <option value="bottle">Bottle</option>
+          <option value="glass">Glass (smoothie / juice glass)</option>
           <option value="tea">Tea (leaves / pouch)</option>
           <option value="bar">Snack bar</option>
           <option value="wrap">Coffee / Matcha glass</option>
@@ -214,7 +290,7 @@ input:checked + .slider::before{transform:translateX(18px);background:var(--oran
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCENURADvCeKYTEVlspsQO5nIBJeCzOWyw",
@@ -231,11 +307,37 @@ const db = getFirestore(app);
 let allDrinks = [];      // live cache from Firestore
 let currentSection = 'drinks';
 let editingId = null;    // null = adding new
-let unsubscribe = null;
+let unsubscribe = null, unsubLayout = null;
+let mode = 'items';      // items | layout | site
+
+/* ═══ LAYOUT MODEL ══════════════════════════════════════════════════════════════════════
+   The live menu (index.html) reads one Firestore doc, config/layout:
+     sections: [{key, en, ru, title1En, title2En, title1Ru, title2Ru, descEn, descRu, hidden, removed}]
+     subcats:  { <sectionKey>: [{key, en, ru, navEn, navRu, hidden, removed, panel}] }
+     site:     { open, close, wifiName, wifiPassword }
+   Defaults come from index.html itself (fetched + parsed below), so this panel always starts
+   from exactly what guests currently see; saving writes the full layout to Firestore. ═══ */
+let defaults = null;     // parsed from index.html
+let saved = {};          // config/layout as stored
+let L = null;            // working copy being edited
+let dirty = false;
+let layoutSection = 'drinks';
+const openDetails = new Set();   // which rows have their details expanded
+
+const FALLBACK_SECTIONS = [
+  { key: 'drinks', en: 'Drinks', ru: 'Напитки' }, { key: 'coffee', en: 'Coffee', ru: 'Кофе' },
+  { key: 'tea', en: 'Tea', ru: 'Чай' }, { key: 'beer', en: 'Beer', ru: 'Пиво' }, { key: 'snacks', en: 'Snacks', ru: 'Снеки' }
+];
+const FALLBACK_SUBCATS = {
+  drinks: ['Soft Drinks', 'Kombucha', 'Ice Herbal Tea', 'Fresh', 'Blended', 'Specials', 'Matcha'],
+  coffee: ['Espresso', 'Iced Coffee'], tea: ['Hot Tea'], beer: ['With Alcohol', 'Alcohol Free'], snacks: ['Protein Bars'],
+};
+const RESERVED = ['site', 'sections', 'subcats'];
 
 const IMG_TYPE_MAP = {
   can:    { imgClass: 'card-img-can',    imgWrapClass: null },
   bottle: { imgClass: 'card-img-bottle', imgWrapClass: null },
+  glass:  { imgClass: 'card-img-glass',  imgWrapClass: null },
   tea:    { imgClass: 'card-img-tea',    imgWrapClass: null },
   bar:    { imgClass: 'card-img-bar',    imgWrapClass: null },
   wrap:   { imgClass: null,              imgWrapClass: 'coffee-img-wrap' },
@@ -243,37 +345,11 @@ const IMG_TYPE_MAP = {
 function imgTypeFromItem(item) {
   if (item.imgWrapClass) return 'wrap';
   if (item.imgClass === 'card-img-bottle') return 'bottle';
+  if (item.imgClass === 'card-img-glass') return 'glass';
   if (item.imgClass === 'card-img-tea') return 'tea';
   if (item.imgClass === 'card-img-bar') return 'bar';
   return 'can';
 }
-
-/* ═══ FIX: SUBCATEGORY ORDER TO MATCH LIVE MENU LAYOUT (delete this block + the
-   two marked lines in renderList() to revert to a flat order-only sort) ═══
-   Previously renderList() sorted every item in a section by its raw numeric
-   "order" field only. Because subcategories were built up over time (e.g. Matcha
-   kept order values from when it lived under Tea, while Soft Drinks/Fresh/Blended
-   have their own independent numbering), items from different subcategories ended
-   up with interleaved order numbers -- so the admin list alternated between
-   subcategories instead of showing them as clean blocks. This list mirrors the
-   exact top-to-bottom subcategory order of the [data-section][data-subcat]
-   containers in index.html, so the admin panel's grouping always matches what
-   guests actually see on the live menu. Any subcategory not listed here (typo,
-   or a brand-new one not yet added to index.html) still shows up -- it's just
-   sorted after the known ones instead of breaking anything. */
-const SUBCAT_ORDER = {
-  drinks: ['Soft Drinks', 'Kombucha', 'Ice Herbal Tea', 'Fresh', 'Blended', 'Matcha'],
-  coffee: ['Espresso', 'Iced Coffee'],
-  tea:    ['Hot Tea'],
-  beer:   ['With Alcohol', 'Alcohol Free'],
-  snacks: ['Protein Bars'],
-};
-function subcatRank(section, subcategory) {
-  const known = SUBCAT_ORDER[section] || [];
-  const i = known.indexOf(subcategory);
-  return i === -1 ? known.length : i;
-}
-/* ═══ END FIX ═══ */
 
 function slugify(s) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item';
@@ -283,14 +359,180 @@ function uniqueSlug(base) {
   while (allDrinks.some(d => d.id === id)) { n++; id = `${base}-${n}`; }
   return id;
 }
-
 function toast(msg, isErr) {
   const t = document.createElement('div');
   t.className = 'toast' + (isErr ? ' err' : '');
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3200);
+  setTimeout(() => t.remove(), 3600);
 }
+function escHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+const clone = o => JSON.parse(JSON.stringify(o === undefined ? null : o));
+
+// ── read the live page's structure so the editor starts from what guests see ──
+async function loadDefaults() {
+  try {
+    const res = await fetch('index.html', { cache: 'no-store' });
+    if (!res.ok) throw new Error(res.status);
+    const d = new DOMParser().parseFromString(await res.text(), 'text/html');
+    const txt = html => { const t = d.createElement('div'); t.innerHTML = html || ''; return t; };
+    const out = { sections: [], subcats: {}, site: {} };
+
+    d.querySelectorAll('.nav-cats .cat-btn').forEach(b => {
+      const m = (b.getAttribute('onclick') || '').match(/show\('(.+?)'/);
+      if (!m) return;
+      const key = m[1], sec = d.getElementById('sec-' + key);
+      const s = { key, en: b.getAttribute('data-en') || b.textContent.trim(), ru: b.getAttribute('data-ru') || '' };
+      const title = sec && sec.querySelector('.sec-title');
+      const split = html => { const t = txt(html); const em = t.querySelector('em'); if (em) em.remove(); return [t.textContent.trim(), em ? em.textContent.trim() : '']; };
+      if (title) {
+        [s.title1En, s.title2En] = split(title.getAttribute('data-en'));
+        [s.title1Ru, s.title2Ru] = split(title.getAttribute('data-ru'));
+      }
+      const desc = sec && sec.querySelector('.sec-header > .sec-desc');
+      s.hasQuicknav = !!(sec && sec.querySelector('.quicknav'));
+      if (desc) { s.descEn = txt(desc.getAttribute('data-en')).textContent; s.descRu = txt(desc.getAttribute('data-ru')).textContent; }
+      out.sections.push(s);
+
+      // subcategories, in page order
+      const list = [];
+      const navLinks = {};
+      if (sec) sec.querySelectorAll('.quicknav .sec-desc-link').forEach(a => {
+        const mm = (a.getAttribute('onclick') || '').match(/jumpToNamedHeader\('(.+?)'\)/);
+        if (mm) navLinks[mm[1]] = a;
+      });
+      if (sec) sec.querySelectorAll(':scope > [data-subcat]').forEach(cont => {
+        const k = cont.dataset.subcat;
+        let head = null, panel = null;
+        for (let n = cont.previousElementSibling; n && !n.dataset.subcat; n = n.previousElementSibling) {
+          if (!head && n.classList.contains('sub-head')) head = n;
+          if (!panel && n.classList.contains('opts-panel')) panel = n;
+        }
+        const st = head && head.querySelector('.sub-title');
+        const entry = { key: k, en: st ? st.getAttribute('data-en') : k, ru: st ? st.getAttribute('data-ru') : k };
+        if (navLinks[k]) { entry.navEn = navLinks[k].getAttribute('data-en'); entry.navRu = navLinks[k].getAttribute('data-ru'); }
+        entry._defaultPanel = panel ? parsePanel(panel, txt) : null;
+        list.push(entry);
+      });
+      out.subcats[key] = list;
+    });
+
+    const strong = d.querySelector('.hero-hours-txt strong');
+    const hm = strong && strong.textContent.match(/(\d{1,2}:\d{2})\s*[–-]\s*(\d{1,2}:\d{2})/);
+    if (hm) { out.site.open = hm[1].padStart(5, '0'); out.site.close = hm[2].padStart(5, '0'); }
+    const wifi = d.querySelector('.hero-wifi');
+    if (wifi) {
+      const t = txt(wifi.getAttribute('data-en'));
+      out.site.wifiName = t.querySelector('strong')?.textContent || '';
+      out.site.wifiPassword = t.querySelector('.wifi-pw')?.textContent || '';
+    }
+    return out;
+  } catch (err) {
+    console.warn('Could not read index.html, using built-in defaults', err);
+    toast('Could not read index.html, so layout defaults are basic. Open the admin from the live site for full detail.', true);
+    return {
+      sections: FALLBACK_SECTIONS.map(s => ({ ...s })),
+      subcats: Object.fromEntries(Object.entries(FALLBACK_SUBCATS).map(([k, v]) => [k, v.map(x => ({ key: x, en: x, ru: x }))])),
+      site: {}
+    };
+  }
+}
+function parsePanel(panel, txt) {
+  const groups = [];
+  panel.querySelectorAll('.opts-group').forEach(g => {
+    const lab = g.querySelector('.opts-group-label');
+    const alt = !!(lab && lab.querySelector('.opts-alt-badge'));
+    const src = alt ? lab.querySelector('span[data-en]') : lab;
+    const grp = { en: src ? txt(src.getAttribute('data-en')).textContent : '', ru: src ? txt(src.getAttribute('data-ru')).textContent : '', alt, pills: [] };
+    g.querySelectorAll('.opts-pills').forEach((row, ri) => {
+      row.querySelectorAll('.opts-pill').forEach((p, pi) => grp.pills.push({
+        en: txt(p.getAttribute('data-en')).textContent, ru: txt(p.getAttribute('data-ru')).textContent,
+        alt: p.classList.contains('opts-pill--alt'), newLine: ri > 0 && pi === 0
+      }));
+    });
+    groups.push(grp);
+  });
+  const note = panel.querySelector('.opts-note');
+  return {
+    groups,
+    noteEn: note ? txt(note.getAttribute('data-en')).textContent : '',
+    noteRu: note ? txt(note.getAttribute('data-ru')).textContent : '',
+    noteHighlight: !!(note && note.getAttribute('style'))
+  };
+}
+
+// ── merge defaults + saved + live data into the working copy ──
+function buildEffective() {
+  const D = defaults || { sections: FALLBACK_SECTIONS, subcats: {}, site: {} };
+  const S = saved || {};
+  const out = { sections: [], subcats: {}, site: { ...(D.site || {}), ...(S.site || {}) } };
+
+  const defSec = k => (D.sections || []).find(s => s.key === k) || {};
+  (S.sections || []).forEach(s => { if (s && s.key) out.sections.push({ ...defSec(s.key), ...s }); });
+  (D.sections || []).forEach(s => { if (!out.sections.some(x => x.key === s.key)) out.sections.push({ ...s }); });
+  [...new Set(allDrinks.map(d => d.section).filter(Boolean))].forEach(k => {
+    if (!out.sections.some(x => x.key === k)) out.sections.push({ key: k, en: k, ru: k });
+  });
+
+  out.sections.forEach(sec => {
+    const defList = (D.subcats || {})[sec.key] || [];
+    const savedList = ((S.subcats || {})[sec.key]) || [];
+    const list = [];
+    const defOf = k => defList.find(e => e.key === k) || {};
+    savedList.forEach(e => { if (e && e.key) list.push({ ...defOf(e.key), ...e }); });
+    defList.forEach(e => { if (!list.some(x => x.key === e.key)) list.push({ ...e }); });
+    [...new Set(allDrinks.filter(d => d.section === sec.key).map(d => d.subcategory).filter(Boolean))].forEach(k => {
+      if (!list.some(x => x.key === k)) list.push({ key: k, en: k, ru: k });
+    });
+    out.subcats[sec.key] = list;
+  });
+  return out;
+}
+function refreshLayout(force) {
+  if (!force && dirty) { renderAll(); return; }
+  L = buildEffective();
+  dirty = false;
+  renderAll();
+}
+function toSaveDoc() {
+  const pick = (o, keys) => { const r = {}; keys.forEach(k => { if (o[k] !== undefined && o[k] !== '') r[k] = o[k]; }); return r; };
+  const secKeys = ['key', 'en', 'ru', 'title1En', 'title2En', 'title1Ru', 'title2Ru', 'descEn', 'descRu', 'hidden', 'removed'];
+  const subKeys = ['key', 'en', 'ru', 'navEn', 'navRu', 'hidden', 'removed'];
+  const docOut = {
+    sections: L.sections.map(s => {
+      const r = pick(s, secKeys);
+      if (s.descEn === '') r.descEn = '';   // explicit "no subtitle"
+      return r;
+    }),
+    subcats: {},
+    site: pick(L.site || {}, ['open', 'close', 'wifiName', 'wifiPassword']),
+    updatedAt: new Date().toISOString()
+  };
+  Object.entries(L.subcats).forEach(([sec, list]) => {
+    docOut.subcats[sec] = list.map(e => {
+      const r = pick(e, subKeys);
+      if ('panel' in e) r.panel = e.panel === null ? null : clone(e.panel);
+      return r;
+    });
+  });
+  return clone(docOut);
+}
+function markDirty() {
+  dirty = true;
+  renderSaveBar();
+}
+
+const liveSections = () => (L ? L.sections : FALLBACK_SECTIONS).filter(s => !s.removed);
+const subcatList = sec => (L && L.subcats[sec] ? L.subcats[sec] : []).filter(e => !e.removed);
+function subcatRank(section, subcategory) {
+  const known = subcatList(section).map(e => e.key);
+  const i = known.indexOf(subcategory);
+  return i === -1 ? known.length : i;
+}
+const labelOf = (sec, key) => (subcatList(sec).find(e => e.key === key) || {}).en || key;
 
 // ── AUTH ──
 document.getElementById('loginBtn').addEventListener('click', async () => {
@@ -305,18 +547,23 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     errEl.classList.remove('hidden');
   }
 });
-document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
+document.getElementById('signOutBtn').addEventListener('click', () => {
+  if (dirty && !confirm('You have unsaved layout changes. Sign out anyway?')) return;
+  signOut(auth);
+});
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     document.getElementById('whoAmI').textContent = 'Signed in as ' + user.email;
+    if (!defaults) defaults = await loadDefaults();
     startListening();
   } else {
     document.getElementById('loginScreen').classList.remove('hidden');
     document.getElementById('app').classList.add('hidden');
     if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+    if (unsubLayout) { unsubLayout(); unsubLayout = null; }
   }
 });
 
@@ -325,27 +572,60 @@ function startListening() {
   unsubscribe = onSnapshot(collection(db, 'drinks'), (snap) => {
     allDrinks = [];
     snap.forEach(d => allDrinks.push(d.data()));
-    renderList();
+    refreshLayout(false);
   }, (err) => toast('Live sync error: ' + err.message, true));
+  unsubLayout = onSnapshot(doc(db, 'config', 'layout'), (snap) => {
+    saved = snap.exists() ? snap.data() : {};
+    refreshLayout(false);
+  }, (err) => {
+    toast('Cannot read layout settings (' + err.code + '). Check the Firestore rules for the config collection.', true);
+    saved = {};
+    refreshLayout(false);
+  });
 }
 
-// ── TABS ──
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentSection = btn.dataset.section;
-    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b === btn));
-    renderList();
-  });
-});
-document.querySelector('.tab[data-section="drinks"]').classList.add('active');
+window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 
-// ── LIST RENDER ──
+// ── MODES ──
+document.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => {
+  mode = b.dataset.mode;
+  document.querySelectorAll('.mode').forEach(x => x.classList.toggle('active', x === b));
+  renderAll();
+}));
+
+function renderAll() {
+  document.getElementById('itemsView').classList.toggle('hidden', mode !== 'items');
+  document.getElementById('layoutView').classList.toggle('hidden', mode !== 'layout');
+  document.getElementById('siteView').classList.toggle('hidden', mode !== 'site');
+  renderTabs();
+  if (mode === 'items') renderList();
+  if (mode === 'layout') renderLayout();
+  if (mode === 'site') renderSite();
+  renderSaveBar();
+}
+
+// ── SECTION TABS (menu items view) ──
+function renderTabs() {
+  const tabs = document.getElementById('tabs');
+  const secs = liveSections();
+  if (!secs.some(s => s.key === currentSection) && secs.length) currentSection = secs[0].key;
+  tabs.innerHTML = secs.map(s => `<button class="tab${s.key === currentSection ? ' active' : ''}" data-section="${escHtml(s.key)}">${escHtml(s.en || s.key)}${s.hidden ? ' (hidden)' : ''}</button>`).join('');
+  tabs.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
+    currentSection = btn.dataset.section;
+    renderTabs(); renderList();
+  }));
+}
+
+// ── LIST RENDER (menu items) ──
+function groupItems(section, subcategory) {
+  return allDrinks.filter(d => d.section === section && d.subcategory === subcategory)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+}
 function renderList() {
   const list = document.getElementById('list');
   const items = allDrinks
     .filter(d => d.section === currentSection)
     .sort((a, b) => {
-      /* FIX: group by subcategory (matching live menu order) before sorting by "order" within each group */
       const subDelta = subcatRank(currentSection, a.subcategory) - subcatRank(currentSection, b.subcategory);
       if (subDelta !== 0) return subDelta;
       return (a.order || 0) - (b.order || 0);
@@ -357,16 +637,24 @@ function renderList() {
   }
 
   let html = '';
-  let lastSub = null;
+  let lastSub = null, group = [];
   items.forEach(item => {
     if (item.subcategory !== lastSub) {
-      html += `<div class="subcat-header">${escHtml(item.subcategory || 'Ungrouped')}</div>`;
+      const entry = subcatList(currentSection).find(e => e.key === item.subcategory);
+      const note = entry && entry.hidden ? ' · hidden on menu' : '';
+      html += `<div class="subcat-header">${escHtml(labelOf(currentSection, item.subcategory) || 'Ungrouped')}${note}</div>`;
       lastSub = item.subcategory;
+      group = groupItems(currentSection, item.subcategory);
     }
+    const gi = group.findIndex(g => g.id === item.id);
     const hasPrice = item.price && item.price.values && item.price.values.length && item.price.values[0];
     const warn = !hasPrice ? '<span class="warn-tag">no price</span>' : '';
     html += `
       <div class="row" data-id="${escHtml(item.id)}">
+        <div class="mv">
+          <button class="mv-item" data-id="${escHtml(item.id)}" data-dir="-1" title="Move up" ${gi === 0 ? 'disabled' : ''}>▲</button>
+          <button class="mv-item" data-id="${escHtml(item.id)}" data-dir="1" title="Move down" ${gi === group.length - 1 ? 'disabled' : ''}>▼</button>
+        </div>
         <div class="row-main">
           <div class="row-name">${escHtml(item.name?.en || item.id)} ${warn}</div>
           <div class="row-sub">${escHtml(item.origin?.en || '')}${hasPrice ? ' · ' + escHtml(item.price.values.join(' / ')) : ''}</div>
@@ -386,11 +674,25 @@ function renderList() {
   list.querySelectorAll('.toggle-active').forEach(cb => cb.addEventListener('change', onToggle));
   list.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', () => openForm(b.dataset.id)));
   list.querySelectorAll('.del-btn').forEach(b => b.addEventListener('click', () => onDelete(b.dataset.id)));
+  list.querySelectorAll('.mv-item').forEach(b => b.addEventListener('click', () => moveItem(b.dataset.id, +b.dataset.dir)));
 }
 
-function escHtml(s) {
-  if (s === null || s === undefined) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// move a drink up/down inside its subcategory, renumbering the group 10, 20, 30…
+async function moveItem(id, dir) {
+  const item = allDrinks.find(d => d.id === id);
+  const group = groupItems(item.section, item.subcategory);
+  const i = group.findIndex(g => g.id === id), j = i + dir;
+  if (j < 0 || j >= group.length) return;
+  [group[i], group[j]] = [group[j], group[i]];
+  const batch = writeBatch(db);
+  let changes = 0;
+  group.forEach((g, idx) => {
+    const want = (idx + 1) * 10;
+    if (g.order !== want) { batch.update(doc(db, 'drinks', g.id), { order: want }); changes++; }
+  });
+  try {
+    if (changes) await batch.commit();
+  } catch (err) { toast('Could not reorder: ' + err.message, true); }
 }
 
 async function onToggle(e) {
@@ -422,7 +724,266 @@ async function onDelete(id) {
   }
 }
 
-// ── FORM: dynamic price / tag rows ──
+/* ═══ LAYOUT VIEW ═══════════════════════════════════════════════════════════════════════ */
+function moveInArray(arr, visible, key, dir) {
+  // move `key` past its neighbour among the visible (non-removed) entries
+  const vis = arr.filter(visible);
+  const vi = vis.findIndex(e => e.key === key), vj = vi + dir;
+  if (vi < 0 || vj < 0 || vj >= vis.length) return;
+  const a = arr.indexOf(vis[vi]), b = arr.indexOf(vis[vj]);
+  [arr[a], arr[b]] = [arr[b], arr[a]];
+}
+const drinksIn = (sec, sub) => allDrinks.filter(d => d.section === sec && (sub === undefined || d.subcategory === sub)).length;
+
+function renderLayout() {
+  if (!L) return;
+  const secs = liveSections();
+  if (!secs.some(s => s.key === layoutSection) && secs.length) layoutSection = secs[0].key;
+
+  // sections
+  document.getElementById('secRows').innerHTML = secs.map((s, i) => {
+    const n = drinksIn(s.key);
+    const open = openDetails.has('sec:' + s.key);
+    const qn = s.hasQuicknav || (defaults?.sections || []).find(d => d.key === s.key)?.hasQuicknav;
+    return `<div class="lrow${s.hidden ? ' is-hidden' : ''}" data-sec="${escHtml(s.key)}">
+      <div class="lrow-top">
+        <div class="mv"><button data-act="sec-up" ${i === 0 ? 'disabled' : ''}>▲</button><button data-act="sec-down" ${i === secs.length - 1 ? 'disabled' : ''}>▼</button></div>
+        <div class="grow">
+          <input data-f="en" value="${escHtml(s.en)}" placeholder="Tab name (EN)">
+          <input data-f="ru" value="${escHtml(s.ru)}" placeholder="Tab name (RU)">
+        </div>
+        <button class="small-btn${open ? ' on' : ''}" data-act="sec-details">Titles</button>
+        <button class="small-btn${s.hidden ? ' on' : ''}" data-act="sec-hide">${s.hidden ? 'Hidden' : 'Visible'}</button>
+        <button class="small-btn danger" data-act="sec-del" title="${n ? 'Move or delete its ' + n + ' items first' : 'Remove section'}" ${n ? 'disabled' : ''}>🗑</button>
+      </div>
+      <div class="key-tag">${escHtml(s.key)} · ${n} item${n === 1 ? '' : 's'}${i === 0 ? ' · opens first' : ''}</div>
+      ${open ? `<div class="details">
+        <div class="field-group"><label>Big section title, line 1 / line 2 in italics (EN)</label>
+          <div class="grid2f"><input data-f="title1En" value="${escHtml(s.title1En)}" placeholder="Drinks &"><input data-f="title2En" value="${escHtml(s.title2En)}" placeholder="Refreshments"></div></div>
+        <div class="field-group"><label>Big section title, line 1 / line 2 (RU)</label>
+          <div class="grid2f"><input data-f="title1Ru" value="${escHtml(s.title1Ru)}"><input data-f="title2Ru" value="${escHtml(s.title2Ru)}"></div></div>
+        ${qn ? '<div class="hint">This section shows its subcategory quick-links under the title, so it has no subtitle line.</div>' : `
+        <div class="field-group"><label>Subtitle under the title (EN / RU)</label>
+          <div class="grid2f"><input data-f="descEn" value="${escHtml(s.descEn)}" placeholder="Freshly steeped · Served hot"><input data-f="descRu" value="${escHtml(s.descRu)}"></div></div>`}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+
+  // subcategories of the selected section
+  const sel = document.getElementById('layoutSecSel');
+  sel.innerHTML = secs.map(s => `<option value="${escHtml(s.key)}">${escHtml(s.en || s.key)}</option>`).join('');
+  sel.value = layoutSection;
+  const secObj = L.sections.find(s => s.key === layoutSection) || {};
+  const hasQn = secObj.hasQuicknav || (defaults?.sections || []).find(d => d.key === layoutSection)?.hasQuicknav;
+  const subs = subcatList(layoutSection);
+  document.getElementById('subRows').innerHTML = subs.length ? subs.map((e, i) => {
+    const n = drinksIn(layoutSection, e.key);
+    const open = openDetails.has('sub:' + layoutSection + ':' + e.key);
+    const panel = ('panel' in e) ? e.panel : e._defaultPanel;
+    const panelInfo = panel && ((panel.groups || []).length || panel.noteEn) ? `options panel: ${(panel.groups || []).length} group(s)` : 'no options panel';
+    return `<div class="lrow${e.hidden ? ' is-hidden' : ''}" data-sub="${escHtml(e.key)}">
+      <div class="lrow-top">
+        <div class="mv"><button data-act="sub-up" ${i === 0 ? 'disabled' : ''}>▲</button><button data-act="sub-down" ${i === subs.length - 1 ? 'disabled' : ''}>▼</button></div>
+        <div class="grow">
+          <input data-f="en" value="${escHtml(e.en)}" placeholder="Header (EN)">
+          <input data-f="ru" value="${escHtml(e.ru)}" placeholder="Header (RU)">
+        </div>
+        <button class="small-btn${open ? ' on' : ''}" data-act="sub-details">More</button>
+        <button class="small-btn${e.hidden ? ' on' : ''}" data-act="sub-hide">${e.hidden ? 'Hidden' : 'Visible'}</button>
+        <button class="small-btn danger" data-act="sub-del" title="${n ? 'Move or delete its ' + n + ' items first' : 'Remove subcategory'}" ${n ? 'disabled' : ''}>🗑</button>
+      </div>
+      <div class="key-tag">${escHtml(e.key)} · ${n} item${n === 1 ? '' : 's'} · ${panelInfo}</div>
+      ${open ? `<div class="details">
+        ${hasQn ? `<div class="field-group"><label>Short name in the quick-links row (EN / RU)</label>
+          <div class="grid2f"><input data-f="navEn" value="${escHtml(e.navEn)}" placeholder="${escHtml(e.en)}"><input data-f="navRu" value="${escHtml(e.navRu)}" placeholder="${escHtml(e.ru)}"></div>
+          <div class="hint">Leave empty to use the header name.</div></div>` : ''}
+        ${panelEditor(e, panel)}
+      </div>` : ''}
+    </div>`;
+  }).join('') : '<div class="hint">No subcategories yet.</div>';
+}
+
+function panelEditor(e, panel) {
+  const has = !!(panel && ((panel.groups || []).length || panel.noteEn));
+  const edited = 'panel' in e;
+  let h = `<div class="field-group"><label>Options panel (the box of choices shown above the drinks)</label>`;
+  if (!has) {
+    h += `<button type="button" class="small-btn" data-act="p-create">+ Add an options panel</button>`;
+    if (edited && e._defaultPanel) h += ` <button type="button" class="small-btn" data-act="p-reset">Restore original panel</button>`;
+    return h + '</div>';
+  }
+  (panel.groups || []).forEach((g, gi) => {
+    h += `<div class="pgroup" data-g="${gi}">
+      <div class="pill-row" style="grid-template-columns:1fr 1fr auto auto">
+        <input type="text" data-pf="g-en" value="${escHtml(g.en)}" placeholder="Group label (EN)">
+        <input type="text" data-pf="g-ru" value="${escHtml(g.ru)}" placeholder="Group label (RU)">
+        <label class="chk"><input type="checkbox" data-pf="g-alt" ${g.alt ? 'checked' : ''}>ALT badge</label>
+        <button type="button" class="dyn-remove" data-act="p-del-group" title="Remove group">✕</button>
+      </div>`;
+    (g.pills || []).forEach((p, pi) => {
+      h += `<div class="pill-row" data-p="${pi}">
+        <input type="text" data-pf="p-en" value="${escHtml(p.en)}" placeholder="Option (EN)">
+        <input type="text" data-pf="p-ru" value="${escHtml(p.ru)}" placeholder="Option (RU)">
+        <label class="chk" title="Orange highlighted pill"><input type="checkbox" data-pf="p-alt" ${p.alt ? 'checked' : ''}>alt</label>
+        <label class="chk" title="Start a new line with this pill"><input type="checkbox" data-pf="p-nl" ${p.newLine ? 'checked' : ''}>new line</label>
+        <button type="button" class="dyn-remove" data-act="p-del-pill">✕</button>
+      </div>`;
+    });
+    h += `<button type="button" class="dyn-add" data-act="p-add-pill">+ Option</button></div>`;
+  });
+  h += `<button type="button" class="dyn-add" data-act="p-add-group">+ Group</button>
+    <div class="field-group" style="margin-top:12px"><label>Note at the bottom of the panel (EN / RU, optional)</label>
+      <div class="grid2f"><input type="text" data-pf="n-en" value="${escHtml(panel.noteEn)}"><input type="text" data-pf="n-ru" value="${escHtml(panel.noteRu)}"></div>
+      <label class="chk" style="margin-top:6px"><input type="checkbox" data-pf="n-hl" ${panel.noteHighlight ? 'checked' : ''}>Brighter note text</label>
+    </div>
+    <button type="button" class="small-btn danger" data-act="p-remove">Remove panel</button>
+    ${edited && e._defaultPanel ? '<button type="button" class="small-btn" data-act="p-reset">Restore original panel</button>' : ''}`;
+  return h + '</div>';
+}
+
+// editable copy of a subcategory's panel (first edit copies the page's original)
+function editPanel(e) {
+  if (!('panel' in e) || e.panel === null) e.panel = clone(e._defaultPanel) || { groups: [], noteEn: '', noteRu: '', noteHighlight: false };
+  if (!e.panel.groups) e.panel.groups = [];
+  return e.panel;
+}
+
+// text inputs: update the model in place, no re-render (keeps focus while typing)
+document.getElementById('layoutView').addEventListener('input', ev => {
+  const t = ev.target;
+  const secRow = t.closest('[data-sec]'), subRow = t.closest('[data-sub]');
+  if (t.dataset.f && secRow) {
+    const s = L.sections.find(x => x.key === secRow.dataset.sec);
+    s[t.dataset.f] = t.value; markDirty(); return;
+  }
+  if (t.dataset.f && subRow) {
+    const e = L.subcats[layoutSection].find(x => x.key === subRow.dataset.sub);
+    e[t.dataset.f] = t.value; markDirty(); return;
+  }
+  if (t.dataset.pf && subRow) {
+    const e = L.subcats[layoutSection].find(x => x.key === subRow.dataset.sub);
+    const p = editPanel(e);
+    const gEl = t.closest('[data-g]'), pEl = t.closest('[data-p]');
+    const g = gEl ? p.groups[+gEl.dataset.g] : null;
+    const pill = g && pEl ? g.pills[+pEl.dataset.p] : null;
+    const val = t.type === 'checkbox' ? t.checked : t.value;
+    ({ 'g-en': () => g.en = val, 'g-ru': () => g.ru = val, 'g-alt': () => g.alt = val,
+       'p-en': () => pill.en = val, 'p-ru': () => pill.ru = val, 'p-alt': () => pill.alt = val, 'p-nl': () => pill.newLine = val,
+       'n-en': () => p.noteEn = val, 'n-ru': () => p.noteRu = val, 'n-hl': () => p.noteHighlight = val })[t.dataset.pf]?.();
+    markDirty();
+  }
+});
+
+// buttons: structural changes, then re-render
+document.getElementById('layoutView').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-act]');
+  if (!b) return;
+  const act = b.dataset.act;
+  const secRow = b.closest('[data-sec]'), subRow = b.closest('[data-sub]');
+  const s = secRow && L.sections.find(x => x.key === secRow.dataset.sec);
+  const list = L.subcats[layoutSection] || [];
+  const e = subRow && list.find(x => x.key === subRow.dataset.sub);
+  const notRemoved = x => !x.removed;
+
+  switch (act) {
+    case 'sec-up': case 'sec-down': moveInArray(L.sections, notRemoved, s.key, act === 'sec-up' ? -1 : 1); break;
+    case 'sec-hide': s.hidden = !s.hidden; break;
+    case 'sec-details': toggleSet('sec:' + s.key); break;
+    case 'sec-del':
+      if (!confirm(`Remove the "${s.en}" section from the menu?`)) return;
+      s.removed = true; break;
+    case 'sub-up': case 'sub-down': moveInArray(list, notRemoved, e.key, act === 'sub-up' ? -1 : 1); break;
+    case 'sub-hide': e.hidden = !e.hidden; break;
+    case 'sub-details': toggleSet('sub:' + layoutSection + ':' + e.key); break;
+    case 'sub-del':
+      if (!confirm(`Remove the "${e.en}" subcategory?`)) return;
+      e.removed = true; break;
+    case 'p-create': editPanel(e); if (!e.panel.groups.length) e.panel.groups.push({ en: '', ru: '', alt: false, pills: [{ en: '', ru: '' }] }); break;
+    case 'p-remove': e.panel = null; break;
+    case 'p-reset': delete e.panel; break;
+    case 'p-add-group': editPanel(e).groups.push({ en: '', ru: '', alt: false, pills: [{ en: '', ru: '' }] }); break;
+    case 'p-del-group': editPanel(e).groups.splice(+b.closest('[data-g]').dataset.g, 1); break;
+    case 'p-add-pill': editPanel(e).groups[+b.closest('[data-g]').dataset.g].pills.push({ en: '', ru: '' }); break;
+    case 'p-del-pill': editPanel(e).groups[+b.closest('[data-g]').dataset.g].pills.splice(+b.closest('[data-p]').dataset.p, 1); break;
+    default: return;
+  }
+  markDirty();
+  renderLayout();
+});
+function toggleSet(k) { openDetails.has(k) ? openDetails.delete(k) : openDetails.add(k); }
+
+document.getElementById('layoutSecSel').addEventListener('change', ev => { layoutSection = ev.target.value; renderLayout(); });
+
+document.getElementById('addSecBtn').addEventListener('click', () => {
+  const en = prompt('Name of the new section (EN), e.g. "Juices"');
+  if (!en || !en.trim()) return;
+  const ru = prompt('Name in Russian', en.trim()) || en.trim();
+  let key = slugify(en).replace(/-/g, '');
+  if (RESERVED.includes(key)) key += 'menu';
+  const existing = L.sections.find(s => s.key === key);
+  if (existing && !existing.removed) { toast('A section with that name already exists', true); return; }
+  if (existing) Object.assign(existing, { removed: false, hidden: false, en: en.trim(), ru });
+  else L.sections.push({ key, en: en.trim(), ru, title1En: en.trim(), title1Ru: ru, descEn: '', descRu: '' });
+  L.subcats[key] = L.subcats[key] || [];
+  layoutSection = key;
+  markDirty(); renderLayout(); renderTabs();
+  toast(`Section "${en.trim()}" added. Add a subcategory to it, then Save.`);
+});
+document.getElementById('addSubBtn').addEventListener('click', () => {
+  const en = prompt('Name of the new subcategory (EN), e.g. "Cold Press"');
+  if (!en || !en.trim()) return;
+  const ru = prompt('Name in Russian', en.trim()) || en.trim();
+  const key = en.trim();
+  const list = L.subcats[layoutSection] = L.subcats[layoutSection] || [];
+  const existing = list.find(x => x.key === key);
+  if (existing && !existing.removed) { toast('That subcategory already exists in this section', true); return; }
+  if (existing) Object.assign(existing, { removed: false, hidden: false, en: key, ru });
+  else list.push({ key, en: key, ru });
+  markDirty(); renderLayout();
+  toast(`"${key}" added at the bottom. Move it into place, then Save.`);
+});
+
+/* ═══ SITE VIEW ═════════════════════════════════════════════════════════════════════════ */
+function renderSite() {
+  if (!L) return;
+  const s = L.site || {};
+  document.getElementById('s_open').value = s.open || '';
+  document.getElementById('s_close').value = s.close || '';
+  document.getElementById('s_wifi').value = s.wifiName || '';
+  document.getElementById('s_pw').value = s.wifiPassword || '';
+}
+['s_open', 's_close', 's_wifi', 's_pw'].forEach(id => document.getElementById(id).addEventListener('input', ev => {
+  const map = { s_open: 'open', s_close: 'close', s_wifi: 'wifiName', s_pw: 'wifiPassword' };
+  L.site = L.site || {};
+  L.site[map[id]] = ev.target.value;
+  markDirty();
+}));
+
+/* ═══ SAVE BAR ══════════════════════════════════════════════════════════════════════════ */
+function renderSaveBar() {
+  document.getElementById('saveBar').classList.toggle('hidden', !dirty);
+}
+document.getElementById('discardBtn').addEventListener('click', () => {
+  if (!confirm('Throw away your unsaved layout changes?')) return;
+  refreshLayout(true);
+});
+document.getElementById('saveLayoutBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveLayoutBtn');
+  btn.disabled = true;
+  try {
+    await setDoc(doc(db, 'config', 'layout'), toSaveDoc());
+    dirty = false;
+    toast('Layout saved. The live menu updates on the next page load.');
+    renderSaveBar();
+  } catch (err) {
+    toast(err.code === 'permission-denied'
+      ? 'Save blocked by Firestore rules: the config collection needs write access for the admin.'
+      : 'Save failed: ' + err.message, true);
+  }
+  btn.disabled = false;
+});
+
+/* ═══ DRINK FORM ════════════════════════════════════════════════════════════════════════ */
 function addPriceRow(value = '') {
   const wrap = document.getElementById('priceRows');
   const row = document.createElement('div');
@@ -445,23 +1006,29 @@ function addTagRow(en = '', ru = '') {
 document.getElementById('addPriceRow').addEventListener('click', () => addPriceRow());
 document.getElementById('addTagRow').addEventListener('click', () => addTagRow());
 
-// ── FORM: open / close ──
 document.getElementById('addBtn').addEventListener('click', () => openForm(null));
 document.getElementById('cancelBtn').addEventListener('click', closeForm);
 document.getElementById('formOverlay').addEventListener('click', (e) => { if (e.target.id === 'formOverlay') closeForm(); });
 
+function populateSectionSelect(value) {
+  const sel = document.getElementById('f_section');
+  const secs = liveSections();
+  sel.innerHTML = secs.map(s => `<option value="${escHtml(s.key)}">${escHtml(s.en || s.key)}</option>`).join('');
+  if (value && !secs.some(s => s.key === value)) sel.insertAdjacentHTML('beforeend', `<option value="${escHtml(value)}">${escHtml(value)}</option>`);
+  sel.value = value || currentSection;
+}
 function populateSubcatList(selectValue) {
   const section = document.getElementById('f_section').value;
   const sel = document.getElementById('f_subcat');
-  const canonical = SUBCAT_ORDER[section] || [];
+  const canonical = subcatList(section).map(e => e.key);
   const inData = [...new Set(allDrinks.filter(d => d.section === section).map(d => d.subcategory).filter(Boolean))];
   const extras = inData.filter(s => !canonical.includes(s)).sort();
   const options = [...canonical, ...extras];
 
   const wanted = selectValue !== undefined ? selectValue : sel.value;
-  sel.innerHTML = options.map(s => `<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('')
+  sel.innerHTML = options.map(s => `<option value="${escHtml(s)}">${escHtml(labelOf(section, s))}${labelOf(section, s) !== s ? ' (' + escHtml(s) + ')' : ''}</option>`).join('')
     + `<option value="__new__">+ New subcategory…</option>`;
-  sel.value = options.includes(wanted) ? wanted : (wanted ? '__new__' : options[0]);
+  sel.value = options.includes(wanted) ? wanted : (wanted ? '__new__' : (options[0] || '__new__'));
 
   const newInput = document.getElementById('f_subcat_new');
   if (sel.value === '__new__') {
@@ -490,7 +1057,7 @@ function openForm(id) {
     document.getElementById('formTitle').textContent = 'Edit Drink';
     document.getElementById('f_name_en').value = item.name?.en || '';
     document.getElementById('f_name_ru').value = item.name?.ru || '';
-    document.getElementById('f_section').value = item.section || 'drinks';
+    populateSectionSelect(item.section || 'drinks');
     document.getElementById('f_origin_en').value = item.origin?.en || '';
     document.getElementById('f_origin_ru').value = item.origin?.ru || '';
     document.getElementById('f_desc_en').value = item.desc?.en || '';
@@ -502,7 +1069,7 @@ function openForm(id) {
     (item.tags || []).forEach(t => addTagRow(t.en, t.ru));
   } else {
     document.getElementById('formTitle').textContent = 'Add Drink';
-    document.getElementById('f_section').value = currentSection;
+    populateSectionSelect(currentSection);
     addPriceRow('');
   }
   populateSubcatList(id ? allDrinks.find(d => d.id === id)?.subcategory : undefined);
@@ -513,7 +1080,6 @@ function closeForm() {
   editingId = null;
 }
 
-// ── FORM: save ──
 document.getElementById('drinkForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nameEn = document.getElementById('f_name_en').value.trim();
@@ -538,7 +1104,6 @@ document.getElementById('drinkForm').addEventListener('submit', async (e) => {
   const existing = editingId ? allDrinks.find(d => d.id === editingId) : null;
   let imgClass = IMG_TYPE_MAP[imgType].imgClass;
   let imgWrapClass = IMG_TYPE_MAP[imgType].imgWrapClass;
-  // preserve one-off wrap modifiers (e.g. strawberry-img-wrap) if the wrap type is unchanged
   if (imgType === 'wrap' && existing?.imgWrapClass?.startsWith('coffee-img-wrap')) {
     imgWrapClass = existing.imgWrapClass;
   }
@@ -564,13 +1129,7 @@ document.getElementById('drinkForm').addEventListener('submit', async (e) => {
     needsInfo: !price,
   };
 
-  /* ═══ FIX: RECOMPUTE ORDER WHEN A DRINK IS MOVED TO A NEW SECTION/SUBCATEGORY
-     (delete this block down to the END FIX marker below, and restore the old if/else, to revert) ═══
-     Editing a drink used to keep its old numeric "order" value no matter what, so relocating an
-     item via the Section/Subcategory pickers above (or the old free-text field) would drop it at
-     some arbitrary spot in its new group instead of at the end. Now any actual move -- new item,
-     or an edit whose section/subcategory differs from what the item had before -- gets a fresh
-     order value placed after everything already in that group, same as "add new" always did. */
+  // a new drink, or one moved to another section/subcategory, goes to the end of its group
   const movedGroup = !editingId || existing.section !== payload.section || existing.subcategory !== payload.subcategory;
   if (movedGroup) {
     const maxOrder = Math.max(0, ...allDrinks
@@ -578,7 +1137,6 @@ document.getElementById('drinkForm').addEventListener('submit', async (e) => {
       .map(d => d.order || 0));
     payload.order = maxOrder + 10;
   }
-  /* END FIX */
 
   try {
     if (editingId) {

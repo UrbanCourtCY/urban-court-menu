@@ -1039,7 +1039,11 @@ function setOpenStatus() {
   const h = parseInt(parts.find(p => p.type === 'hour').value, 10);
   const m = parseInt(parts.find(p => p.type === 'minute').value, 10);
   const mins = h * 60 + m;
-  const isOpen = mins >= (7 * 60 + 30) && mins < (21 * 60 + 30);
+  // hours can be changed from the admin panel (window.UC_HOURS, set by applySite()); default 07:30–21:30
+  const hm = t => { const [a, b] = t.split(':').map(Number); return a * 60 + b; };
+  const o = window.UC_HOURS ? hm(window.UC_HOURS.open) : 7 * 60 + 30;
+  const c = window.UC_HOURS ? hm(window.UC_HOURS.close) : 21 * 60 + 30;
+  const isOpen = mins >= o && mins < c;
   badge.classList.toggle('is-closed', !isOpen);
   statusEl.setAttribute('data-en', isOpen ? 'Open Now' : 'Closed Now');
   statusEl.setAttribute('data-ru', isOpen ? 'Открыто' : 'Закрыто');
@@ -1164,22 +1168,23 @@ function renderCard(item) {
   </div>`;
 }
 
-// ═══ NEW: ADMIN-CONTROLLED SUBCATEGORY LAYOUT ════════════════════════════════════════════
-// Optional Firestore doc  config/layout  →  { drinks: [{key, en, ru, hidden}], coffee: [...], ... }
-// • Reorders the subcategory blocks of each section to match the list (a "block" = the sub-head,
-//   any opts-panel between it and its cards, and the cards container itself).
-// • Creates a block for any subcategory that exists in Firestore but has no container in this
-//   file yet — so a brand-new subcategory made in the admin panel shows up without a code edit.
-// • Rebuilds the sticky quicknav row of that section in the same order.
-// • hidden:true hides the whole block (header included).
-// If the doc doesn't exist or can't be read, the page keeps the hardcoded order below and only
-// appends new subcategories at the end of their section. ═══
+// ═══ NEW: ADMIN-CONTROLLED LAYOUT (config/layout in Firestore, edited in admin.html) ═══════
+// Everything here is optional — if config/layout doesn't exist or can't be read, the page keeps
+// the hardcoded structure below exactly as written. The doc can contain:
+//   sections: [{key, en, ru, title1En, title2En, title1Ru, title2Ru, descEn, descRu, hidden, removed}]
+//       → top nav tabs: order, labels, section titles/subtitles, hide, brand-new sections
+//   subcats: { drinks: [{key, en, ru, navEn, navRu, hidden, removed, panel}], coffee: [...] }
+//       → subcategory blocks: order, header + quick-nav names, hide, new ones, options panel
+//         (panel: undefined = keep the HTML panel, null = no panel, {groups, noteEn, noteRu, noteHighlight})
+//   site: {open, close, wifiName, wifiPassword}
+//       → opening hours (hero badge, open/closed status, footers) and Wi-Fi line
+// A drink saved under a subcategory the page doesn't have yet still gets its own block. ═══
 async function loadLayout() {
   try {
     const snap = await getDoc(doc(db, 'config', 'layout'));
     return snap.exists() ? snap.data() : {};
   } catch (err) {
-    console.warn('Layout config not readable, using built-in order:', err);
+    console.warn('Layout config not readable, using built-in layout:', err);
     return {};
   }
 }
@@ -1187,6 +1192,36 @@ async function loadLayout() {
 function jumpAttrs(key) {
   const k = esc(key).replace(/'/g, "\\'");
   return `onclick="jumpToNamedHeader('${k}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();jumpToNamedHeader('${k}')}" tabindex="0" role="button"`;
+}
+function setBi(el, en, ru, html) {
+  // sets data-en/data-ru and the visible text in the current language
+  if (!el) return;
+  el.setAttribute('data-en', en); el.setAttribute('data-ru', ru);
+  const cur = (typeof lang !== 'undefined' && lang === 'ru') ? ru : en;
+  if (html) el.innerHTML = cur; else el.textContent = cur;
+}
+const escA = s => esc(s == null ? '' : s);
+
+function renderPanel(panel) {
+  const div = document.createElement('div');
+  div.className = 'opts-panel';
+  let html = '';
+  (panel.groups || []).forEach(g => {
+    const label = g.alt
+      ? `<div class="opts-group-label"><span class="opts-alt-badge">ALT</span><span data-en="${escA(g.en)}" data-ru="${escA(g.ru || g.en)}">${escA(g.en)}</span></div>`
+      : `<div class="opts-group-label" data-en="${escA(g.en)}" data-ru="${escA(g.ru || g.en)}">${escA(g.en)}</div>`;
+    const rows = [[]];
+    (g.pills || []).forEach((p, i) => { if (p.newLine && i > 0) rows.push([]); rows[rows.length - 1].push(p); });
+    const rowsHtml = rows.filter(r => r.length).map(r => `<div class="opts-pills">${r.map(p =>
+      `<span class="opts-pill${p.alt ? ' opts-pill--alt' : ''}" data-en="${escA(p.en)}" data-ru="${escA(p.ru || p.en)}">${escA(p.en)}</span>`).join('')}</div>`).join('');
+    html += `<div class="opts-group">${label}${rowsHtml}</div>`;
+  });
+  if (panel.noteEn) {
+    const style = panel.noteHighlight ? ' style="font-style:normal;font-size:11.5px;color:var(--cream);opacity:.85"' : '';
+    html += `<div class="opts-note"${style} data-en="${escA(panel.noteEn)}" data-ru="${escA(panel.noteRu || panel.noteEn)}">${escA(panel.noteEn)}</div>`;
+  }
+  div.innerHTML = html;
+  return div;
 }
 
 function makeBlock(sectionEl, secKey, entry) {
@@ -1207,7 +1242,77 @@ function makeBlock(sectionEl, secKey, entry) {
   return [head, cont];
 }
 
-function applyLayout(layout, items) {
+// ── top nav tabs + section headers ──
+function applySections(list) {
+  if (!Array.isArray(list) || !list.length) return;
+  const navCats = document.querySelector('.nav-cats');
+  if (!navCats) return;
+  const btnFor = key => Array.from(navCats.querySelectorAll('.cat-btn'))
+    .find(b => (b.getAttribute('onclick') || '').includes(`show('${key}'`));
+  const lastSection = () => Array.from(document.querySelectorAll('.section[id^="sec-"]')).pop();
+
+  list.forEach(s => {
+    if (!s || !s.key) return;
+    let sec = document.getElementById('sec-' + s.key);
+    let btn = btnFor(s.key);
+    if (!sec && !s.removed) {
+      // brand-new section: same skeleton as Tea/Snacks
+      sec = document.createElement('div');
+      sec.id = 'sec-' + s.key; sec.className = 'section';
+      const footer = document.querySelector('.section .footer');
+      sec.innerHTML = `<div class="sec-atm"><div class="atm-orb atm-tea1"></div><div class="atm-orb atm-tea2"></div></div>
+        <div class="sec-header"><div class="sec-title"></div>
+        <div class="sec-rule"><div class="sr-line"></div><div class="sr-dot"></div><div class="sr-line"></div></div></div>`;
+      if (footer) sec.appendChild(footer.cloneNode(true));
+      lastSection().after(sec);
+    }
+    if (!btn && sec) {
+      btn = document.createElement('button');
+      btn.className = 'cat-btn';
+      btn.setAttribute('onclick', `show('${s.key}',this)`);
+      navCats.appendChild(btn);
+    }
+    if (btn) {
+      if (s.en) setBi(btn, s.en, s.ru || s.en);
+      btn.style.display = (s.hidden || s.removed) ? 'none' : '';
+      navCats.appendChild(btn);   // re-append in list order
+    }
+    if (sec) {
+      const title = sec.querySelector('.sec-title');
+      if (title && (s.title1En || s.title2En)) {
+        const mk = (a, b) => b ? `${esc(a || '')}<br><em>${esc(b)}</em>` : esc(a || '');
+        setBi(title, mk(s.title1En, s.title2En), mk(s.title1Ru || s.title1En, s.title2Ru || s.title2En), true);
+      }
+      const header = sec.querySelector('.sec-header');
+      if (header && s.descEn !== undefined && !sec.querySelector('.quicknav')) {
+        let d = header.querySelector(':scope > .sec-desc');
+        if (s.descEn) {
+          if (!d) { d = document.createElement('div'); d.className = 'sec-desc'; header.querySelector('.sec-title').after(d); }
+          setBi(d, s.descEn, s.descRu || s.descEn);
+        } else if (d) d.remove();
+      }
+      if (s.hidden || s.removed) sec.dataset.hiddenByAdmin = '1'; else delete sec.dataset.hiddenByAdmin;
+    }
+  });
+
+  // tabs the list doesn't mention keep their place after the listed ones
+  Array.from(navCats.querySelectorAll('.cat-btn')).forEach(b => {
+    const m = (b.getAttribute('onclick') || '').match(/show\('(.+?)'/);
+    if (m && !list.some(s => s && s.key === m[1])) navCats.appendChild(b);
+  });
+
+  // make sure the tab that opens first is the first visible one
+  const firstBtn = Array.from(navCats.querySelectorAll('.cat-btn')).find(b => b.style.display !== 'none');
+  const m = firstBtn && (firstBtn.getAttribute('onclick') || '').match(/show\('(.+?)'/);
+  if (m) {
+    document.querySelectorAll('.section').forEach(s => s.classList.toggle('visible', s.id === 'sec-' + m[1]));
+    navCats.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b === firstBtn));
+    if (typeof currentSection !== 'undefined') currentSection = m[1];
+  }
+}
+
+// ── subcategory blocks inside each section ──
+function applySubcats(subcats, items) {
   document.querySelectorAll('.section[id^="sec-"]').forEach(sectionEl => {
     const secKey = sectionEl.id.replace('sec-', '');
     const footer = sectionEl.querySelector(':scope > .footer');
@@ -1215,41 +1320,55 @@ function applyLayout(layout, items) {
     if (!footer) return;
 
     // 1. collect existing blocks (all nodes from the first sub-head up to each container)
-    const blocks = new Map();   // key -> [nodes]
+    const blocks = new Map();
     let buf = [], collecting = !firstHead;
     for (const node of Array.from(sectionEl.childNodes)) {
       if (node === footer) break;
       if (node === firstHead) collecting = true;
       if (!collecting) continue;
       buf.push(node);
-      if (node.nodeType === 1 && node.dataset && node.dataset.subcat) {
-        blocks.set(node.dataset.subcat, buf); buf = [];
-      }
+      if (node.nodeType === 1 && node.dataset && node.dataset.subcat) { blocks.set(node.dataset.subcat, buf); buf = []; }
     }
-    const trailing = buf;   // anything after the last container (whitespace etc.)
+    const trailing = buf;
 
-    // 2. work out the final order
-    const listed = Array.isArray(layout[secKey]) ? layout[secKey].filter(e => e && e.key) : [];
+    // 2. final order: admin list first, then anything else the page or the data has
+    const listed = Array.isArray(subcats[secKey]) ? subcats[secKey].filter(e => e && e.key) : [];
+    const entryOf = k => listed.find(e => e.key === k);
     const order = listed.map(e => e.key);
     blocks.forEach((_, k) => { if (!order.includes(k)) order.push(k); });
-    items.filter(i => i.section === secKey && i.subcategory).forEach(i => {
-      if (!order.includes(i.subcategory)) order.push(i.subcategory);
-    });
+    items.filter(i => i.section === secKey && i.subcategory).forEach(i => { if (!order.includes(i.subcategory)) order.push(i.subcategory); });
 
-    // 3. create missing blocks, then re-insert everything before the footer in order
+    // 3. create / relabel / re-panel / hide, then re-insert everything before the footer
     order.forEach(k => {
-      if (!blocks.has(k)) blocks.set(k, makeBlock(sectionEl, secKey, listed.find(e => e.key === k) || { key: k }));
-    });
-    order.forEach(k => {
-      const entry = listed.find(e => e.key === k);
-      blocks.get(k).forEach(n => {
+      const entry = entryOf(k);
+      if (!blocks.has(k)) blocks.set(k, makeBlock(sectionEl, secKey, entry || { key: k }));
+      const nodes = blocks.get(k);
+      const heads = nodes.filter(n => n.nodeType === 1 && n.classList.contains('sub-head'));
+      const mainHead = heads[heads.length - 1];
+      if (entry && entry.en && mainHead) setBi(mainHead.querySelector('.sub-title'), entry.en, entry.ru || entry.en);
+      if (entry && entry.panel !== undefined) {
+        const cont = nodes[nodes.length - 1];
+        const old = nodes.filter(n => n.nodeType === 1 && n.classList.contains('opts-panel'));
+        const target = old[old.length - 1];
+        const idx = target ? nodes.indexOf(target) : -1;
+        if (target) target.remove();
+        const hasContent = entry.panel && ((entry.panel.groups || []).length || entry.panel.noteEn);
+        if (hasContent) {
+          const p = renderPanel(entry.panel);
+          if (idx >= 0) nodes[idx] = p; else nodes.splice(nodes.length - 1, 0, p);
+        } else if (idx >= 0) nodes.splice(idx, 1);
+      }
+      // a built-in block the admin removed, or an unlisted empty block when a list exists → hide
+      const hasItems = items.some(i => i.section === secKey && i.subcategory === k);
+      const hide = (entry && (entry.hidden || entry.removed)) || (!entry && listed.length && !hasItems);
+      nodes.forEach(n => {
         sectionEl.insertBefore(n, footer);
-        if (n.nodeType === 1) n.style.display = (entry && entry.hidden) ? 'none' : '';
+        if (n.nodeType === 1) n.style.display = hide ? 'none' : '';
       });
     });
     trailing.forEach(n => sectionEl.insertBefore(n, footer));
 
-    // 4. rebuild the quicknav row in the same order (keeps existing links' wording)
+    // 4. rebuild the quick-nav row in the same order
     const pill = sectionEl.querySelector('.quicknav .quicknav-pill');
     if (!pill) return;
     const existing = new Map();
@@ -1259,25 +1378,53 @@ function applyLayout(layout, items) {
     });
     const links = [];
     order.forEach(k => {
-      const entry = listed.find(e => e.key === k);
-      if (entry && entry.hidden) return;
-      if (!sectionEl.querySelector(`.sub-head.nav-jump[aria-label="Jump to ${CSS.escape(k)}"]`)) return;
+      const entry = entryOf(k);
+      const head = sectionEl.querySelector(`.sub-head.nav-jump[aria-label="Jump to ${CSS.escape(k)}"]`);
+      if (!head || head.style.display === 'none') return;
       let a = existing.get(k);
       if (!a) {
-        const en = (entry && (entry.navEn || entry.en)) || k;
-        const ru = (entry && (entry.navRu || entry.ru)) || en;
         const w = document.createElement('span');
-        w.innerHTML = `<span class="sec-desc-link" ${jumpAttrs(k)} data-en="${esc(en)}" data-ru="${esc(ru)}">${esc(en)}</span>`;
+        w.innerHTML = `<span class="sec-desc-link" ${jumpAttrs(k)}></span>`;
         a = w.firstChild;
       }
+      const en = (entry && (entry.navEn || entry.en)) || a.getAttribute('data-en') || k;
+      const ru = (entry && (entry.navRu || entry.ru)) || a.getAttribute('data-ru') || en;
+      setBi(a, en, ru);
       links.push(a);
     });
     pill.textContent = '';
-    links.forEach((a, idx) => {
-      if (idx) pill.appendChild(document.createTextNode(' · '));
-      pill.appendChild(a);
-    });
+    links.forEach((a, idx) => { if (idx) pill.appendChild(document.createTextNode(' · ')); pill.appendChild(a); });
   });
+}
+
+// ── opening hours + Wi-Fi ──
+function applySite(site) {
+  if (!site) return;
+  const hm = /^\d{1,2}:\d{2}$/;
+  if (hm.test(site.open || '') && hm.test(site.close || '')) {
+    window.UC_HOURS = { open: site.open, close: site.close };
+    const range = `${site.open} – ${site.close}`;
+    const strong = document.querySelector('.hero-hours-txt strong');
+    if (strong) strong.textContent = range;
+    const re = /\d{1,2}:\d{2}\s*[–-]\s*\d{1,2}:\d{2}/g;
+    document.querySelectorAll('.f-txt').forEach(el => {
+      ['data-en', 'data-ru'].forEach(a => { const v = el.getAttribute(a); if (v) el.setAttribute(a, v.replace(re, range)); });
+      el.innerHTML = el.innerHTML.replace(re, range);
+    });
+    if (typeof setOpenStatus === 'function') setOpenStatus();
+  }
+  if (site.wifiName || site.wifiPassword) {
+    const w = document.querySelector('.hero-wifi');
+    const html = `Wi-Fi · <strong>${esc(site.wifiName || 'Urban Court')}</strong>` + (site.wifiPassword ? ` · <span class='wifi-pw'>${esc(site.wifiPassword)}</span>` : '');
+    if (w) setBi(w, html, html, true);
+  }
+}
+
+function applyLayout(layout, items) {
+  applySite(layout.site);
+  applySections(layout.sections);
+  applySubcats(layout.subcats || {}, items);
+  // hidden sections: the tab button is already hidden; nothing else needed
 }
 // ═══ END NEW ═══
 
