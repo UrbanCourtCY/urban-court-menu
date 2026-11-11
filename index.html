@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Urban Court</title>
+<meta name="description" content="Urban Court menu: drinks, coffee, tea, beer and snacks. Limassol, Cyprus. EN / RU.">
+<meta name="theme-color" content="#0c0906">
+<meta property="og:title" content="Urban Court menu">
+<meta property="og:description" content="Drinks, coffee, tea, beer and snacks at Urban Court, Limassol.">
+<meta property="og:type" content="website">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@200;300;400;500&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -11,7 +16,7 @@
   --bg:#0c0906;--card:#121110;
   --orange:#ed8530;--rose-gold:#c4886a;--chrome:#9fa8aa;
   --cream:#f0e4d0;--cream-dim:rgba(240,228,208,0.38);
-  --gold:#c9a84c;--muted:#7a6550;
+  --gold:#c9a84c;--muted:#8f7a64;
 }
 /* ═══ FIX v7: HERO IS ONE-WAY PAST THE SEAM, ONLY THE HOME BUTTON BRINGS IT BACK — replaces
    v6. v6 (and v5, v3 before it — full blow-by-blow of v1–v6 is in this file's git history if it's
@@ -29,7 +34,7 @@ html{scroll-behavior:smooth;overflow-anchor:none}
 body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-anchor:none}
 
 /* ─── HERO ─────────────────────────────────────────────── */
-.hero{position:relative;height:100vh;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.hero{position:relative;height:100vh;height:100svh;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
 .hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px);animation:drift 12s ease-in-out infinite alternate}
 .orb1{width:420px;height:420px;background:radial-gradient(circle,rgba(237,133,48,0.09),transparent 70%);top:-80px;left:-100px;animation-duration:14s}
 .orb2{width:300px;height:300px;background:radial-gradient(circle,rgba(196,136,106,0.06),transparent 70%);bottom:60px;right:-60px;animation-duration:10s;animation-direction:alternate-reverse}
@@ -311,7 +316,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif
 img[src*="kelloggs-all-bran-chocolate"]{transform:scaleX(1.22);transform-origin:center center}
 img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center center}
 
-@media(min-width:481px){#sec-beer .card-img-bottle{align-self:flex-end}#sec-beer .grid2:last-of-type .card{height:300px;overflow:hidden}}
+@media(min-width:481px){#sec-beer .card-img-bottle{align-self:flex-end}}
 
 .card-origin{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);opacity:.75;margin-bottom:8px}
 .card-name{font-family:'Caveat',cursive;font-size:27px;font-weight:600;line-height:1.1;color:var(--cream);margin-bottom:4px;text-shadow:0 0 12px rgba(237,133,48,0.45),0 0 28px rgba(237,133,48,0.2)}
@@ -330,9 +335,9 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 .card-choice-pill{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:500;letter-spacing:.03em;color:var(--muted);background:transparent;border:1px dashed rgba(237,133,48,.45);border-radius:20px;padding:3px 10px}
 /* ═══ END FIX ═══ */
 
-.card-desc{font-family:'Montserrat',sans-serif;font-size:10px;line-height:1.9;color:rgba(240,228,208,0.52);font-weight:300;letter-spacing:.06em}
+.card-desc{font-family:'Montserrat',sans-serif;font-size:11px;line-height:1.85;color:rgba(240,228,208,0.58);font-weight:300;letter-spacing:.06em}
 .card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.tag{font-family:'Montserrat',sans-serif;font-size:8px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);background:rgba(237,133,48,.12);border:1px solid rgba(237,133,48,.25);border-radius:20px;padding:3px 10px;opacity:.72}
+.tag{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);background:rgba(237,133,48,.12);border:1px solid rgba(237,133,48,.25);border-radius:20px;padding:3px 10px;opacity:.72}
 /* ═══ FIX: EMPTY PLACEHOLDER FIELDS COLLAPSE — every card now has a .card-origin/.card-desc/
    .card-tags/.price-badge element present even where there's no real data yet (see the
    "DEACTIVATED-CARD STRUCTURE UNIFIED" comment on .deactivated, and the same unification applied
@@ -557,7 +562,7 @@ img[src$="/Espresso.png"]{transform:scale(0.62);transform-origin:center bottom}
 img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],img[src*="iced-strawberry-latte"],img[src*="Freddo-Espresso"]{transform:scale(1.07);transform-origin:center bottom}
 /* ═══ END FIX ═══ */
 
-@media(min-width:481px){#sec-beer .card-img-bottle{align-self:flex-end}#sec-beer .grid2:last-of-type .card{height:300px;overflow:hidden}}
+@media(min-width:481px){#sec-beer .card-img-bottle{align-self:flex-end}}
 
 /* ── layer 3 — PHONE OVERRIDES: same photos, smaller, so text keeps room ─ */
 @media(max-width:480px){
@@ -574,6 +579,95 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   .card-img-tea{height:120px;max-width:110px;min-width:60px}
   img.card-img-glass,[data-subcat="Specials"] img.card-img-bottle,img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{height:120px;max-width:110px;min-width:60px}
 }
+
+/* ===== FIXES (test build) ===== */
+/* hero: scroll hint sits in the flow under the button, never on top of it */
+.hero-scroll{position:static;margin-top:clamp(20px,4vh,48px);opacity:.8}
+@media(max-height:620px){.hero-scroll{display:none}}
+/* open/closed badge hidden until the first clock check has run */
+.hero-hours:not(.is-ready){visibility:hidden}
+/* price chips stay on the right even when the origin text wraps */
+/* origin text and price chips wrap instead of squeezing each other (Espresso card, long Russian words) */
+.card-eyebrow{flex-wrap:wrap}
+.card-eyebrow .card-origin{min-width:0}
+.price-chips{flex-shrink:1;min-width:0;justify-content:flex-end}
+.card-eyebrow > :last-child{margin-left:auto}
+/* bigger tap targets */
+.lang-btn{padding:9px 12px}
+.nav-home-btn{padding:9px 12px}
+@media(max-width:400px){
+ .cat-btn{font-size:13px;padding:9px 8px;letter-spacing:.1em}
+ .cards,.grid2{padding:0 14px}
+ .card-body{padding:18px 16px 20px}
+ .coffee-img-wrap{width:104px;height:150px}
+ img.card-img-glass,[data-subcat="Specials"] img.card-img-bottle,img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{height:140px;max-width:104px;min-width:60px}
+ .card-img-tea{height:120px;max-width:110px;min-width:64px}}
+@media(max-width:340px){
+ .card-name{font-size:23px}
+ .card-eyebrow .card-origin{letter-spacing:.14em}
+ .cat-btn{font-size:12px;padding:9px 6px;letter-spacing:.08em}
+ .coffee-img-wrap{width:88px;height:130px}
+ img.card-img-glass,[data-subcat="Specials"] img.card-img-bottle,img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{height:120px;max-width:88px;min-width:52px}
+ .card-img-tea{height:100px;max-width:90px;min-width:56px}}
+@media(max-width:480px){
+ .sec-desc.quicknav{font-size:18px}
+ .quicknav-pill{display:block;max-width:100%;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent 100%)}
+ .quicknav-pill::-webkit-scrollbar{display:none}
+ .sec-desc-link{white-space:nowrap}}
+/* beer: one column on phones/small tablets, two side by side on desktop (like the tea cards) */
+@media(min-width:481px){#sec-beer .grid2{grid-template-columns:1fr}}
+@media(min-width:768px){
+ #sec-beer.visible{display:grid;grid-template-columns:1fr 1fr;align-content:start}
+ #sec-beer > *{grid-column:1/-1}
+ #sec-beer > .sec-header + .sub-head{grid-column:1;grid-row:2}
+ #sec-beer > .sec-header + .sub-head + .grid2{grid-column:1;grid-row:3}
+ #sec-beer > .grid2 + .sub-head{grid-column:2;grid-row:2}
+ #sec-beer > .grid2 + .sub-head + .grid2{grid-column:2;grid-row:3}}
+@media (prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+ html{scroll-behavior:auto}}
+/* ===== CHRISTMAS THEME (only active when <html class="xmas">) ===== */
+html.xmas{--xm-red:#c8423a;--xm-green:#2e7d4f;--xm-gold:#e8c36a}
+/* twinkling fairy lights hanging under the nav bar */
+.xm-lights{display:none}
+html.xmas .xm-lights{display:block;position:absolute;left:0;right:0;top:100%;height:26px;pointer-events:none;z-index:3;
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='26'%3E%3Cpath d='M0 2Q20 14 40 2' fill='none' stroke='%23362a1c' stroke-width='1.4'/%3E%3C/svg%3E") repeat-x 0 0/40px 26px}
+html.xmas .xm-lights::before,html.xmas .xm-lights::after{content:"";position:absolute;inset:0;background-size:40px 26px;background-repeat:repeat-x;animation:xmTwinkle 2.6s ease-in-out infinite}
+html.xmas .xm-lights::before{background-image:
+ radial-gradient(circle at 10px 10px,#ff7a6b 0 2.4px,rgba(255,122,107,.38) 3px,transparent 6.5px),
+ radial-gradient(circle at 30px 10px,#58c98a 0 2.4px,rgba(88,201,138,.38) 3px,transparent 6.5px)}
+html.xmas .xm-lights::after{background-image:
+ radial-gradient(circle at 20px 11px,#ffd35c 0 2.4px,rgba(255,211,92,.4) 3px,transparent 6.5px);animation-delay:-1.3s}
+@keyframes xmTwinkle{0%,100%{opacity:.45}50%{opacity:1}}
+/* hero: greeting + little scene */
+.xm-greet{display:none}
+html.xmas .xm-greet{display:block;font-family:'Caveat',cursive;font-size:clamp(22px,3.6vw,32px);font-weight:600;color:var(--xm-gold);text-shadow:0 0 18px rgba(232,195,106,.35);margin-top:14px;letter-spacing:.03em;text-wrap:balance}
+.xm-deco{display:none}
+html.xmas .xm-deco{display:block;position:absolute;left:0;right:0;bottom:0;height:clamp(120px,27vh,240px);pointer-events:none;z-index:1}
+html.xmas .xm-deco::before{content:"";position:absolute;inset:auto 0 0 0;height:100%;background:linear-gradient(to top,rgba(200,66,58,.10),transparent 70%)}
+.xm-tree,.xm-santa{position:absolute;bottom:-3px;width:auto}
+.xm-tree{aspect-ratio:100/140}
+.xm-tree.l{left:clamp(6px,5vw,96px);height:100%}
+.xm-tree.r{right:clamp(120px,15vw,300px);height:70%}
+.xm-santa{right:clamp(0px,2vw,44px);height:82%;aspect-ratio:120/130}
+.xm-tree .tw{animation:xmTwinkle 2.2s ease-in-out infinite}
+.xm-tree .tw:nth-child(2n){animation-delay:-.9s}
+.xm-tree .tw:nth-child(3n){animation-delay:-1.6s}
+@media(max-width:600px){html.xmas .xm-deco{height:clamp(96px,15vh,150px)}.xm-tree.r{display:none}.xm-tree.l{left:6px}.xm-santa{right:4px}}
+@media(max-height:620px){html.xmas .xm-deco{display:none}}
+/* cards: snow on top edge, red / green / orange accent bars */
+html.xmas .card::before{content:"";display:block;position:absolute;left:0;right:0;top:0;height:10px;z-index:3;pointer-events:none;opacity:.93;
+ background:
+ radial-gradient(circle at 11px 0,#f6f9fc 0 6px,transparent 6.6px) 0 0/24px 10px repeat-x,
+ radial-gradient(circle at 18px 0,#eef3f8 0 4px,transparent 4.6px) 0 0/37px 8px repeat-x,
+ linear-gradient(#f6f9fc,#f6f9fc) 0 0/100% 3px no-repeat}
+html.xmas .card:nth-child(3n+1){border-left-color:var(--xm-red)}
+html.xmas .card:nth-child(3n+2){border-left-color:var(--xm-green)}
+html.xmas .card:nth-child(3n+1) .card-accent{background:var(--xm-red)}
+html.xmas .card:nth-child(3n+2) .card-accent{background:var(--xm-green)}
+/* snow layer */
+#uc-snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+@media (prefers-reduced-motion:reduce){#uc-snow{display:none}html.xmas .xm-lights::before,html.xmas .xm-lights::after,.xm-tree .tw{animation:none;opacity:.9}}
 </style>
 </head>
 <body>
@@ -838,9 +932,12 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   </div>
 </div>
 <script>
+// Stop the browser restoring a stale scroll position on refresh: every visit starts at the top.
+try { history.scrollRestoration = 'manual'; } catch (e) {}
+
 let lang = 'en';
 let currentSection = 'drinks';
-const sectionScroll = {}; // remembers each tab's scroll position for the rest of this visit
+const sectionScroll = {}; // remembers each tab's scroll position ONLY while the guest is flipping between tabs inside the menu (goHome() clears it)
 // ═══ FIX (v2): TAB SWITCH LANDING MID-PAGE — the first fix here cached hero's position once at
 // page load to avoid crashing on a removed .hero, but that introduced a different bug: once
 // .hero is actually removed (v7 hero-removal, further down), the page gets SHORTER by hero's
@@ -849,9 +946,29 @@ const sectionScroll = {}; // remembers each tab's scroll position for the rest o
 // whether .hero still exists each time. If it does, measure it (same as the original approach).
 // If it's gone, "top of tab" is just 0 — once hero's removed, the nav bar IS the top of the
 // document. (revert to a single cached constant to reintroduce this bug) ═══
+// ═══ FIX (v3): the hero is hidden with display:none (v7), never removed, so document.querySelector('.hero')
+// is ALWAYS truthy. A hidden element measures 0, so the old line returned the CURRENT scroll position,
+// i.e. "stay where you are", and tabs opened mid-page. The hero only counts as "above the menu" while it is
+// actually rendered (offsetHeight > 0). (revert to `hero ? ... : 0` to reintroduce the bug) ═══
 function getTopOfTab() {
   const hero = document.querySelector('.hero');
-  return hero ? hero.getBoundingClientRect().bottom + window.scrollY : 0;
+  return (hero && hero.offsetHeight > 0) ? hero.getBoundingClientRect().bottom + window.scrollY : 0;
+}
+
+// Accessibility: tabs, panels and headings for screen readers (re-run on every tab switch and after the menu renders)
+function syncTabsA11y() {
+  const nc = document.querySelector('.nav-cats');
+  if (nc) nc.setAttribute('role', 'tablist');
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', b.classList.contains('active') ? 'true' : 'false');
+  });
+  document.querySelectorAll('.section').forEach(s => s.setAttribute('role', 'tabpanel'));
+  document.querySelectorAll('.sec-title').forEach(t => { t.setAttribute('role', 'heading'); t.setAttribute('aria-level', '2'); });
+  const ht = document.querySelector('.hero-title');
+  if (ht) { ht.setAttribute('role', 'heading'); ht.setAttribute('aria-level', '1'); }
+  const nw = document.querySelector('.nav-wrap');
+  if (nw) { nw.setAttribute('role', 'navigation'); nw.setAttribute('aria-label', 'Menu sections'); }
 }
 
 function show(id, btn) {
@@ -863,6 +980,7 @@ function show(id, btn) {
   const sec = document.getElementById('sec-' + id);
   sec.classList.add('visible');
   btn.classList.add('active');
+  syncTabsA11y();
 
   const hasVisited = id in sectionScroll;
   currentSection = id;
@@ -882,11 +1000,14 @@ function show(id, btn) {
 
 function setLang(l) {
   lang = l;
+  document.documentElement.lang = l;
+  try { localStorage.setItem('uc_lang', l); } catch (e) {}   // remember the guest's choice
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === l.toUpperCase()));
   document.querySelectorAll('[data-' + l + ']').forEach(el => {
     const v = el.getAttribute('data-' + l);
     if (v !== null) el.innerHTML = v;
   });
+  document.querySelectorAll('.opts-alt-badge').forEach(b => { b.textContent = l === 'ru' ? 'АЛЬТ' : 'ALT'; });
 }
 
 // ═══ FIX: CLICKABLE SECTION HEADERS — jump-scrolls a sub-head to just below the sticky nav.
@@ -960,6 +1081,8 @@ function jumpToNamedHeader(label) {
   window.goHome = function () {
     hero.style.display = ''; // removing the inline override lets .hero{display:flex} apply again
     removed = false;
+    // forget every remembered tab position, so the next time the menu is opened each tab starts at its top
+    Object.keys(sectionScroll).forEach(k => delete sectionScroll[k]);
     window.scrollTo({top: 0, left: 0, behavior: 'instant'});
   };
   /* ═══ END FIX ═══ */
@@ -1045,6 +1168,7 @@ function setOpenStatus() {
   const c = window.UC_HOURS ? hm(window.UC_HOURS.close) : 21 * 60 + 30;
   const isOpen = mins >= o && mins < c;
   badge.classList.toggle('is-closed', !isOpen);
+  badge.classList.add('is-ready');   // the badge stays hidden (CSS) until this first check has run, so it never flashes a wrong state
   statusEl.setAttribute('data-en', isOpen ? 'Open Now' : 'Closed Now');
   statusEl.setAttribute('data-ru', isOpen ? 'Открыто' : 'Закрыто');
   statusEl.innerHTML = statusEl.getAttribute('data-' + lang) || (isOpen ? 'Open Now' : 'Closed Now');
@@ -1060,6 +1184,15 @@ document.addEventListener('touchstart', (e) => {
   card.classList.add('card-glow');
 }, {passive: true});
 
+// Language: first visit follows the phone's language (Russian phones open in RU); the guest's own choice is remembered.
+(function () {
+  let l = '';
+  try { l = localStorage.getItem('uc_lang') || ''; } catch (e) {}
+  if (l !== 'en' && l !== 'ru') l = (navigator.language || '').toLowerCase().indexOf('ru') === 0 ? 'ru' : 'en';
+  if (l === 'ru') setLang('ru');
+})();
+syncTabsA11y();
+
 
 function selectBase(pill, group) {
   // Deselect all pills in the same group within the same card
@@ -1068,6 +1201,135 @@ function selectBase(pill, group) {
   sameGroupPills.forEach(p => p.classList.remove('selected'));
   pill.classList.add('selected');
 }
+</script>
+<script>
+// Christmas theme: decorations + snow. Switched by the admin panel (Firestore config/layout -> site.xmas / site.xmasUntil).
+(function () {
+  var LS = 'uc_xmas', built = false, on = false, snow = null;
+
+  function cyprusToday() {
+    try { return new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Nicosia'}).format(new Date()); } catch (e) { return ''; }
+  }
+  function isOn(site) {
+    site = site || {};
+    if (window.UC_TEST) {                       // test build only: ?xmas=on / ?xmas=off, and on by default
+      var q = (new URLSearchParams(location.search).get('xmas') || '').toLowerCase();
+      if (q === 'off') return false;
+      if (q === 'on' || site.xmas === undefined) return true;
+    }
+    if (!site.xmas) return false;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(site.xmasUntil || '') && cyprusToday() > site.xmasUntil) return false;   // auto-off after this date
+    return true;
+  }
+
+  var TREE = '<svg class="xm-tree __C__" viewBox="0 0 100 140" aria-hidden="true">' +
+    '<rect x="43" y="116" width="14" height="22" rx="2" fill="#5a3a22"/>' +
+    '<polygon points="50,60 92,124 8,124" fill="#1d6a44"/><polygon points="50,34 82,92 18,92" fill="#25805a"/><polygon points="50,12 72,56 28,56" fill="#2d9468"/>' +
+    '<path d="M50,12 L58,27 Q50,31 42,27 Z" fill="#f6f9fc"/><path d="M50,34 L62,55 Q50,60 38,55 Z" fill="#f6f9fc" opacity=".9"/><path d="M50,60 L66,88 Q50,94 34,88 Z" fill="#f6f9fc" opacity=".85"/>' +
+    '<polygon points="50,0 53,8 61,8 55,13 57,21 50,16 43,21 45,13 39,8 47,8" fill="#f3c74a"/>' +
+    '<circle class="tw" cx="44" cy="44" r="3.2" fill="#ff7a6b"/><circle class="tw" cx="58" cy="40" r="3" fill="#ffd35c"/>' +
+    '<circle class="tw" cx="36" cy="74" r="3.4" fill="#6db7ff"/><circle class="tw" cx="62" cy="80" r="3.2" fill="#ff7a6b"/><circle class="tw" cx="50" cy="70" r="3" fill="#ffd35c"/>' +
+    '<circle class="tw" cx="26" cy="108" r="3.4" fill="#ffd35c"/><circle class="tw" cx="46" cy="104" r="3.4" fill="#ff7a6b"/><circle class="tw" cx="68" cy="110" r="3.4" fill="#6db7ff"/><circle class="tw" cx="82" cy="116" r="3" fill="#ff7a6b"/>' +
+    '</svg>';
+
+  var SANTA = '<svg class="xm-santa" viewBox="0 0 120 130" aria-hidden="true">' +
+    '<circle cx="60" cy="80" r="31" fill="#f2c6a0"/>' +
+    '<path d="M28,80 Q30,122 60,126 Q90,122 92,80 Q82,98 60,98 Q38,98 28,80 Z" fill="#fbfbf8"/>' +
+    '<ellipse cx="49" cy="88" rx="13" ry="7" fill="#fbfbf8"/><ellipse cx="71" cy="88" rx="13" ry="7" fill="#fbfbf8"/>' +
+    '<circle cx="60" cy="82" r="5.5" fill="#e7977a"/>' +
+    '<circle cx="49" cy="72" r="2.8" fill="#2b1d14"/><circle cx="71" cy="72" r="2.8" fill="#2b1d14"/>' +
+    '<path d="M42,65 Q49,61 56,65 M64,65 Q71,61 78,65" stroke="#fbfbf8" stroke-width="3.2" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="40" cy="82" r="5" fill="#ee8a7a" opacity=".45"/><circle cx="80" cy="82" r="5" fill="#ee8a7a" opacity=".45"/>' +
+    '<g transform="translate(0,-12)"><path d="M26,62 Q26,22 62,16 Q92,14 98,40 Q112,40 114,58 Q110,66 100,60 Q98,66 94,64 Q62,70 26,62 Z" fill="#c8423a"/>' +
+    '<path d="M22,60 Q62,76 98,60 L100,70 Q62,86 20,70 Z" fill="#fbfbf8"/>' +
+    '<circle cx="114" cy="62" r="8" fill="#fbfbf8"/></g>' +
+    '</svg>';
+
+  function build() {
+    built = true;
+    var nav = document.querySelector('.nav-wrap');
+    if (nav && !nav.querySelector('.xm-lights')) {
+      var l = document.createElement('div'); l.className = 'xm-lights'; l.setAttribute('aria-hidden', 'true'); nav.appendChild(l);
+    }
+    var hero = document.querySelector('.hero');
+    if (hero) {
+      var d = document.createElement('div'); d.className = 'xm-deco'; d.setAttribute('aria-hidden', 'true');
+      d.innerHTML = TREE.replace('__C__', 'l') + TREE.replace('__C__', 'r') + SANTA;
+      hero.appendChild(d);
+      var sub = hero.querySelector('.hero-sub');
+      if (sub) {
+        var g = document.createElement('div'); g.className = 'xm-greet';
+        g.setAttribute('data-en', 'Merry Christmas &amp; Happy New Year');
+        g.setAttribute('data-ru', 'С Рождеством и Новым годом!');
+        g.innerHTML = g.getAttribute('data-' + (typeof lang !== 'undefined' ? lang : 'en'));
+        sub.after(g);
+      }
+    }
+  }
+
+  // ---- snow: one small canvas, ~30fps, paused when the tab is hidden, off for reduced-motion / data-saver / single-core devices ----
+  function snowAllowed() {
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+    if (navigator.connection && navigator.connection.saveData) return false;
+    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 2) return false;
+    return true;
+  }
+  function startSnow() {
+    if (snow || !snowAllowed()) return;
+    var c = document.createElement('canvas'); c.id = 'uc-snow'; c.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(c);
+    var ctx = c.getContext('2d'), W = 0, H = 0, flakes = [], raf = 0, last = 0, running = true;
+    function size() {
+      W = c.width = innerWidth; H = c.height = innerHeight;
+      var n = W < 600 ? 28 : 56;
+      while (flakes.length < n) flakes.push(mk(true));
+      flakes.length = n;
+    }
+    function mk(anywhere) {
+      return {x: Math.random() * W, y: anywhere ? Math.random() * H : -8, r: 1 + Math.random() * 2.4,
+              v: 14 + Math.random() * 26, ph: Math.random() * 6.28, sw: 8 + Math.random() * 16, a: .45 + Math.random() * .45};
+    }
+    function frame(t) {
+      raf = requestAnimationFrame(frame);
+      if (t - last < 33) return;
+      var dt = Math.min((t - last) / 1000, .1); last = t;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < flakes.length; i++) {
+        var f = flakes[i];
+        f.y += f.v * dt; f.ph += dt * .9;
+        if (f.y > H + 8) { flakes[i] = f = mk(false); }
+        ctx.globalAlpha = f.a;
+        ctx.beginPath(); ctx.arc(f.x + Math.sin(f.ph) * f.sw, f.y, f.r, 0, 6.2832); ctx.fillStyle = '#fff'; ctx.fill();
+      }
+    }
+    function vis() { if (document.hidden) { cancelAnimationFrame(raf); running = false; } else if (!running) { running = true; last = performance.now(); raf = requestAnimationFrame(frame); } }
+    size(); addEventListener('resize', size); document.addEventListener('visibilitychange', vis);
+    raf = requestAnimationFrame(frame);
+    snow = {stop: function () { cancelAnimationFrame(raf); removeEventListener('resize', size); document.removeEventListener('visibilitychange', vis); c.remove(); snow = null; }};
+  }
+
+  function set(a) {
+    if (a === on) return;
+    on = a;
+    document.documentElement.classList.toggle('xmas', a);
+    if (a) {
+      if (!built) { if (document.body) build(); else document.addEventListener('DOMContentLoaded', build); }
+      startSnow();
+    } else if (snow) snow.stop();
+  }
+
+  window.ucXmas = function (site) {
+    var a = isOn(site);
+    try { localStorage.setItem(LS, JSON.stringify({x: a ? 1 : 0, u: (site && site.xmasUntil) || ''})); } catch (e) {}
+    set(a);
+  };
+  // instant paint on repeat visits: trust the last known state until the live settings arrive
+  try {
+    var s = JSON.parse(localStorage.getItem(LS) || 'null');
+    if (s && s.x && !(s.u && cyprusToday() > s.u)) set(true);
+  } catch (e) {}
+  if (window.UC_TEST) window.addEventListener('load', function () { if (isOn({})) set(true); });
+})();
 </script>
 <script type="module">
 // ═══ FIX: DATA-DRIVEN MENU — cards used to be hardcoded HTML per drink. They now render at
@@ -1103,23 +1365,38 @@ function bilingualAttrs(field) {
   return { attrs: `data-en="${esc(field.en)}" data-ru="${esc(field.ru)}"`, text: esc(field.en) };
 }
 
+// Price chips carry EN + RU text so "Single / Double / alt" follow the language switch
+function priceRu(v) {
+  return String(v).replace(/\balt\b/i, 'альт').replace(/\bSingle\b/, 'Одинарный').replace(/\bDouble\b/, 'Двойной');
+}
+function priceBadge(v) {
+  return `<div class="price-badge" data-en="${esc(v)}" data-ru="${esc(priceRu(v))}">${esc(v)}</div>`;
+}
 function renderPrice(price) {
   if (!price) return '';
   if (price.type === 'chips') {
-    const badges = price.values.map(v => `<div class="price-badge">${esc(v)}</div>`).join('');
+    const badges = price.values.map(priceBadge).join('');
     return `<div class="price-chips">${badges}</div>`;
   }
-  return `<div class="price-badge">${esc(price.values[0])}</div>`;
+  return priceBadge(price.values[0]);
+}
+
+// Images: guests get the small .webp copy; if it's missing (e.g. a brand-new photo with no .webp yet) the
+// original .png loads instead, so a photo can never go missing. Lazy-loaded so hidden tabs cost nothing.
+function imgAttrs(path) {
+  const p = path || '';
+  const webp = /\.png$/i.test(p) && !/\/Logo\//i.test(p) ? p.replace(/\.png$/i, '.webp') : p;
+  return `src="${esc(webp)}" data-fb="${esc(p)}" loading="lazy" decoding="async" onerror="if(this.dataset.fb&&this.src.slice(-5)==='.webp'){this.src=this.dataset.fb}else{this.style.display='none'}"`;
 }
 
 function renderImage(item) {
   const alt = esc(item.name?.en || '');
   if (item.imgWrapClass) {
-    return `<div class="${esc(item.imgWrapClass)}"><img src="${esc(item.image)}" alt="${alt}" onerror="this.style.display='none'"></div>`;
+    return `<div class="${esc(item.imgWrapClass)}"><img ${imgAttrs(item.image)} alt="${alt}"></div>`;
   }
   // "Glass" display style = bottle behaviour + glass sizing (see GLASS IMAGE STYLE in the CSS)
   const cls = item.imgClass === 'card-img-glass' ? 'card-img-bottle card-img-glass' : (item.imgClass || '');
-  return `<img class="${esc(cls)}" src="${esc(item.image)}" alt="${alt}" onerror="this.style.display='none'">`;
+  return `<img class="${esc(cls)}" ${imgAttrs(item.image)} alt="${alt}">`;
 }
 
 function renderCard(item) {
@@ -1399,6 +1676,7 @@ function applySubcats(subcats, items) {
 
 // ── opening hours + Wi-Fi ──
 function applySite(site) {
+  if (window.ucXmas) window.ucXmas(site || {});   // Christmas theme on/off (admin panel > Site > Christmas theme)
   if (!site) return;
   const hm = /^\d{1,2}:\d{2}$/;
   if (hm.test(site.open || '') && hm.test(site.close || '')) {
@@ -1463,6 +1741,7 @@ async function renderMenu() {
   if (typeof syncNavHeight === 'function') syncNavHeight();
   if (typeof setupQuicknavStickyObserver === 'function') setupQuicknavStickyObserver();
   else if (typeof recomputeQuicknavStuck === 'function') recomputeQuicknavStuck();
+  if (typeof syncTabsA11y === 'function') syncTabsA11y();
 }
 
 renderMenu();

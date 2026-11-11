@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Urban Court — Admin</title>
 <style>
@@ -184,6 +185,16 @@ select.inline{width:auto;padding:7px 10px;font-size:13px}
         <div class="field-group"><label>Network name</label><input id="s_wifi"></div>
         <div class="field-group"><label>Password</label><input id="s_pw"></div>
       </div>
+    </div>
+    <div class="panel">
+      <h2>Christmas theme</h2>
+      <div class="hint">Snow, fairy lights, trees and Santa on the guest menu. Switch it on or off here, then press Save changes. Guests see the change the next time they open the menu.</div>
+      <div class="lrow-top" style="margin-bottom:12px">
+        <label class="switch"><input type="checkbox" id="s_xmas"><span class="slider"></span></label>
+        <span id="s_xmas_label" style="font-size:13px">Christmas theme is off</span>
+      </div>
+      <div class="field-group" style="max-width:260px"><label>Turn off automatically after (optional)</label><input type="date" id="s_xmasUntil"></div>
+      <div class="hint" style="margin:0">Leave the date empty to keep the theme on until you switch it off yourself. On the chosen date it stays on all day and switches itself off the next day.</div>
     </div>
   </div>
 
@@ -508,7 +519,7 @@ function toSaveDoc() {
       return r;
     }),
     subcats: {},
-    site: pick(L.site || {}, ['open', 'close', 'wifiName', 'wifiPassword']),
+    site: pick(L.site || {}, ['open', 'close', 'wifiName', 'wifiPassword', 'xmas', 'xmasUntil']),
     updatedAt: new Date().toISOString()
   };
   Object.entries(L.subcats).forEach(([sec, list]) => {
@@ -951,6 +962,9 @@ function renderSite() {
   document.getElementById('s_close').value = s.close || '';
   document.getElementById('s_wifi').value = s.wifiName || '';
   document.getElementById('s_pw').value = s.wifiPassword || '';
+  document.getElementById('s_xmas').checked = !!s.xmas;
+  document.getElementById('s_xmas_label').textContent = s.xmas ? 'Christmas theme is ON' : 'Christmas theme is off';
+  document.getElementById('s_xmasUntil').value = s.xmasUntil || '';
 }
 ['s_open', 's_close', 's_wifi', 's_pw'].forEach(id => document.getElementById(id).addEventListener('input', ev => {
   const map = { s_open: 'open', s_close: 'close', s_wifi: 'wifiName', s_pw: 'wifiPassword' };
@@ -958,6 +972,18 @@ function renderSite() {
   L.site[map[id]] = ev.target.value;
   markDirty();
 }));
+
+document.getElementById('s_xmas').addEventListener('change', ev => {
+  L.site = L.site || {};
+  L.site.xmas = ev.target.checked;
+  document.getElementById('s_xmas_label').textContent = ev.target.checked ? 'Christmas theme is ON' : 'Christmas theme is off';
+  markDirty();
+});
+document.getElementById('s_xmasUntil').addEventListener('input', ev => {
+  L.site = L.site || {};
+  L.site.xmasUntil = ev.target.value;   // YYYY-MM-DD, or '' for no end date
+  markDirty();
+});
 
 /* ═══ SAVE BAR ══════════════════════════════════════════════════════════════════════════ */
 function renderSaveBar() {
