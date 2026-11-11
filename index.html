@@ -16,7 +16,7 @@
   --bg:#0c0906;--card:#121110;
   --orange:#ed8530;--rose-gold:#c4886a;--chrome:#9fa8aa;
   --cream:#f0e4d0;--cream-dim:rgba(240,228,208,0.38);
-  --gold:#c9a84c;--muted:#8f7a64;
+  --gold:#c9a84c;--muted:#7a6550;
 }
 /* ═══ FIX v7: HERO IS ONE-WAY PAST THE SEAM, ONLY THE HOME BUTTON BRINGS IT BACK — replaces
    v6. v6 (and v5, v3 before it — full blow-by-blow of v1–v6 is in this file's git history if it's
@@ -34,7 +34,7 @@ html{scroll-behavior:smooth;overflow-anchor:none}
 body{background:var(--bg);color:var(--cream);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-anchor:none}
 
 /* ─── HERO ─────────────────────────────────────────────── */
-.hero{position:relative;height:100vh;height:100svh;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.hero{position:relative;height:100vh;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
 .hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px);animation:drift 12s ease-in-out infinite alternate}
 .orb1{width:420px;height:420px;background:radial-gradient(circle,rgba(237,133,48,0.09),transparent 70%);top:-80px;left:-100px;animation-duration:14s}
 .orb2{width:300px;height:300px;background:radial-gradient(circle,rgba(196,136,106,0.06),transparent 70%);bottom:60px;right:-60px;animation-duration:10s;animation-direction:alternate-reverse}
@@ -335,9 +335,9 @@ img[src*="kelloggs-coco-pops-bar"]{transform:scale(1.08);transform-origin:center
 .card-choice-pill{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:500;letter-spacing:.03em;color:var(--muted);background:transparent;border:1px dashed rgba(237,133,48,.45);border-radius:20px;padding:3px 10px}
 /* ═══ END FIX ═══ */
 
-.card-desc{font-family:'Montserrat',sans-serif;font-size:11px;line-height:1.85;color:rgba(240,228,208,0.58);font-weight:300;letter-spacing:.06em}
+.card-desc{font-family:'Montserrat',sans-serif;font-size:10px;line-height:1.9;color:rgba(240,228,208,0.52);font-weight:300;letter-spacing:.06em}
 .card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.tag{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);background:rgba(237,133,48,.12);border:1px solid rgba(237,133,48,.25);border-radius:20px;padding:3px 10px;opacity:.72}
+.tag{font-family:'Montserrat',sans-serif;font-size:8px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);background:rgba(237,133,48,.12);border:1px solid rgba(237,133,48,.25);border-radius:20px;padding:3px 10px;opacity:.72}
 /* ═══ FIX: EMPTY PLACEHOLDER FIELDS COLLAPSE — every card now has a .card-origin/.card-desc/
    .card-tags/.price-badge element present even where there's no real data yet (see the
    "DEACTIVATED-CARD STRUCTURE UNIFIED" comment on .deactivated, and the same unification applied
@@ -553,13 +553,13 @@ img[src*="Red-bull-250ml"]{transform:scaleX(1.27);transform-origin:center center
 img[src*="Red-bull-sugar-free"]{transform:scaleX(1.19);transform-origin:center center}
 
 /* ═══ FIX: ESPRESSO — the coffee-wrap box size fix above (matching Fresh & Smoothies) made every cup read at a similarly "full" size, but a real espresso should look like a small shot next to Americano/Cappuccino/Latte. Scaled down and anchored to the bottom of its box so it still sits on the same baseline as its neighbours, just smaller. Uses src$= (ends-with) so it targets only Espresso.png, not Freddo-Espresso.png. (delete this rule to revert) ═══ */
-img[src$="/Espresso.png"]{transform:scale(0.62);transform-origin:center bottom}
+img[src*="/Espresso."]{transform:scale(0.62);transform-origin:center bottom}
 /* ═══ END FIX ═══ */
 
 /* ═══ COFFEE CUP ALIGNMENT — checked and reverted. A prior pass added translateX(18px)/translateX(15px) to Americano/Cappuccino assuming their handle skewed the crop's center ~10-12%. Re-measured directly against the source PNGs (bottom-band, handle-free) and the real skew is under 1% for every cup here — not enough to explain what was seen on the live site. Live-rendered DOM measurement confirms it: with NO transform, Americano/Cappuccino's image center already lands at the exact same card-relative X (505px) as Latte, Freddo-Espresso, iced-strawberry-latte and Bumble. So the translateX rules were themselves the misalignment, not the fix — removed. No rule needed here; leaving this comment so a future pass doesn't reintroduce the same mistake without re-measuring the live render first. ═══ */
 
 /* ═══ FIX: COFFEE GLASS SIZE — pass 2 (measured on the live rendered DOM, not estimated). All these share one fixed 150×190px box with object-fit:contain. With no transform, Americano/Cappuccino/Latte/iced-strawberry-latte all render at exactly 150×190 (box-constrained); Freddo-Espresso renders slightly larger at 156×198; Bumble renders largest at 161×203 (its own aspect ratio clears the box). Bumble is the biggest natural render, so it's the target: scale everything else up to match its ~203px height instead of shrinking it down, which is why "the bumble coffee is making iced strawberry latte look small" — Bumble was already right, the others were under it. transform-origin is bottom so every glass still grows from the same base line instead of drifting up or down. (delete this rule to revert to each drink's natural crop size) ═══ */
-img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],img[src*="iced-strawberry-latte"],img[src*="Freddo-Espresso"]{transform:scale(1.07);transform-origin:center bottom}
+img[src*="/Americano."],img[src*="/Cappuccino."],img[src*="/Latte."],img[src*="iced-strawberry-latte"],img[src*="Freddo-Espresso"]{transform:scale(1.07);transform-origin:center bottom}
 /* ═══ END FIX ═══ */
 
 @media(min-width:481px){#sec-beer .card-img-bottle{align-self:flex-end}}
@@ -580,40 +580,12 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
   img.card-img-glass,[data-subcat="Specials"] img.card-img-bottle,img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{height:120px;max-width:110px;min-width:60px}
 }
 
-/* ===== FIXES (test build) ===== */
+/* ===== FIXES ===== */
 /* hero: scroll hint sits in the flow under the button, never on top of it */
 .hero-scroll{position:static;margin-top:clamp(20px,4vh,48px);opacity:.8}
 @media(max-height:620px){.hero-scroll{display:none}}
 /* open/closed badge hidden until the first clock check has run */
 .hero-hours:not(.is-ready){visibility:hidden}
-/* price chips stay on the right even when the origin text wraps */
-/* origin text and price chips wrap instead of squeezing each other (Espresso card, long Russian words) */
-.card-eyebrow{flex-wrap:wrap}
-.card-eyebrow .card-origin{min-width:0}
-.price-chips{flex-shrink:1;min-width:0;justify-content:flex-end}
-.card-eyebrow > :last-child{margin-left:auto}
-/* bigger tap targets */
-.lang-btn{padding:9px 12px}
-.nav-home-btn{padding:9px 12px}
-@media(max-width:400px){
- .cat-btn{font-size:13px;padding:9px 8px;letter-spacing:.1em}
- .cards,.grid2{padding:0 14px}
- .card-body{padding:18px 16px 20px}
- .coffee-img-wrap{width:104px;height:150px}
- img.card-img-glass,[data-subcat="Specials"] img.card-img-bottle,img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{height:140px;max-width:104px;min-width:60px}
- .card-img-tea{height:120px;max-width:110px;min-width:64px}}
-@media(max-width:340px){
- .card-name{font-size:23px}
- .card-eyebrow .card-origin{letter-spacing:.14em}
- .cat-btn{font-size:12px;padding:9px 6px;letter-spacing:.08em}
- .coffee-img-wrap{width:88px;height:130px}
- img.card-img-glass,[data-subcat="Specials"] img.card-img-bottle,img[src*="Orange_fresh"],img[src*="Grapefruit_fresh"],img[src*="Orange_grapefruit"],img[src*="Energy_mix"],img[src*="Blue_banana"],img[src*="Strawberry_banana"],img[src*="Berry_mix"],img[src*="Simple_protein"],img[src*="Matcha_milk_puree"],img[src*="Match_orange"],img[src*="Matcha_tonic"]{height:120px;max-width:88px;min-width:52px}
- .card-img-tea{height:100px;max-width:90px;min-width:56px}}
-@media(max-width:480px){
- .sec-desc.quicknav{font-size:18px}
- .quicknav-pill{display:block;max-width:100%;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent 100%)}
- .quicknav-pill::-webkit-scrollbar{display:none}
- .sec-desc-link{white-space:nowrap}}
 /* beer: one column on phones/small tablets, two side by side on desktop (like the tea cards) */
 @media(min-width:481px){#sec-beer .grid2{grid-template-columns:1fr}}
 @media(min-width:768px){
@@ -623,11 +595,11 @@ img[src*="/Americano.png"],img[src*="/Cappuccino.png"],img[src$="/Latte.png"],im
  #sec-beer > .sec-header + .sub-head + .grid2{grid-column:1;grid-row:3}
  #sec-beer > .grid2 + .sub-head{grid-column:2;grid-row:2}
  #sec-beer > .grid2 + .sub-head + .grid2{grid-column:2;grid-row:3}}
-@media (prefers-reduced-motion:reduce){
- *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
- html{scroll-behavior:auto}}
 /* ===== CHRISTMAS THEME (only active when <html class="xmas">) ===== */
 html.xmas{--xm-red:#c8423a;--xm-green:#2e7d4f;--xm-gold:#e8c36a}
+
+/* keep the sticky category row (Soft Drinks / Kombucha / ...) clear of the hanging lights; 26px = lights' depth plus a little air */
+html.xmas .sec-desc.quicknav{top:calc(var(--nav-h,74px) + 26px)}
 /* twinkling fairy lights hanging under the nav bar */
 .xm-lights{display:none}
 html.xmas .xm-lights{display:block;position:absolute;left:0;right:0;top:100%;height:26px;pointer-events:none;z-index:3;
@@ -1007,7 +979,6 @@ function setLang(l) {
     const v = el.getAttribute('data-' + l);
     if (v !== null) el.innerHTML = v;
   });
-  document.querySelectorAll('.opts-alt-badge').forEach(b => { b.textContent = l === 'ru' ? 'АЛЬТ' : 'ALT'; });
 }
 
 // ═══ FIX: CLICKABLE SECTION HEADERS — jump-scrolls a sub-head to just below the sticky nav.
@@ -1022,7 +993,7 @@ function setLang(l) {
 // own html{scroll-behavior:smooth}, so this now scrolls the same way a finger/mouse-wheel scroll
 // does, just faster. (was 'instant' — change back to 'instant' to revert to an immediate jump)
 function jumpToHeader(el) {
-  const navH = document.querySelector('.nav-wrap').offsetHeight;
+  const navH = document.querySelector('.nav-wrap').offsetHeight + (document.documentElement.classList.contains('xmas') ? 26 : 0); // +26 = Christmas lights depth (see xmas.css)
   const quicknav = document.querySelector('.section.visible .sec-desc.quicknav');
   const quicknavH = quicknav ? quicknav.offsetHeight : 0;
   const y = el.getBoundingClientRect().top + window.scrollY - navH - quicknavH - 8;
@@ -1119,7 +1090,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncNavHei
 // leftover .stuck class for even one frame while waiting on the observer's own (slightly async)
 // callback.
 function recomputeQuicknavStuck() {
-  const navH = document.querySelector('.nav-wrap').offsetHeight;
+  const navH = document.querySelector('.nav-wrap').offsetHeight + (document.documentElement.classList.contains('xmas') ? 26 : 0); // +26 = Christmas lights depth (see xmas.css)
   document.querySelectorAll('.quicknav-sentinel').forEach(s => {
     const row = s.nextElementSibling;
     if (row) row.classList.toggle('stuck', s.getBoundingClientRect().top < navH);
@@ -1128,7 +1099,7 @@ function recomputeQuicknavStuck() {
 let quicknavObserver = null;
 function setupQuicknavStickyObserver() {
   if (quicknavObserver) quicknavObserver.disconnect();
-  const navH = document.querySelector('.nav-wrap').offsetHeight;
+  const navH = document.querySelector('.nav-wrap').offsetHeight + (document.documentElement.classList.contains('xmas') ? 26 : 0); // +26 = Christmas lights depth (see xmas.css)
   // NOTE: deliberately NOT using entry.isIntersecting here — it's false both when the sentinel has
   // scrolled above the nav line (row IS stuck) and when the sentinel hasn't been scrolled to yet
   // (row is nowhere near stuck, just off-screen below). Comparing the sentinel's own
@@ -1218,7 +1189,9 @@ function selectBase(pill, group) {
       if (q === 'on' || site.xmas === undefined) return true;
     }
     if (!site.xmas) return false;
-    if (/^\d{4}-\d{2}-\d{2}$/.test(site.xmasUntil || '') && cyprusToday() > site.xmasUntil) return false;   // auto-off after this date
+    var D = /^\d{4}-\d{2}-\d{2}$/, t = cyprusToday();
+    if (D.test(site.xmasFrom || '') && t < site.xmasFrom) return false;    // not started yet (start date is optional)
+    if (D.test(site.xmasUntil || '') && t > site.xmasUntil) return false;  // already finished (end date is optional)
     return true;
   }
 
@@ -1312,6 +1285,7 @@ function selectBase(pill, group) {
     if (a === on) return;
     on = a;
     document.documentElement.classList.toggle('xmas', a);
+    if (typeof setupQuicknavStickyObserver === 'function') setupQuicknavStickyObserver();
     if (a) {
       if (!built) { if (document.body) build(); else document.addEventListener('DOMContentLoaded', build); }
       startSnow();
@@ -1320,13 +1294,13 @@ function selectBase(pill, group) {
 
   window.ucXmas = function (site) {
     var a = isOn(site);
-    try { localStorage.setItem(LS, JSON.stringify({x: a ? 1 : 0, u: (site && site.xmasUntil) || ''})); } catch (e) {}
+    try { localStorage.setItem(LS, JSON.stringify({x: site && site.xmas ? 1 : 0, f: (site && site.xmasFrom) || '', u: (site && site.xmasUntil) || ''})); } catch (e) {}
     set(a);
   };
   // instant paint on repeat visits: trust the last known state until the live settings arrive
   try {
     var s = JSON.parse(localStorage.getItem(LS) || 'null');
-    if (s && s.x && !(s.u && cyprusToday() > s.u)) set(true);
+    if (s && s.x && !(s.f && cyprusToday() < s.f) && !(s.u && cyprusToday() > s.u)) set(true);
   } catch (e) {}
   if (window.UC_TEST) window.addEventListener('load', function () { if (isOn({})) set(true); });
 })();
@@ -1367,7 +1341,7 @@ function bilingualAttrs(field) {
 
 // Price chips carry EN + RU text so "Single / Double / alt" follow the language switch
 function priceRu(v) {
-  return String(v).replace(/\balt\b/i, 'альт').replace(/\bSingle\b/, 'Одинарный').replace(/\bDouble\b/, 'Двойной');
+  return String(v);   // chips keep the exact text the admin typed (same as the original site)
 }
 function priceBadge(v) {
   return `<div class="price-badge" data-en="${esc(v)}" data-ru="${esc(priceRu(v))}">${esc(v)}</div>`;
